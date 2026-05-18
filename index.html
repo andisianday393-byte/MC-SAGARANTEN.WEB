@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC-SAGARANTEN - Home</title>
+    <style>
+        :root {
+            /* Palette Warna Baru: Merah & Kuning Elegant */
+            --primary-color: #e60012;      /* Merah Khas */
+            --primary-hover: #c4000f;
+            --accent-gold: #ffb700;        /* Kuning Gold Elegan */
+            --accent-dark-gold: #d49600;   /* Kuning Lebih Gelap untuk Teks */
+            --accent-orange: #ff6b00;      /* Oranye Elegan untuk Menu DSE */
+            --bg-color: #ffffff;           
+            --text-color: #2d3748;
+            --border-color: #f3f4f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Gradasi Merah ke Kuning Emas Elegan */
+        .app-header {
+            background: linear-gradient(135deg, #e60012 0%, #ff4d00 50%, #ffb700 100%);
+            color: #ffffff;
+            padding: 45px 20px 35px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(230, 0, 18, 0.15);
+        }
+
+        /* Garis putih transparan aksen di bawah header */
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .app-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .app-header p {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        /* Kontainer Utama Navigasi */
+        .app-navigation {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Pembungkus Menu List Item Masing-masing */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 24px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        /* Sisi Kiri Berwarna Indikator */
+        .stok-link {
+            border-left: 6px solid var(--accent-gold);
+        }
+
+        .form-link {
+            border-left: 6px solid var(--primary-color);
+        }
+
+        .dse-link {
+            border-left: 6px solid var(--accent-orange);
+        }
+
+        .nav-icon {
+            font-size: 32px;
+            margin-right: 18px;
+            width: 45px;
+            text-align: center;
+        }
+
+        .nav-details {
+            flex: 1;
+        }
+
+        .nav-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Warna Teks Judul Menu disesuaikan agar tetap kontras & elegan */
+        .stok-link .nav-title { color: var(--accent-dark-gold); }
+        .form-link .nav-title { color: var(--primary-color); }
+        .dse-link .nav-title { color: var(--accent-orange); }
+
+        .nav-desc {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .nav-arrow {
+            font-size: 18px;
+            color: #d1d5db;
+            padding-left: 10px;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        /* Efek Sentuh / Hover */
+        .nav-item:hover {
+            background-color: #fffbeb; /* Efek highlight kuning tipis saat dihover */
+        }
+
+        .form-link:hover {
+            background-color: #fff5f5; /* Efek highlight merah tipis untuk form */
+        }
+
+        .dse-link:hover {
+            background-color: #fffaf5; /* Efek highlight oranye tipis untuk DSE */
+        }
+
+        .nav-item:hover .nav-arrow {
+            transform: translateX(6px);
+        }
+        
+        .stok-link:hover .nav-arrow { color: var(--accent-dark-gold); }
+        .form-link:hover .nav-arrow { color: var(--primary-color); }
+        .dse-link:hover .nav-arrow { color: var(--accent-orange); }
+
+        .nav-item:active {
+            background-color: #f3f4f6;
+        }
+
+        /* Footer Aplikasi */
+        .app-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #9ca3af;
+            background-color: #fafafa;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        /* Penyesuaian jika dibuka di Layar Lebar Tablet / PC */
+        @media (min-width: 600px) {
+            .app-header h1 { font-size: 32px; }
+            .app-header { padding: 55px 20px 45px 20px; }
+            .nav-item { padding: 30px 40px; }
+            .nav-title { font-size: 18px; }
+            .nav-desc { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <h1>MC-SAGARANTEN</h1>
+        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+    </div>
+    
+    <div class="app-navigation">
+        
+        <a href="stok-gudang.html" class="nav-item stok-link">
+            <div class="nav-icon">📦</div>
+            <div class="nav-details">
+                <div class="nav-title">Laporan Stok Gudang</div>
+                <div class="nav-desc">Pantau sisa stok segel, data monitor barang masuk (Sell-in), dan kalkulasi total stok secara real-time.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
+
+        <a href="form-permintaan.html" class="nav-item form-link">
+            <div class="nav-icon">📝</div>
+            <div class="nav-details">
+                <div class="nav-title">Form Permintaan Barang</div>
+                <div class="nav-desc">Input data kuantitas Starter Pack (SP) atau Voucher yang diperlukan oleh tim sales/DSE di lapangan.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
+
+        <!-- MENU KETIGA BARU: STOK BARANG DSE -->
+        <a href="stok-barang-dse.html" class="nav-item dse-link">
+            <div class="nav-icon">💼</div>
+            <div class="nav-details">
+                <div class="nav-title">Stok Barang DSE</div>
+                <div class="nav-desc">Lihat dan monitor rincian alokasi produk, sisa barang bawaan, serta status distribusi masing-masing tim sales di lapangan.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
+
+    </div>
+
+    <div class="app-footer">
+        &copy; 2026 MC-SAGARANTEN. All Rights Reserved.
+    </div>
+
+</body>
+</html>

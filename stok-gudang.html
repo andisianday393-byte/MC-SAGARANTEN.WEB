@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Gudang Otomatis Google Sheets (Direct CSV)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #232323;
+            background-color: #ffffff;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* HEADER GRADASI IM3 ELEGAN */
+        .header {
+            background: linear-gradient(135deg, #e60012 0%, #ff4d4d 50%, #ffcc00 100%);
+            color: #ffffff;
+            padding: 18px 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(230, 0, 18, 0.25);
+            position: relative; 
+        }
+        .header h1 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            padding-right: 30px; 
+            padding-left: 30px;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* TOMBOL MENU GARIS TIGA */
+        .menu-toggle {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            z-index: 100;
+        }
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* DROPDOWN NAVIGASI MENU */
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            z-index: 99;
+            border-bottom: 2px solid #e60012;
+        }
+        .nav-menu.open { max-height: 200px; }
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f3f4f6; }
+        .nav-menu ul li a { display: block; padding: 14px 20px; color: #232323; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: left; }
+        .nav-menu ul li a:hover { background-color: #fff1f2; color: #c4000f; }
+
+        /* CONTAINER RESPONSIF */
+        .table-responsive {
+            width: 100%;
+            overflow-x: hidden;
+            padding: 5px 2px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            border: 1px solid #e60012;
+        }
+
+        th, td {
+            padding: 9px 2px;
+            font-size: 10.5px;
+            word-wrap: break-word;
+            border: 1px solid #ffd1d5;
+        }
+
+        th {
+            background-color: #c4000f;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 8px;
+            letter-spacing: 0.2px;
+            padding: 11px 2px;
+            border: 1px solid #a3000a;
+        }
+
+        /* KOLOM TOTAL PALING KANAN */
+        tbody tr:not(.empty-row):not(.total-row) td:last-child {
+            background-color: #fffbeb !important;
+            font-weight: 700;
+            color: #c4000f;
+        }
+        
+        /* BARIS KOSONG (PEMISAH KATEGORI) */
+        .empty-row { height: 14px; background-color: #f3f4f6; }
+        .empty-row td { background-color: transparent !important; border: 1px solid #ffd1d5; }
+
+        /* BARIS TOTAL PALING BAWAH */
+        .total-row {
+            background: linear-gradient(90deg, #fffbeb 0%, #fffae6 100%);
+            font-weight: 700;
+        }
+        .total-row td {
+            color: #111827;
+            font-size: 11px;
+            padding: 11px 2px;
+            border-top: 1.5px solid #e60012;
+            border-bottom: 1px solid #e60012;
+        }
+        .total-row td:first-child { color: #c4000f; }
+
+        .text-left { text-align: left; font-weight: 600; padding-left: 5px; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; padding-right: 5px; }
+        .zero-val { color: #9ca3af; }
+        
+        tbody tr:not(.empty-row):not(.total-row):hover td { background-color: #fff1f2 !important; }
+        .loading-text { text-align: center; padding: 20px; font-size: 14px; color: #666; font-weight: bold;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Stok Barang Gudang</h1>
+        <p>Data Monitor Stok Segel dan Sellin (Live via Google Sheets CSV)</p>
+        
+        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav-menu" id="nav-dropdown">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li><a href="form-permintaan.html">Form Permintaan</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 46%; text-align: left; padding-left: 5px;">Nama Barang</th>
+                    <th style="width: 18%; text-align: right; padding-right: 5px;">Segel</th>
+                    <th style="width: 18%; text-align: right; padding-right: 5px;">Sell-In</th>
+                    <th style="width: 18%; text-align: right; padding-right: 5px;">Total</th>
+                </tr>
+            </thead>
+            <tbody id="stok-data-table">
+                <tr>
+                    <td colspan="4" class="loading-text">Sedang mengambil data terbaru langsung dari CSV...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Menggunakan link publikasi CSV milik Anda secara langsung
+        const googleScriptUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnLOGylNni39d00Fb2Qiuf-IGbhel8TAIrxCuJ2NGxoTgZx1NV16NuK60RqGzx2euW92pRGAsc6bGJ/pub?output=csv";
+
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(googleScriptUrl);
+                if (!response.ok) throw new Error("Gagal terhubung ke link CSV Google Sheets.");
+                
+                // Membaca data sebagai teks (CSV), BUKAN .json()
+                const csvText = await response.text();
+                
+                // Parsing teks CSV menjadi format matriks/array 2 dimensi
+                const matrix = parseCSV(csvText);
+                
+                processAndRender(matrix);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" style="color:red; text-align:center; padding:20px; font-weight:bold;">Gagal memuat data CSV.<br><span style="font-size:11px; font-weight:normal; color:#666;">Pesan Masalah: ${error.message}. Pastikan spreadsheet sudah di-publish ke web sebagai CSV.</span></td></tr>`;
+            }
+        }
+
+        // Fungsi pembantu untuk memotong baris dan kolom teks CSV secara rapi
+        function parseCSV(text) {
+            let lines = text.split(/\r\n|\n/);
+            return lines.map(line => {
+                // Menangani pemisah koma dengan aman
+                let result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    let char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current);
+                return result;
+            });
+        }
+
+        function parseStockValue(val) {
+            if (val === undefined || val === null || val === "-" || val === "") return null;
+            let cleanStr = val.toString().trim().replace(/^"|"$/g, ''); // Hapus tanda kutip jika ada
+            if (cleanStr === "0") return 0;
+            
+            cleanStr = cleanStr.replace(/\./g, '').replace(/,/g, '');
+            let parsed = parseInt(cleanStr);
+            return isNaN(parsed) ? null : parsed;
+        }
+
+        function processAndRender(matrix) {
+            const dataSp = [];
+            const dataVdk = [];
+            let isVdkGroup = false;
+
+            matrix.forEach(row => {
+                if (!row || row.length === 0) return;
+                
+                const col0 = row[0] !== undefined ? row[0].toString().trim().replace(/^"|"$/g, '') : "";
+                
+                if (col0 === "" || col0.toLowerCase().includes("nama") || col0.toLowerCase().includes("item") || col0.toLowerCase().includes("gudang") || col0.toLowerCase().includes("stok")) {
+                    return;
+                }
+
+                if (col0.toUpperCase() === "VDK") {
+                    isVdkGroup = true;
+                    return;
+                }
+
+                let segel = parseStockValue(row[1]);
+                let sellIn = parseStockValue(row[2]);
+
+                if (segel === null && sellIn === null) return;
+
+                const item = { nama: col0, segel, sellIn };
+
+                if (isVdkGroup) {
+                    dataVdk.push(item);
+                } else {
+                    dataSp.push(item);
+                }
+            });
+
+            if(dataSp.length === 0 && dataVdk.length === 0) {
+                document.getElementById('stok-data-table').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#c4000f; font-weight:bold;">Format CSV Tidak Sesuai atau Kosong!<br><span style="font-weight:normal; font-size:11px; color:#555;">Pastikan Kolom A = Nama Barang, Kolom B = Segel, Kolom C = Sell-In.</span></td></tr>';
+                return;
+            }
+
+            renderTableVisual(dataSp, dataVdk);
+        }
+
+        function formatNumber(num) {
+            if (num === null) return { val: "-", class: "text-center zero-val" };
+            if (num === 0) return { val: "0", class: "text-right zero-val" };
+            return { val: num.toLocaleString('id-ID'), class: "text-right" };
+        }
+
+        function generateRowHtml(item) {
+            const segelFormated = formatNumber(item.segel);
+            const sellInFormated = formatNumber(item.sellIn);
+            let total = (item.segel || 0) + (item.sellIn || 0);
+            const totalFormated = formatNumber(total);
+
+            return `<tr>
+                <td class="text-left">${item.nama}</td>
+                <td class="${segelFormated.class}">${segelFormated.val}</td>
+                <td class="${sellInFormated.class}">${sellInFormated.val}</td>
+                <td class="${totalFormated.class}">${totalFormated.val}</td>
+            </tr>`;
+        }
+
+        function renderTableVisual(dataSp, dataVdk) {
+            const tbody = document.getElementById('stok-data-table');
+            let htmlContent = "";
+            let totalSegel = 0, totalSellIn = 0;
+
+            dataSp.forEach(item => {
+                htmlContent += generateRowHtml(item);
+                totalSegel += (item.segel || 0);
+                totalSellIn += (item.sellIn || 0);
+            });
+
+            if (dataVdk.length > 0) {
+                htmlContent += `<tr class="empty-row"><td></td><td></td><td></td><td></td></tr>`;
+                dataVdk.forEach(item => {
+                    htmlContent += generateRowHtml(item);
+                    totalSegel += (item.segel || 0);
+                    totalSellIn += (item.sellIn || 0);
+                });
+            }
+
+            let totalSemua = totalSegel + totalSellIn;
+
+            htmlContent += `<tr class="total-row">
+                <td class="text-left">TOTAL</td>
+                <td class="text-right">${totalSegel.toLocaleString('id-ID')}</td>
+                <td class="text-right">${totalSellIn.toLocaleString('id-ID')}</td>
+                <td class="text-right">${totalSemua.toLocaleString('id-ID')}</td>
+            </tr>`;
+
+            tbody.innerHTML = htmlContent;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSheetData();
+            
+            const menuBtn = document.getElementById('menu-btn');
+            const navDropdown = document.getElementById('nav-dropdown');
+
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                menuBtn.classList.toggle('active');
+                navDropdown.classList.toggle('open');
+            });
+
+            document.addEventListener('click', () => {
+                if(navDropdown.classList.contains('open')) {
+                    menuBtn.classList.remove('active');
+                    navDropdown.classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
