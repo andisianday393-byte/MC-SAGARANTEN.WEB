@@ -3,88 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Permintaan Barang - IM3 Distributor</title>
+    <title>Form Permintaan Barang - Monitor CSV Real-time</title>
     <style>
-        :root {
-            /* Palette Warna: Dominan Kuning Gold dengan Aksen Merah */
-            --primary-color: #e60012;      /* Merah Khas IM3 */
-            --accent-gold: #ffb700;        /* Kuning Gold Utama */
-            --accent-light-gold: #fffbeb;  /* Kuning Soft untuk Highlight */
-            --accent-dark-gold: #cc9200;   /* Kuning Tua untuk Teks/Aksen agar kontras */
-            --bg-color: #ffffff;           
-            --text-color: #2d3748;
-            --border-color: #e5e7eb;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
+        
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: var(--text-color);
-            background-color: #ffffff; 
-            display: block;
-        }
-
-        .form-container {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: #334155;
+            background-color: #f1f5f9;
             width: 100%;
-            max-width: 100%;
-            background-color: #ffffff;
-            padding: 0;
+            min-height: 100vh;
+            padding-bottom: 40px;
         }
 
-        /* HEADER: Dominan Kuning Gold Mewah dengan Transisi Merah Tipis di Kiri */
-        .form-header {
-            background: linear-gradient(135deg, #e60012 0%, #ff9400 35%, #ffb700 85%, #fcd34d 100%);
+        /* HEADER - IDENTIK DENGAN HALAMAN STOK GUDANG */
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #ffffff;
-            padding: 28px 15px;
-            text-align: left;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(255, 183, 0, 0.2);
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative; 
+            margin-bottom: 20px;
         }
-
-        /* Garis bawah putih transparan elegan */
-        .form-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .form-header h2 {
-            font-size: 20px;
-            font-weight: 800;
-            margin: 0 0 4px 0;
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #ffffff;
-            text-shadow: 0 1.5px 3px rgba(180, 80, 0, 0.3);
-            padding-right: 40px; /* Ruang agar tidak tabrakan dengan tombol menu */
-        }
-
-        .form-header p {
-            margin: 0;
-            font-size: 11px;
-            font-weight: 600;
-            color: #ffffff;
-            opacity: 0.95;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(180, 80, 0, 0.2);
+            letter-spacing: 0.8px;
             padding-right: 40px;
+            padding-left: 40px;
+            text-align: center;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 6px;
+            padding-right: 40px;
+            padding-left: 40px;
+            text-align: center;
         }
 
-        /* TOMBOL MENU GARIS TIGA (HAMBURGER) - IDENTIK DENGAN HALAMAN STOK */
+        /* TOMBOL MENU GARIS TIGA */
         .menu-toggle {
             position: absolute;
             top: 50%;
-            right: 15px;
+            right: 16px;
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -92,503 +63,507 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 24px;
-            height: 18px;
+            width: 22px;
+            height: 16px;
             z-index: 100;
         }
         .menu-toggle span {
             display: block;
-            height: 3px;
+            height: 2.5px;
             width: 100%;
             background-color: #ffffff;
             border-radius: 3px;
             transition: all 0.3s ease;
         }
         
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7.5px) rotate(45deg);
-        }
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7.5px) rotate(-45deg);
-        }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-        /* DROPDOWN NAVIGASI MENU - SERASI DENGAN TEMA FORM */
+        /* DROPDOWN NAVIGASI MENU UTAMA */
         .nav-menu {
             position: absolute;
             top: 100%;
             left: 0;
             width: 100%;
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            z-index: 99;
+            border-bottom: 3px solid #0284c7;
+        }
+        .nav-menu.open { 
+            max-height: 100vh;
+            overflow-y: auto; 
+        } 
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
+        
+        .nav-menu ul li a { 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px; 
+            color: #334155; 
+            text-decoration: none; 
+            font-size: 13.5px; 
+            font-weight: 600; 
+            text-align: left; 
+        }
+        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+
+        /* NAVIGASI SUB-MENU PENJUALAN */
+        .nav-submenu-container {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
-            z-index: 99;
-            border-bottom: 3px solid var(--accent-gold);
+            background-color: #f8fafc;
         }
-        .nav-menu.open {
-            max-height: 200px; 
+        .nav-submenu-container a {
+            display: block !important;
+            padding: 12px 20px 12px 35px !important;
+            font-size: 13px !important;
+            color: #475569 !important;
+            border-left: 4px solid #0d9488;
+            border-bottom: 1px solid #f1f5f9;
+            text-decoration: none;
+            font-weight: 600;
         }
-        .nav-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .nav-menu ul li {
-            border-bottom: 1px solid #f3f4f6;
-        }
-        .nav-menu ul li:last-child {
+        .nav-submenu-container a:last-child {
             border-bottom: none;
         }
-        .nav-menu ul li a {
-            display: block;
-            padding: 14px 20px;
-            color: #232323;
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 600;
-            text-align: left;
-            transition: background-color 0.2s;
+        .nav-submenu-container a:hover {
+            background-color: #f0fdfa !important;
+            color: #0d9488 !important;
         }
-        .nav-menu ul li a:hover, .nav-menu ul li a:active {
-            background-color: var(--accent-light-gold);
-            color: var(--accent-dark-gold);
-        }
-
-        .form-body {
-            padding: 15px; 
-        }
-
-        /* JUDUL SECTION */
-        .section-title {
+        
+        .menu-arrow-icon {
+            transition: transform 0.3s ease;
             font-size: 11px;
+            color: #94a3b8;
+        }
+        .nav-menu ul li.active-trigger .menu-arrow-icon {
+            transform: rotate(90deg);
+            color: #10b981;
+        }
+
+        /* STYLE KHUSUS UNTUK HALAMAN YANG SEDANG AKTIF (DISABLED) */
+        .nav-menu ul li.disabled-menu-item a {
+            color: #94a3b8 !important; 
+            background-color: #f8fafc !important;
+            pointer-events: none; 
+            cursor: default;
+            user-select: none;
+        }
+
+        /* DASHBOARD CONTAINER - FULL SCREEN TANPA KARTU */
+        .dashboard-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0 10px;
+        }
+
+        /* FORM BODY & SUB SECTION */
+        .form-content {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+        }
+
+        /* SECTION TITLE - SINKRON DENGAN STYLING HEADER TABEL GUDANG */
+        .section-title {
+            background-color: #f8fafc;
+            color: #475569;
             font-weight: 700;
-            color: #ffffff;
-            background: linear-gradient(90deg, var(--accent-dark-gold) 0%, var(--accent-gold) 100%);
-            margin: 24px 0 12px 0;
-            padding: 8px 12px;
+            font-size: 11px;
             text-transform: uppercase;
+            padding: 10px 12px;
+            border-bottom: 2px solid #cbd5e1;
+            margin-bottom: 12px;
+            margin-top: 15px;
             letter-spacing: 0.5px;
-            border-radius: 4px;
-            border-left: 4px solid var(--primary-color);
-            box-shadow: 0 2px 4px rgba(204, 146, 0, 0.15);
         }
-
         .section-title:first-of-type {
-            margin-top: 5px;
+            margin-top: 0;
         }
 
+        /* STYLING INPUT FORM */
         .form-group {
             margin-bottom: 12px;
         }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
-
         label {
             display: block;
             font-size: 12px;
             font-weight: 600;
-            margin-bottom: 5px;
-            color: #4a5568;
+            margin-bottom: 4px;
+            color: #475569;
         }
-
         input[type="text"],
         input[type="date"],
         select,
         textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid var(--border-color);
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 13px;
-            color: var(--text-color);
-            background-color: #fafafa;
-            box-sizing: border-box;
+            color: #334155;
+            background-color: #f8fafc;
             transition: all 0.2s ease;
-            -webkit-appearance: none;
         }
-
         input[type="text"]:focus,
         input[type="date"]:focus,
         select:focus,
         textarea:focus {
-            border-color: var(--accent-gold);
+            border-color: #0284c7;
             background-color: #ffffff;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(255, 183, 0, 0.2);
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
         }
-
         input[readonly] {
-            background-color: #f1f5f9;
+            background-color: #e2e8f0;
+            color: #64748b;
             cursor: not-allowed;
-            color: #6b7280;
+            font-weight: 600;
         }
-
         textarea {
             resize: vertical;
-            min-height: 70px;
+            min-height: 80px;
             font-family: inherit;
         }
 
-        /* GRID ITEM BARANG */
+        /* GRID DAFTAR ITEM */
         .item-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 12px;
         }
 
+        /* STRUKTUR INPUT KELAS ITEM (MIMIK BARIS TABEL STOK) */
         .item-input-group {
             display: flex;
             align-items: center;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 6px 10px;
-            transition: all 0.2s ease;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #ffffff;
         }
-
         .item-input-group:hover {
-            background-color: var(--accent-light-gold) !important;
-            border-color: var(--accent-gold);
+            background-color: #f8fafc;
         }
-
-        .item-input-group:focus-within {
-            border-color: var(--accent-gold);
-            background: #ffffff;
-            box-shadow: 0 0 0 2px rgba(255, 183, 0, 0.15);
-        }
-
         .item-label {
-            flex: 1;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: #111827;
-            padding-right: 10px;
+            color: #334155;
+            flex: 1;
         }
-
         .item-count {
             width: 75px;
             padding: 6px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             text-align: center;
-            font-size: 14px;
-            color: #111827;
-            background-color: #fff9db;
-            outline: none;
-            -moz-appearance: textfield;
+            font-size: 13px;
             font-weight: 700;
+            color: #0284c7;
+            background-color: #f0f9ff; /* Soft Blue khas kolom total tabel */
+            font-variant-numeric: tabular-nums;
+            outline: none;
         }
-
-        .item-count::-webkit-outer-spin-button,
-        .item-count::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
         .item-count:focus {
-            border-color: var(--accent-gold);
+            border-color: #0284c7;
             background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.1);
         }
 
-        /* TOMBOL SUBMIT */
+        /* BUTTON KIRIM - BERGAYA UTAMA MODERN */
         .btn-submit {
-            background: linear-gradient(135deg, #ffb700 0%, #ff9400 100%);
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
             color: #ffffff;
             border: none;
             padding: 14px 20px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             border-radius: 6px;
             width: 100%;
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(255, 148, 0, 0.25);
-            -webkit-appearance: none;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(180, 80, 0, 0.2);
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
         }
-
         .btn-submit:hover {
-            background: linear-gradient(135deg, #ff9400 0%, #e60012 100%);
-            box-shadow: 0 4px 14px rgba(230, 0, 12, 0.25);
+            background: linear-gradient(135deg, #0369a1 0%, #0f172a 100%);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
         }
-
         .btn-submit:active {
-            transform: scale(0.98);
+            transform: scale(0.99);
         }
 
-        /* OPTIMASI TABLET & DESKTOP */
+        /* MEDIA QUERY UNTUK DESKTOP/TABLET (FLEXIBEL GRID) */
         @media (min-width: 600px) {
-            body { 
-                background-color: #f8fafc;
-                padding: 20px;
-                display: flex;
-                justify-content: center;
+            .dashboard-container {
+                padding: 0 20px;
             }
-            .form-container { 
-                max-width: 800px; 
-                border-radius: 8px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-                overflow: hidden;
-                border: 1px solid #f1f5f9;
-                position: relative;
+            .item-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 10px;
             }
-            .form-header { padding: 30px 25px; }
-            .form-header h2 { font-size: 26px; }
-            .form-header p { font-size: 13px; }
-            .form-body { padding: 25px; }
-            .section-title { font-size: 12px; padding: 10px 15px; }
-            label { font-size: 13px; }
-            input[type="text"], input[type="date"], select, textarea { font-size: 14px; padding: 12px; }
-            .item-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
-            .item-input-group { padding: 10px 15px; }
-            .item-label { font-size: 14px; }
-            .btn-submit { padding: 16px 20px; font-size: 16px; }
-            
-            .nav-menu {
-                left: auto;
-                right: 25px;
-                width: 250px;
-                border-radius: 0 0 8px 8px;
+            .item-input-group {
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="form-container">
-    <div class="form-header">
-        <h2>Form Permintaan Barang</h2>
+    <div class="header">
+        <h1>Form Permintaan Barang</h1>
         <p>Silakan input data kuantitas barang yang diperlukan</p>
         
-        <!-- TOMBOL MENU BARU DI SEBELAH KANAN -->
         <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </button>
 
-        <!-- DROPDOWN NAVIGASI MENU BARU -->
         <nav class="nav-menu" id="nav-dropdown">
             <ul>
                 <li><a href="index.html">Beranda</a></li>
                 <li><a href="stok-gudang.html">Stok Gudang</a></li>
-                <li><a href="stok-barang-dse.html">Stok DSE</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li class="disabled-menu-item"><a href="#">Form Permintaan</a></li>
+                <li id="trigger-penjualan">
+                    <a href="#" onclick="return false;">
+                        <span>Laporan Penjualan</span>
+                        <span class="menu-arrow-icon">➔</span>
+                    </a>
+                </li>
+                <div class="nav-submenu-container" id="dropdown-submenu-penjualan">
+                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-paket-tm.html">📞 Penjualan Paket TM</a>
+                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
             </ul>
         </nav>
     </div>
-    
-    <form id="requestForm" class="form-body" onsubmit="handleSubmit(event)">
-        
-        <div class="section-title">Informasi Sales</div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="tanggal">Tanggal Permintaan</label>
-                <input type="date" id="tanggal" name="tanggal" required>
-            </div>
+
+    <div class="dashboard-container">
+        <form id="requestForm" class="form-content" onsubmit="handleSubmit(event)">
             
+            <div class="section-title">Informasi Sales</div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tanggal">Tanggal Permintaan</label>
+                    <input type="date" id="tanggal" name="tanggal" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_dse">ID DSE</label>
+                    <select id="id_dse" name="id_dse" onchange="updateNamaDSE()" required>
+                        <option value="" disabled selected>-- Pilih ID --</option>
+                        <option value="SKBPLARA04">SKBPLARA04</option>
+                        <option value="SKBPLARA08">SKBPLARA08</option>
+                        <option value="SKBPLARA11">SKBPLARA11</option>
+                        <option value="DSESGRN01">DSESGRN01</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label for="id_dse">ID DSE</label>
-                <select id="id_dse" name="id_dse" onchange="updateNamaDSE()" required>
-                    <option value="" disabled selected>-- Pilih ID --</option>
-                    <option value="SKBPLARA04">SKBPLARA04</option>
-                    <option value="SKBPLARA08">SKBPLARA08</option>
-                    <option value="SKBPLARA11">SKBPLARA11</option>
-                    <option value="DSESGRN01">DSESGRN01</option>
-                </select>
+                <label for="nama_dse">Nama DSE</label>
+                <input type="text" id="nama_dse" name="nama_dse" placeholder="Akan terisi otomatis..." readonly>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="nama_dse">Nama DSE</label>
-            <input type="text" id="nama_dse" name="nama_dse" placeholder="Akan terisi otomatis..." readonly>
-        </div>
+            <div class="section-title">Kategori Starter Pack (SP)</div>
+            <div class="item-grid">
+                <div class="item-input-group">
+                    <span class="item-label">SP ZERO</span>
+                    <input type="number" class="item-count" name="sp_zero" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">SP 3GB</span>
+                    <input type="number" class="item-count" name="sp_3gb" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+            </div>
 
-        <div class="section-title">Kategori Starter Pack (SP)</div>
-        <div class="item-grid">
-            <div class="item-input-group">
-                <span class="item-label">SP ZERO</span>
-                <input type="number" class="item-count" name="sp_zero" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+            <div class="section-title">Kategori Voucher</div>
+            <div class="item-grid">
+                <div class="item-input-group">
+                    <span class="item-label">VDK</span>
+                    <input type="number" class="item-count" name="vdk" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">3GB 14HR</span>
+                    <input type="number" class="item-count" name="v_3gb_14hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">2,5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_2_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">FI 3 GB 30HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_30hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">3.5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_3_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">7GB 7HR</span>
+                    <input type="number" class="item-count" name="v_7gb_7hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 6GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_6gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 1.5GB 1HR</span>
+                    <input type="number" class="item-count" name="v_fi_1_5gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 3GB 1HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 3GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 5GB 2HR</span>
+                    <input type="number" class="item-count" name="v_fi_5gb_2hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 5GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_5gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
             </div>
-            <div class="item-input-group">
-                <span class="item-label">SP 3GB</span>
-                <input type="number" class="item-count" name="sp_3gb" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-        </div>
 
-        <div class="section-title">Kategori Voucher</div>
-        <div class="item-grid">
-            <div class="item-input-group">
-                <span class="item-label">VDK</span>
-                <input type="number" class="item-count" name="vdk" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+            <div class="section-title">Catatan Tambahan</div>
+            <div class="form-group">
+                <label for="komentar">Komentar / Keterangan Lain</label>
+                <textarea id="komentar" name="komentar" placeholder="Masukkan catatan atau instruksi khusus jika ada..."></textarea>
             </div>
-            <div class="item-input-group">
-                <span class="item-label">3GB 14HR</span>
-                <input type="number" class="item-count" name="v_3gb_14hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">2,5GB 5HR</span>
-                <input type="number" class="item-count" name="v_2_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">FI 3 GB 30HR</span>
-                <input type="number" class="item-count" name="v_fi_3gb_30hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">3.5GB 5HR</span>
-                <input type="number" class="item-count" name="v_3_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">5GB 5HR</span>
-                <input type="number" class="item-count" name="v_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">7GB 7HR</span>
-                <input type="number" class="item-count" name="v_7gb_7hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 6GB 3HR</span>
-                <input type="number" class="item-count" name="v_fi_6gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 1.5GB 1HR</span>
-                <input type="number" class="item-count" name="v_fi_1_5gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 3GB 1HR</span>
-                <input type="number" class="item-count" name="v_fi_3gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 3GB 3HR</span>
-                <input type="number" class="item-count" name="v_fi_3gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 5GB 2HR</span>
-                <input type="number" class="item-count" name="v_fi_5gb_2hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-            <div class="item-input-group">
-                <span class="item-label">Fi 5GB 3HR</span>
-                <input type="number" class="item-count" name="v_fi_5gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
-            </div>
-        </div>
 
-        <div class="section-title">Catatan Tambahan</div>
-        <div class="form-group">
-            <label for="komentar">Komentar / Keterangan Lain</label>
-            <textarea id="komentar" name="komentar" placeholder="Masukkan catatan atau instruksi khusus jika ada..."></textarea>
-        </div>
+            <button type="submit" class="btn-submit">Kirim Permintaan</button>
+        </form>
+    </div>
 
-        <button type="submit" class="btn-submit">Kirim Permintaan</button>
-    </form>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // JS NAVIGASI MENU RESPONSIVE (ANTI TUMPANG TINDIH)
+            const menuBtn = document.getElementById('menu-btn');
+            const navDropdown = document.getElementById('nav-dropdown');
+            const triggerPenjualan = document.getElementById('trigger-penjualan');
+            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
 
-<script>
-    // SCRIPT INTERAKSI TOMBOL MENU (IDENTIK DENGAN HALAMAN STOK)
-    document.addEventListener('DOMContentLoaded', () => {
-        const menuBtn = document.getElementById('menu-btn');
-        const navDropdown = document.getElementById('nav-dropdown');
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                menuBtn.classList.toggle('active');
+                navDropdown.classList.toggle('open');
+            });
 
-        menuBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); 
-            menuBtn.classList.toggle('active');
-            navDropdown.classList.toggle('open');
+            triggerPenjualan.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                triggerPenjualan.classList.toggle('active-trigger');
+                
+                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
+                    submenuPenjualan.style.maxHeight = "0px";
+                } else {
+                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
+                }
+            });
+
+            document.addEventListener('click', () => {
+                if(navDropdown.classList.contains('open')) {
+                    menuBtn.classList.remove('active');
+                    navDropdown.classList.remove('open');
+                    triggerPenjualan.classList.remove('active-trigger');
+                    submenuPenjualan.style.maxHeight = "0px";
+                }
+            });
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal').value = today;
         });
 
-        document.addEventListener('click', () => {
-            if(navDropdown.classList.contains('open')) {
-                menuBtn.classList.remove('active');
-                navDropdown.classList.remove('open');
+        const dseMapping = {
+            'SKBPLARA04': 'Parhan',
+            'SKBPLARA08': 'Andi',
+            'SKBPLARA11': 'Endem',
+            'DSESGRN01': 'Pebrian'
+        };
+
+        function updateNamaDSE() {
+            const idDse = document.getElementById('id_dse').value;
+            const namaField = document.getElementById('nama_dse');
+            namaField.value = dseMapping[idDse] || '';
+        }
+
+        function clearZero(input) {
+            if (input.value === "0") input.value = "";
+        }
+
+        function restoreZero(input) {
+            if (input.value === "") input.value = "0";
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const noAdmin = "6285759695969"; 
+            const formData = new FormData(event.target);
+            
+            let message = "*--- PERMINTAAN BARANG IM3 ---*\n\n";
+            message += `*Tanggal:* ${formData.get('tanggal')}\n`;
+            message += `*ID DSE:* ${formData.get('id_dse')}\n`;
+            message += `*Nama DSE:* ${document.getElementById('nama_dse').value}\n\n`;
+            message += "*Daftar Item:*\n";
+
+            let hasItems = false;
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'tanggal' && key !== 'id_dse' && key !== 'komentar' && parseInt(value) > 0) {
+                    const inputElement = document.querySelector(`[name="${key}"]`);
+                    const labelText = inputElement.closest('.item-input-group').querySelector('.item-label').innerText;
+                    message += `- ${labelText}: *${value} pcs*\n`;
+                    hasItems = true;
+                }
             }
-        });
-    });
 
-    const dseMapping = {
-        'SKBPLARA04': 'Parhan',
-        'SKBPLARA08': 'Andi',
-        'SKBPLARA11': 'Endem',
-        'DSESGRN01': 'Pebrian'
-    };
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tanggal').value = today;
-    });
-
-    function updateNamaDSE() {
-        const idDse = document.getElementById('id_dse').value;
-        const namaField = document.getElementById('nama_dse');
-        
-        if (dseMapping[idDse]) {
-            namaField.value = dseMapping[idDse];
-        } else {
-            namaField.value = '';
-        }
-    }
-
-    function clearZero(input) {
-        if (input.value === "0") {
-            input.value = "";
-        }
-    }
-
-    function restoreZero(input) {
-        if (input.value === "") {
-            input.value = "0";
-        }
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-        
-        const noAdmin = "6285759695969"; 
-        const formData = new FormData(event.target);
-        
-        let message = "*--- PERMINTAAN BARANG IM3 ---*\n\n";
-        message += `*Tanggal:* ${formData.get('tanggal')}\n`;
-        message += `*ID DSE:* ${formData.get('id_dse')}\n`;
-        message += `*Nama DSE:* ${document.getElementById('nama_dse').value}\n\n`;
-        message += "*Daftar Item:*\n";
-
-        let hasItems = false;
-        for (let [key, value] of formData.entries()) {
-            if (key !== 'tanggal' && key !== 'id_dse' && key !== 'komentar' && parseInt(value) > 0) {
-                const inputElement = document.querySelector(`[name="${key}"]`);
-                const labelText = inputElement.closest('.item-input-group').querySelector('.item-label').innerText;
-                message += `- ${labelText}: *${value} pcs*\n`;
-                hasItems = true;
+            if (!hasItems) {
+                alert("Silakan masukkan kuantitas minimal pada salah satu barang sebelum mengirim.");
+                return;
             }
-        }
 
-        if (!hasItems) {
-            alert("Silakan masukkan kuantitas minimal pada salah satu barang sebelum mengirim.");
-            return;
-        }
+            const catatan = formData.get('komentar').trim();
+            if (catatan) {
+                message += `\n*Catatan Tambahan:* \n_${catatan}_\n`;
+            }
 
-        const catatan = formData.get('komentar').trim();
-        if (catatan) {
-            message += `\n*Catatan Tambahan:* \n_${catatan}_\n`;
+            const encodedMessage = encodeURIComponent(message);
+            const waLink = `https://api.whatsapp.com/send?phone=${noAdmin}&text=${encodedMessage}`;
+            window.open(waLink, '_blank');
         }
-
-        const encodedMessage = encodeURIComponent(message);
-        const waLink = `https://api.whatsapp.com/send?phone=${noAdmin}&text=${encodedMessage}`;
-        
-        window.open(waLink, '_blank');
-    }
-</script>
+    </script>
 </body>
 </html>
+
 
 

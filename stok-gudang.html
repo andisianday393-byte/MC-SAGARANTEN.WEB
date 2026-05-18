@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stok Gudang Otomatis Google Sheets (Direct CSV)</title>
+    <title>Stok Gudang Otomatis - Monitor CSV Real-time</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,45 +12,49 @@
         }
         
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #232323;
-            background-color: #ffffff;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: #334155;
+            background-color: #f1f5f9;
             width: 100%;
             min-height: 100vh;
+            padding-bottom: 40px;
         }
 
-        /* HEADER GRADASI IM3 ELEGAN */
         .header {
-            background: linear-gradient(135deg, #e60012 0%, #ff4d4d 50%, #ffcc00 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #ffffff;
-            padding: 18px 10px;
+            padding: 20px 16px;
             text-align: center;
-            box-shadow: 0 3px 10px rgba(230, 0, 18, 0.25);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             position: relative; 
+            margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            padding-right: 30px; 
-            padding-left: 30px;
+            letter-spacing: 0.8px;
+            padding-right: 40px;
+            padding-left: 40px;
+            text-align: center;
         }
         .header p {
             margin: 0;
-            opacity: 0.95;
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
+            opacity: 0.8;
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 6px;
+            padding-right: 40px;
+            padding-left: 40px;
+            text-align: center;
         }
 
         /* TOMBOL MENU GARIS TIGA */
         .menu-toggle {
             position: absolute;
             top: 50%;
-            right: 15px;
+            right: 16px;
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -58,107 +62,209 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 24px;
-            height: 18px;
+            width: 22px;
+            height: 16px;
             z-index: 100;
         }
         .menu-toggle span {
             display: block;
-            height: 3px;
+            height: 2.5px;
             width: 100%;
             background-color: #ffffff;
             border-radius: 3px;
             transition: all 0.3s ease;
         }
         
-        .menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
         .menu-toggle.active span:nth-child(2) { opacity: 0; }
         .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-        /* DROPDOWN NAVIGASI MENU */
+        /* DROPDOWN NAVIGASI MENU UTAMA */
         .nav-menu {
             position: absolute;
             top: 100%;
             left: 0;
             width: 100%;
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            z-index: 99;
+            border-bottom: 3px solid #0284c7;
+        }
+        .nav-menu.open { 
+            max-height: 100vh; /* Menggunakan viewport height agar fleksibel mengikuti tinggi isi menu */
+            overflow-y: auto; 
+        } 
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
+        
+        /* Layout Flexbox untuk mencegah tumpang tindih teks dan ikon */
+        .nav-menu ul li a { 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px; 
+            color: #334155; 
+            text-decoration: none; 
+            font-size: 13.5px; 
+            font-weight: 600; 
+            text-align: left; 
+        }
+        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+
+        /* NAVIGASI SUB-MENU PENJUALAN */
+        .nav-submenu-container {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
-            z-index: 99;
-            border-bottom: 2px solid #e60012;
+            background-color: #f8fafc;
         }
-        .nav-menu.open { max-height: 200px; }
-        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
-        .nav-menu ul li { border-bottom: 1px solid #f3f4f6; }
-        .nav-menu ul li a { display: block; padding: 14px 20px; color: #232323; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: left; }
-        .nav-menu ul li a:hover { background-color: #fff1f2; color: #c4000f; }
-
-        /* CONTAINER RESPONSIF */
-        .table-responsive {
-            width: 100%;
-            overflow-x: hidden;
-            padding: 5px 2px;
+        .nav-submenu-container a {
+            display: block !important;
+            padding: 12px 20px 12px 35px !important;
+            font-size: 13px !important;
+            color: #475569 !important;
+            border-left: 4px solid #0d9488;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .nav-submenu-container a:last-child {
+            border-bottom: none;
+        }
+        .nav-submenu-container a:hover {
+            background-color: #f0fdfa !important;
+            color: #0d9488 !important;
         }
         
+        /* Animasi rotasi panah indikator */
+        .menu-arrow-icon {
+            transition: transform 0.3s ease;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .nav-menu ul li.active-trigger .menu-arrow-icon {
+            transform: rotate(90deg);
+            color: #10b981;
+        }
+
+        /* STYLE KHUSUS UNTUK HALAMAN YANG SEDANG AKTIF (TIDAK BISA DIKLIK) */
+        .nav-menu ul li.disabled-menu-item a {
+            color: #94a3b8 !important; 
+            background-color: #f8fafc !important;
+            pointer-events: none; 
+            cursor: default;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* CONTAINER LAYAR */
+        .dashboard-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0 10px; 
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
-            border: 1px solid #e60012;
+            table-layout: fixed; 
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
         }
 
         th, td {
-            padding: 9px 2px;
-            font-size: 10.5px;
-            word-wrap: break-word;
-            border: 1px solid #ffd1d5;
+            padding: 12px 10px;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap; 
         }
 
         th {
-            background-color: #c4000f;
-            color: #ffffff;
+            background-color: #f8fafc;
+            color: #475569;
             font-weight: 700;
-            text-transform: uppercase;
-            font-size: 8px;
-            letter-spacing: 0.2px;
-            padding: 11px 2px;
-            border: 1px solid #a3000a;
-        }
-
-        /* KOLOM TOTAL PALING KANAN */
-        tbody tr:not(.empty-row):not(.total-row) td:last-child {
-            background-color: #fffbeb !important;
-            font-weight: 700;
-            color: #c4000f;
-        }
-        
-        /* BARIS KOSONG (PEMISAH KATEGORI) */
-        .empty-row { height: 14px; background-color: #f3f4f6; }
-        .empty-row td { background-color: transparent !important; border: 1px solid #ffd1d5; }
-
-        /* BARIS TOTAL PALING BAWAH */
-        .total-row {
-            background: linear-gradient(90deg, #fffbeb 0%, #fffae6 100%);
-            font-weight: 700;
-        }
-        .total-row td {
-            color: #111827;
             font-size: 11px;
-            padding: 11px 2px;
-            border-top: 1.5px solid #e60012;
-            border-bottom: 1px solid #e60012;
+            text-transform: uppercase;
+            border-bottom: 2px solid #cbd5e1;
         }
-        .total-row td:first-child { color: #c4000f; }
 
-        .text-left { text-align: left; font-weight: 600; padding-left: 5px; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; padding-right: 5px; }
-        .zero-val { color: #9ca3af; }
+        /* KOLOM NAMA BARANG */
+        .item-name-col {
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+            width: 45%; 
+            white-space: normal; 
+        }
+
+        /* PENATAAN TENGAH */
+        table th:nth-child(2), table td:nth-child(2) {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            width: 17%; 
+        }
+
+        table th:nth-child(3), table td:nth-child(3) {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            width: 18%; 
+        }
+
+        /* KOLOM TOTAL */
+        table th:nth-child(4), table td:nth-child(4) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            color: #0f172a;
+            width: 20%;
+            padding-right: 12px;
+        }
+
+        tbody tr:not(.empty-row):not(.total-row) td:last-child {
+            background-color: #f0f9ff !important;
+            font-weight: 700;
+            color: #0284c7;
+        }
+
+        .empty-cell {
+            color: #cbd5e1;
+            text-align: center;
+        }
+
+        .empty-row td {
+            height: 16px;
+            background-color: #f8fafc !important;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .total-row td {
+            background-color: #fef08a !important; 
+            color: #713f12 !important;
+            font-weight: 700;
+            border-top: 2px solid #fef08a;
+            border-bottom: 1px solid #ca8a04;
+        }
         
-        tbody tr:not(.empty-row):not(.total-row):hover td { background-color: #fff1f2 !important; }
-        .loading-text { text-align: center; padding: 20px; font-size: 14px; color: #666; font-weight: bold;}
+        tbody tr:not(.empty-row):not(.total-row):hover td { 
+            background-color: #f8fafc !important; 
+        }
+
+        .loading-text { 
+            text-align: center; 
+            padding: 30px; 
+            font-size: 13px; 
+            color: #64748b; 
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -174,32 +280,44 @@
         <nav class="nav-menu" id="nav-dropdown">
             <ul>
                 <li><a href="index.html">Beranda</a></li>
+                <li class="disabled-menu-item"><a href="#">Stok Gudang</a></li>
                 <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
                 <li><a href="form-permintaan.html">Form Permintaan</a></li>
+                <li id="trigger-penjualan">
+                    <a href="#" onclick="return false;">
+                        <span>Laporan Penjualan</span>
+                        <span class="menu-arrow-icon">➔</span>
+                    </a>
+                </li>
+                <div class="nav-submenu-container" id="dropdown-submenu-penjualan">
+                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-paket-tm.html">📞 Penjualan Paket TM</a>
+                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
             </ul>
         </nav>
     </div>
-    
-    <div class="table-responsive">
+
+    <div class="dashboard-container">
         <table>
             <thead>
                 <tr>
-                    <th style="width: 46%; text-align: left; padding-left: 5px;">Nama Barang</th>
-                    <th style="width: 18%; text-align: right; padding-right: 5px;">Segel</th>
-                    <th style="width: 18%; text-align: right; padding-right: 5px;">Sell-In</th>
-                    <th style="width: 18%; text-align: right; padding-right: 5px;">Total</th>
+                    <th class="item-name-col">Nama Barang</th>
+                    <th>Segel</th>
+                    <th>Sell-In</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody id="stok-data-table">
                 <tr>
-                    <td colspan="4" class="loading-text">Sedang mengambil data terbaru langsung dari CSV...</td>
+                    <td colspan="4" class="loading-text">🔄 Sedang mengambil data terbaru langsung dari CSV...</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
     <script>
-        // Menggunakan link publikasi CSV milik Anda secara langsung
         const googleScriptUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnLOGylNni39d00Fb2Qiuf-IGbhel8TAIrxCuJ2NGxoTgZx1NV16NuK60RqGzx2euW92pRGAsc6bGJ/pub?output=csv";
 
         async function fetchSheetData() {
@@ -207,24 +325,18 @@
                 const response = await fetch(googleScriptUrl);
                 if (!response.ok) throw new Error("Gagal terhubung ke link CSV Google Sheets.");
                 
-                // Membaca data sebagai teks (CSV), BUKAN .json()
                 const csvText = await response.text();
-                
-                // Parsing teks CSV menjadi format matriks/array 2 dimensi
                 const matrix = parseCSV(csvText);
-                
                 processAndRender(matrix);
             } catch (error) {
                 console.error(error);
-                document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" style="color:red; text-align:center; padding:20px; font-weight:bold;">Gagal memuat data CSV.<br><span style="font-size:11px; font-weight:normal; color:#666;">Pesan Masalah: ${error.message}. Pastikan spreadsheet sudah di-publish ke web sebagai CSV.</span></td></tr>`;
+                document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" style="color:#ef4444; text-align:center; padding:20px; font-weight:bold;">⚠️ Gagal memuat data CSV.<br><span style="font-size:11px; font-weight:normal; color:#64748b;">Pesan Masalah: ${error.message}</span></td></tr>`;
             }
         }
 
-        // Fungsi pembantu untuk memotong baris dan kolom teks CSV secara rapi
         function parseCSV(text) {
             let lines = text.split(/\r\n|\n/);
             return lines.map(line => {
-                // Menangani pemisah koma dengan aman
                 let result = [];
                 let current = '';
                 let inQuotes = false;
@@ -247,7 +359,7 @@
 
         function parseStockValue(val) {
             if (val === undefined || val === null || val === "-" || val === "") return null;
-            let cleanStr = val.toString().trim().replace(/^"|"$/g, ''); // Hapus tanda kutip jika ada
+            let cleanStr = val.toString().trim().replace(/^"|"$/g, '');
             if (cleanStr === "0") return 0;
             
             cleanStr = cleanStr.replace(/\./g, '').replace(/,/g, '');
@@ -289,7 +401,7 @@
             });
 
             if(dataSp.length === 0 && dataVdk.length === 0) {
-                document.getElementById('stok-data-table').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#c4000f; font-weight:bold;">Format CSV Tidak Sesuai atau Kosong!<br><span style="font-weight:normal; font-size:11px; color:#555;">Pastikan Kolom A = Nama Barang, Kolom B = Segel, Kolom C = Sell-In.</span></td></tr>';
+                document.getElementById('stok-data-table').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#ef4444; font-weight:bold;">Format CSV Tidak Sesuai atau Kosong!<br><span style="font-weight:normal; font-size:11px; color:#64748b;">Pastikan susunan kolom sheet sudah benar.</span></td></tr>';
                 return;
             }
 
@@ -297,22 +409,18 @@
         }
 
         function formatNumber(num) {
-            if (num === null) return { val: "-", class: "text-center zero-val" };
-            if (num === 0) return { val: "0", class: "text-right zero-val" };
-            return { val: num.toLocaleString('id-ID'), class: "text-right" };
+            if (num === null || num === undefined) return `<span class="empty-cell">-</span>`;
+            return num.toLocaleString('id-ID');
         }
 
         function generateRowHtml(item) {
-            const segelFormated = formatNumber(item.segel);
-            const sellInFormated = formatNumber(item.sellIn);
             let total = (item.segel || 0) + (item.sellIn || 0);
-            const totalFormated = formatNumber(total);
 
             return `<tr>
-                <td class="text-left">${item.nama}</td>
-                <td class="${segelFormated.class}">${segelFormated.val}</td>
-                <td class="${sellInFormated.class}">${sellInFormated.val}</td>
-                <td class="${totalFormated.class}">${totalFormated.val}</td>
+                <td class="item-name-col">${item.nama}</td>
+                <td>${formatNumber(item.segel)}</td>
+                <td>${formatNumber(item.sellIn)}</td>
+                <td>${formatNumber(total)}</td>
             </tr>`;
         }
 
@@ -328,7 +436,7 @@
             });
 
             if (dataVdk.length > 0) {
-                htmlContent += `<tr class="empty-row"><td></td><td></td><td></td><td></td></tr>`;
+                htmlContent += `<tr class="empty-row"><td colspan="4"></td></tr>`;
                 dataVdk.forEach(item => {
                     htmlContent += generateRowHtml(item);
                     totalSegel += (item.segel || 0);
@@ -339,10 +447,10 @@
             let totalSemua = totalSegel + totalSellIn;
 
             htmlContent += `<tr class="total-row">
-                <td class="text-left">TOTAL</td>
-                <td class="text-right">${totalSegel.toLocaleString('id-ID')}</td>
-                <td class="text-right">${totalSellIn.toLocaleString('id-ID')}</td>
-                <td class="text-right">${totalSemua.toLocaleString('id-ID')}</td>
+                <td class="item-name-col">TOTAL STOK</td>
+                <td>${totalSegel.toLocaleString('id-ID')}</td>
+                <td>${totalSellIn.toLocaleString('id-ID')}</td>
+                <td>${totalSemua.toLocaleString('id-ID')}</td>
             </tr>`;
 
             tbody.innerHTML = htmlContent;
@@ -353,23 +461,45 @@
             
             const menuBtn = document.getElementById('menu-btn');
             const navDropdown = document.getElementById('nav-dropdown');
+            const triggerPenjualan = document.getElementById('trigger-penjualan');
+            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
 
+            // Toggle Menu Utama (Garis Tiga)
             menuBtn.addEventListener('click', (event) => {
                 event.stopPropagation(); 
                 menuBtn.classList.toggle('active');
                 navDropdown.classList.toggle('open');
             });
 
+            // Toggle Sub-Menu Penjualan di dalam Navigasi Dropdown secara aman
+            triggerPenjualan.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                triggerPenjualan.classList.toggle('active-trigger');
+                
+                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
+                    submenuPenjualan.style.maxHeight = "0px";
+                } else {
+                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
+                }
+            });
+
+            // Tutup menu jika klik di luar area navigasi
             document.addEventListener('click', () => {
                 if(navDropdown.classList.contains('open')) {
                     menuBtn.classList.remove('active');
                     navDropdown.classList.remove('open');
+                    triggerPenjualan.classList.remove('active-trigger');
+                    submenuPenjualan.style.maxHeight = "0px";
                 }
             });
         });
     </script>
 </body>
 </html>
+
+
+
+
 
 
 

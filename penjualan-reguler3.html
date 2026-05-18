@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan Reguler - Monitor CSV Real-time</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: #334155;
+            background-color: #f1f5f9;
+            width: 100%;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #ffffff;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative; 
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding-right: 40px;
+            padding-left: 40px;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 6px;
+            padding-right: 40px;
+            padding-left: 40px;
+        }
+        .date-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* TOMBOL MENU GARIS TIGA */
+        .menu-toggle {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 22px;
+            height: 16px;
+            z-index: 100;
+        }
+        .menu-toggle span {
+            display: block;
+            height: 2.5px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* DROPDOWN NAVIGASI MENU UTAMA */
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            z-index: 99;
+            border-bottom: 3px solid #0284c7;
+        }
+        .nav-menu.open { 
+            max-height: 100vh;
+            overflow-y: auto; 
+        } 
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
+        
+        .nav-menu ul li a { 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px; 
+            color: #334155; 
+            text-decoration: none; 
+            font-size: 13.5px; 
+            font-weight: 600; 
+            text-align: left; 
+        }
+        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+
+        /* NAVIGASI SUB-MENU PENJUALAN */
+        .nav-submenu-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8fafc;
+        }
+        .nav-submenu-container a {
+            display: block !important;
+            padding: 12px 20px 12px 35px !important;
+            font-size: 13px !important;
+            color: #475569 !important;
+            border-left: 4px solid #0d9488;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .nav-submenu-container a:last-child {
+            border-bottom: none;
+        }
+        .nav-submenu-container a:hover {
+            background-color: #f0fdfa !important;
+            color: #0d9488 !important;
+        }
+        
+        /* Gaya khusus untuk sub-menu aktif (Halaman ini) */
+        .nav-submenu-container a.active-sub {
+            color: #0d9488 !important;
+            background-color: #f0fdfa !important;
+            pointer-events: none;
+            font-weight: 700;
+        }
+        
+        .menu-arrow-icon {
+            transition: transform 0.3s ease;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .nav-menu ul li.active-trigger .menu-arrow-icon {
+            transform: rotate(90deg);
+            color: #10b981;
+        }
+
+        /* STYLE KHUSUS UNTUK HALAMAN YANG SEDANG AKTIF DI MENU UTAMA (TIDAK BISA DIKLIK) */
+        .nav-menu ul li.disabled-menu-item a {
+            color: #94a3b8 !important; 
+            background-color: #f8fafc !important;
+            pointer-events: none; 
+            cursor: default;
+            user-select: none;
+        }
+
+        /* CONTAINER LAYAR */
+        .selector-container {
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            padding: 0 15px;
+        }
+        .selector-card {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .form-control-select {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-control-select:focus {
+            border-color: #0284c7;
+        }
+        .dse-name-display {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0284c7;
+            background: #f0f9ff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px dashed #bae6fd;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .summary-mode {
+            color: #16a34a !important;
+            background: #f0fdf4 !important;
+            border-color: #bbf7d0 !important;
+        }
+
+        .dashboard-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .section-title {
+            background-color: #1e293b;
+            color: #ffffff;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px 14px;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .rank-col {
+            text-align: center;
+            font-weight: 700;
+            width: 12%;
+            color: #475569;
+        }
+
+        .item-name-col {
+            text-align: left;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .number-col {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            width: 22%;
+        }
+
+        .amount-col {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            color: #0f172a;
+            width: 28%;
+        }
+
+        .empty-cell {
+            color: #cbd5e1;
+        }
+
+        .excel-rank-1 { background-color: #c6efce !important; color: #006100 !important; }
+        .excel-rank-2 { background-color: #e2f0d9 !important; color: #385723 !important; }
+        .excel-rank-3 { background-color: #fff2cc !important; color: #7f6000 !important; }
+        .excel-rank-4 { background-color: #ffc7ce !important; color: #9c0006 !important; }
+
+        .total-row td {
+            background-color: #fef08a !important; 
+            color: #713f12 !important;
+            font-weight: 700;
+            border-top: 2px solid #fef08a;
+            border-bottom: 1px solid #ca8a04;
+        }
+        
+        .sub-id-text {
+            display: block;
+            font-size: 10px;
+            color: #64748b;
+            font-weight: normal;
+        }
+
+        .accordion-detail {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 2px solid #16a34a;
+            margin-top: 25px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.1);
+        }
+        .accordion-detail summary {
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-detail summary::after {
+            content: "▼";
+            font-size: 11px;
+            transition: transform 0.2s;
+        }
+        .accordion-detail[open] summary::after {
+            transform: rotate(-180deg);
+        }
+        .inner-detail-title {
+            background: #f8fafc;
+            color: #334155;
+            padding: 8px 14px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Penjualan Reguler</h1>
+        <p>Data Monitor Berbasis Live File CSV</p>
+        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
+        
+        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav-menu" id="nav-dropdown">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="stok-gudang.html">Stok Gudang</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li><a href="form-permintaan.html">Form Permintaan</a></li>
+                <li id="trigger-penjualan">
+                    <a href="#" onclick="return false;">
+                        <span>Laporan Penjualan</span>
+                        <span class="menu-arrow-icon">➔</span>
+                    </a>
+                </li>
+                <div class="nav-submenu-container" id="dropdown-submenu-penjualan">
+                    <a href="#" class="active-sub">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-reguler3.html">📞 Penjualan Paket TM</a>
+                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="selector-container">
+        <div class="selector-card">
+            <div class="form-group">
+                <label for="dseSelect">Pilih ID DSE / Outlet</label>
+                <select id="dseSelect" class="form-control-select">
+                    <option value="">Mengambil data CSV...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Nama DSE Terpasang</label>
+                <div id="dseName" class="dse-name-display">👤 Memuat...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="section-card" id="spCard">
+            <div class="section-title" id="spSectionTitle">Rangking Performa SP Per DSE</div>
+            <table>
+                <thead><tr id="spHeaderRow"></tr></thead>
+                <tbody id="spTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="section-card" id="voucherCard">
+            <div class="section-title" id="voucherSectionTitle">Rangking Performa Voucher Per DSE</div>
+            <table>
+                <thead><tr id="voucherHeaderRow"></tr></thead>
+                <tbody id="voucherTableBody"></tbody>
+            </table>
+        </div>
+
+        <details class="accordion-detail" id="productSummaryAccordion" style="display: none;">
+            <summary>Detail Produk Summary</summary>
+            <div class="inner-detail-title">📦 Total Akumulasi Produk SP</div>
+            <table>
+                <thead><tr><th>Nama Produk SP</th><th style="text-align: right;">Total Pcs</th><th style="text-align: right;">Total Amount</th></tr></thead>
+                <tbody id="summarySpProductBody"></tbody>
+            </table>
+            <div class="inner-detail-title" style="margin-top: 15px; border-top: 1px solid #e2e8f0;">🎟️ Total Akumulasi Produk Voucher</div>
+            <table>
+                <thead><tr><th>Nama Produk Voucher</th><th style="text-align: right;">Total Pcs</th><th style="text-align: right;">Total Amount</th></tr></thead>
+                <tbody id="summaryVchProductBody"></tbody>
+            </table>
+        </details>
+    </div>
+
+    <script>
+        let dseMapping = { "SUMMARY": "SUMMARY (TOTAL GABUNGAN)" };
+        let itemPrices = {};
+        let dbSales = {};
+
+        const orderSP = ["SP ZERO", "SP 3GB INJEK", "SP 3GB", "SP 3GB ORI", "SP 9GB"];
+        const orderVoucher = [
+            "VDK", "3GB 14HR", "Voucher 2,5GB", "2,5GB", "Freedom Internet 3 GB", "FI 3 GB", "Fi 3 GB", 
+            "Voucher 3.5GB 5HR", "3.5GB 5HR", "Voucher 5GB 5HR", "5GB 5HR", "Voucher 7GB 7HR", "7GB 7HR", 
+            "Fi 6GB", "Voucher 1GB 2Hari", "V 10K", "Fi 1.5GB/1D", "Fi 3GB/1D", "Fi 3GB/3D", "Fi 5GB/2D", "Fi 5GB/3D"
+        ];
+
+        async function loadCSVData() {
+            try {
+                const response = await fetch('spreadsheet.csv');
+                const text = await response.text();
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                
+                let currentSection = "";
+                let salesHeaders = [];
+
+                lines.forEach(line => {
+                    if(line === "[KATEGORI_HARGA]") { currentSection = "harga"; return; }
+                    if(line === "[DB_SALES]") { currentSection = "sales"; return; }
+                    
+                    const cols = line.split(',');
+
+                    if(currentSection === "harga" && cols[0] !== "Nama Produk") {
+                        if(cols[0] === "SP 6GB") return; 
+                        itemPrices[cols[0]] = parseFloat(cols[1]) || 0;
+                    }
+                    
+                    if(currentSection === "sales") {
+                        if(cols[0] === "ID DSE") {
+                            salesHeaders = cols;
+                        } else {
+                            const idDse = cols[0];
+                            const namaDse = cols[1];
+                            dseMapping[idDse] = namaDse;
+
+                            dbSales[idDse] = { sp: {}, voucher: {} };
+
+                            for(let i = 2; i < cols.length; i++) {
+                                const productName = salesHeaders[i];
+                                const pcs = parseInt(cols[i]) || 0;
+                                
+                                if(!productName || productName === "SP 6GB") continue;
+
+                                if(productName.startsWith("SP")) {
+                                    dbSales[idDse].sp[productName] = pcs;
+                                } else {
+                                    dbSales[idDse].voucher[productName] = pcs;
+                                }
+                            }
+                        }
+                    }
+                });
+
+                initDseSelector();
+            } catch (error) {
+                console.error("Gagal memuat file CSV:", error);
+                document.getElementById('dseName').textContent = "⚠️ Error: Gagal memuat spreadsheet.csv";
+            }
+        }
+
+        function formatRupiah(number) { return number === 0 ? "-" : number.toLocaleString('id-ID'); }
+        function formatPcs(pcs) { return pcs === 0 ? `<span class="empty-cell">-</span>` : pcs.toLocaleString('id-ID'); }
+
+        function setYesterdayDate() {
+            const targetElement = document.getElementById('reportDate');
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            targetElement.textContent = `Update Penjualan: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+        }
+
+        function initDseSelector() {
+            const selectEl = document.getElementById('dseSelect');
+            selectEl.innerHTML = "";
+            Object.keys(dseMapping).forEach(id => {
+                let opt = document.createElement('option');
+                opt.value = id; opt.textContent = id;
+                selectEl.appendChild(opt);
+            });
+            selectEl.addEventListener('change', (e) => updateDashboard(e.target.value));
+            updateDashboard("SUMMARY");
+        }
+
+        function getSortedPerformance(type) {
+            let list = [];
+            Object.keys(dbSales).forEach(id => {
+                let pcs = 0, amount = 0;
+                Object.keys(dbSales[id][type]).forEach(item => {
+                    let itemPcs = dbSales[id][type][item] || 0;
+                    pcs += itemPcs; amount += itemPcs * (itemPrices[item] || 0);
+                });
+                list.push({ id: id, nama: dseMapping[id], pcs: pcs, amount: amount });
+            });
+            return list.sort((a, b) => b.amount - a.amount);
+        }
+
+        function getProductSummaryCustomOrder(type) {
+            let productMap = {};
+            Object.keys(dbSales).forEach(id => {
+                Object.keys(dbSales[id][type]).forEach(itemName => {
+                    let pcs = dbSales[id][type][itemName] || 0;
+                    if (pcs > 0) {
+                        if (!productMap[itemName]) productMap[itemName] = { name: itemName, pcs: 0, amount: 0 };
+                        productMap[itemName].pcs += pcs;
+                        productMap[itemName].amount += pcs * (itemPrices[itemName] || 0);
+                    }
+                });
+            });
+            const currentOrderList = (type === 'sp') ? orderSP : orderVoucher;
+            return Object.values(productMap).sort((a, b) => {
+                let idxA = currentOrderList.findIndex(item => a.name.toLowerCase().includes(item.toLowerCase()));
+                let idxB = currentOrderList.findIndex(item => b.name.toLowerCase().includes(item.toLowerCase()));
+                return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+            });
+        }
+
+        function getExcelRankClass(index, totalItems) {
+            if (totalItems <= 1) return 'excel-rank-1';
+            let ratio = index / (totalItems - 1);
+            return ratio <= 0.25 ? 'excel-rank-1' : ratio <= 0.50 ? 'excel-rank-2' : ratio <= 0.75 ? 'excel-rank-3' : 'excel-rank-4';
+        }
+
+        function updateDashboard(dseId) {
+            const nameDisplay = document.getElementById('dseName');
+            const spTitle = document.getElementById('spSectionTitle');
+            const voucherTitle = document.getElementById('voucherSectionTitle');
+            const spHeaderRow = document.getElementById('spHeaderRow');
+            const voucherHeaderRow = document.getElementById('voucherHeaderRow');
+            const spBody = document.getElementById('spTableBody');
+            const voucherBody = document.getElementById('voucherTableBody');
+            const accordionSection = document.getElementById('productSummaryAccordion');
+
+            spBody.innerHTML = ""; voucherBody.innerHTML = "";
+
+            if (dseId === "SUMMARY") {
+                nameDisplay.textContent = `📊 Semua DSE (Rangking Tertinggi ke Terendah)`;
+                nameDisplay.classList.add('summary-mode');
+                accordionSection.style.display = "block";
+                spTitle.textContent = "Rangking Performa SP Per DSE";
+                voucherTitle.textContent = "Rangking Performa Voucher Per DSE";
+                
+                spHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE / Salesforce</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
+                voucherHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE / Salesforce</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
+
+                const sortedSp = getSortedPerformance('sp');
+                let gSpPcs = 0, gSpAmt = 0;
+                sortedSp.forEach((dse, index) => {
+                    gSpPcs += dse.pcs; gSpAmt += dse.amount;
+                    spBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedSp.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
+                });
+                spBody.innerHTML += `<tr class="total-row"><td></td><td class="item-name-col">TOTAL GABUNGAN SP</td><td class="number-col">${formatPcs(gSpPcs)}</td><td class="amount-col">${formatRupiah(gSpAmt)}</td></tr>`;
+
+                const sortedVch = getSortedPerformance('voucher');
+                let gVchPcs = 0, gVchAmt = 0;
+                sortedVch.forEach((dse, index) => {
+                    gVchPcs += dse.pcs; gVchAmt += dse.amount;
+                    voucherBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedVch.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
+                });
+                voucherBody.innerHTML += `<tr class="total-row"><td></td><td class="item-name-col">TOTAL GABUNGAN VOUCHER</td><td class="number-col">${formatPcs(gVchPcs)}</td><td class="amount-col">${formatRupiah(gVchAmt)}</td></tr>`;
+
+                const summarySpList = getProductSummaryCustomOrder('sp');
+                let totalSummarySpPcs = 0;
+                let totalSummarySpAmt = 0;
+                let htmlSp = summarySpList.map(p => {
+                    totalSummarySpPcs += p.pcs;
+                    totalSummarySpAmt += p.amount;
+                    return `<tr><td class="item-name-col">${p.name}</td><td class="number-col">${formatPcs(p.pcs)}</td><td class="amount-col">${formatRupiah(p.amount)}</td></tr>`;
+                }).join('');
+                htmlSp += `<tr class="total-row"><td class="item-name-col">TOTAL AKUMULASI SP</td><td class="number-col">${formatPcs(totalSummarySpPcs)}</td><td class="amount-col">${formatRupiah(totalSummarySpAmt)}</td></tr>`;
+                document.getElementById('summarySpProductBody').innerHTML = htmlSp;
+
+                const summaryVchList = getProductSummaryCustomOrder('voucher');
+                let totalSummaryVchPcs = 0;
+                let totalSummaryVchAmt = 0;
+                let htmlVch = summaryVchList.map(p => {
+                    totalSummaryVchPcs += p.pcs;
+                    totalSummaryVchAmt += p.amount;
+                    return `<tr><td class="item-name-col">${p.name}</td><td class="number-col">${formatPcs(p.pcs)}</td><td class="amount-col">${formatRupiah(p.amount)}</td></tr>`;
+                }).join('');
+                htmlVch += `<tr class="total-row"><td class="item-name-col">TOTAL AKUMULASI VOUCHER</td><td class="number-col">${formatPcs(totalSummaryVchPcs)}</td><td class="amount-col">${formatRupiah(totalSummaryVchAmt)}</td></tr>`;
+                document.getElementById('summaryVchProductBody').innerHTML = htmlVch;
+
+            } else {
+                nameDisplay.textContent = `👤 ${dseMapping[dseId]}`;
+                nameDisplay.classList.remove('summary-mode');
+                accordionSection.style.display = "none";
+                spTitle.textContent = "Penjualan SP";
+                voucherTitle.textContent = "Penjualan Voucher";
+                spHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
+                voucherHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
+
+                let tSpPcs = 0, tSpAmt = 0;
+                Object.keys(dbSales[dseId].sp).forEach(item => {
+                    let pcs = dbSales[dseId].sp[item]; let amt = pcs * (itemPrices[item] || 0);
+                    tSpPcs += pcs; tSpAmt += amt;
+                    spBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
+                });
+                spBody.innerHTML += `<tr class="total-row"><td class="item-name-col">TOTAL SP</td><td class="number-col">${formatPcs(tSpPcs)}</td><td class="amount-col">${formatRupiah(tSpAmt)}</td></tr>`;
+
+                let tVchPcs = 0, tVchAmt = 0;
+                Object.keys(dbSales[dseId].voucher).forEach(item => {
+                    let pcs = dbSales[dseId].voucher[item]; let amt = pcs * (itemPrices[item] || 0);
+                    tVchPcs += pcs; tVchAmt += amt;
+                    voucherBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
+                });
+                voucherBody.innerHTML += `<tr class="total-row"><td class="item-name-col">TOTAL VOUCHER</td><td class="number-col">${formatPcs(tVchPcs)}</td><td class="amount-col">${formatRupiah(tVchAmt)}</td></tr>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setYesterdayDate();
+            loadCSVData();
+
+            // JS NAVIGASI MENU RESPONSIVE (ANTI TUMPANG TINDIH)
+            const menuBtn = document.getElementById('menu-btn');
+            const navDropdown = document.getElementById('nav-dropdown');
+            const triggerPenjualan = document.getElementById('trigger-penjualan');
+            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
+
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                menuBtn.classList.toggle('active');
+                navDropdown.classList.toggle('open');
+            });
+
+            triggerPenjualan.addEventListener('click', (event) => {
+                event.stopPropagation(); 
+                triggerPenjualan.classList.toggle('active-trigger');
+                
+                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
+                    submenuPenjualan.style.maxHeight = "0px";
+                } else {
+                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
+                }
+            });
+
+            document.addEventListener('click', () => {
+                if(navDropdown.classList.contains('open')) {
+                    menuBtn.classList.remove('active');
+                    navDropdown.classList.remove('open');
+                    triggerPenjualan.classList.remove('active-trigger');
+                    submenuPenjualan.style.maxHeight = "0px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
