@@ -3,110 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MC-SAGARANTEN - Home</title>
+    <title>MC-SAGARANTEN - Home Portal</title>
     <style>
         :root {
-            /* Palette Warna Baru: Merah & Kuning Elegant */
-            --primary-color: #e60012;      /* Merah Khas */
-            --primary-hover: #c4000f;
-            --accent-gold: #ffb700;        /* Kuning Gold Elegan */
-            --accent-dark-gold: #d49600;   /* Kuning Lebih Gelap untuk Teks */
-            --accent-orange: #ff6b00;      /* Oranye Elegan untuk Menu DSE */
-            --bg-color: #ffffff;           
-            --text-color: #2d3748;
-            --border-color: #f3f4f6;
+            /* Palette Warna Utama Slate & Dark Slate */
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-color: #f1f5f9;           
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+
+            /* Warna Aksen Menu yang Selaras & Profesional */
+            --accent-gudang: #0284c7;     /* Biru Soft */
+            --accent-form: #f59e0b;       /* Amber/Kuning Soft */
+            --accent-dse: #6366f1;        /* Indigo */
+            --accent-penjualan: #10b981;  /* Hijau Soft */
+            --accent-submenu: #0d9488;    /* Teal */
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-bottom: 30px;
         }
 
-        /* Header Gradasi Merah ke Kuning Emas Elegan */
+        /* HEADER - IDENTIK DENGAN HALAMAN STOK GUDANG & CSO */
         .app-header {
-            background: linear-gradient(135deg, #e60012 0%, #ff4d00 50%, #ffb700 100%);
+            background: var(--header-gradient);
             color: #ffffff;
-            padding: 45px 20px 35px 20px;
+            padding: 35px 20px 30px 20px;
             text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             position: relative;
-            box-shadow: 0 4px 15px rgba(230, 0, 18, 0.15);
-        }
-
-        /* Garis putih transparan aksen di bawah header */
-        .app-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 20px;
         }
 
         .app-header h1 {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            margin-bottom: 6px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
 
         .app-header p {
             font-size: 12px;
-            font-weight: 600;
-            opacity: 0.95;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #ffffff;
+            font-weight: 400;
+            opacity: 0.8;
         }
 
-        /* Kontainer Utama Navigasi */
+        /* Kontainer Utama Navigasi - Berbasis Full Screen/Full Width */
         .app-navigation {
             flex: 1;
             display: flex;
             flex-direction: column;
             width: 100%;
+            padding: 0 10px;
         }
 
-        /* Pembungkus Menu List Item Masing-masing */
+        .nav-wrapper {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Elemen List Menu */
         .nav-item {
             display: flex;
             align-items: center;
             text-decoration: none;
-            padding: 24px 20px;
+            padding: 20px 16px;
             background-color: #ffffff;
             border-bottom: 1px solid var(--border-color);
-            transition: all 0.2s ease;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Hapus border bawah pada item terakhir agar rapi di dalam wrapper */
+        .nav-wrapper > .nav-item:last-child,
+        .nav-wrapper > .submenu-container:last-child .submenu-item:last-child {
+            border-bottom: none;
         }
 
         /* Sisi Kiri Berwarna Indikator */
-        .stok-link {
-            border-left: 6px solid var(--accent-gold);
-        }
-
-        .form-link {
-            border-left: 6px solid var(--primary-color);
-        }
-
-        .dse-link {
-            border-left: 6px solid var(--accent-orange);
-        }
+        .gudang-link { border-left: 5px solid var(--accent-gudang); }
+        .form-link { border-left: 5px solid var(--accent-form); }
+        .dse-link { border-left: 5px solid var(--accent-dse); }
+        .penjualan-link { border-left: 5px solid var(--accent-penjualan); }
 
         .nav-icon {
-            font-size: 32px;
-            margin-right: 18px;
-            width: 45px;
+            font-size: 26px;
+            margin-right: 16px;
+            width: 35px;
             text-align: center;
         }
 
@@ -115,52 +116,95 @@
         }
 
         .nav-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        /* Warna Teks Judul Menu disesuaikan agar tetap kontras & elegan */
-        .stok-link .nav-title { color: var(--accent-dark-gold); }
-        .form-link .nav-title { color: var(--primary-color); }
-        .dse-link .nav-title { color: var(--accent-orange); }
+        /* Warna Teks Judul Menu Utama */
+        .gudang-link .nav-title { color: var(--accent-gudang); }
+        .form-link .nav-title { color: var(--accent-form); }
+        .dse-link .nav-title { color: var(--accent-dse); }
+        .penjualan-link .nav-title { color: var(--accent-penjualan); }
 
         .nav-desc {
-            font-size: 13px;
-            color: #6b7280;
+            font-size: 12px;
+            color: var(--text-muted);
             line-height: 1.4;
         }
 
         .nav-arrow {
-            font-size: 18px;
-            color: #d1d5db;
+            font-size: 14px;
+            color: #cbd5e1;
             padding-left: 10px;
             transition: transform 0.2s ease, color 0.2s ease;
         }
 
-        /* Efek Sentuh / Hover */
-        .nav-item:hover {
-            background-color: #fffbeb; /* Efek highlight kuning tipis saat dihover */
-        }
-
-        .form-link:hover {
-            background-color: #fff5f5; /* Efek highlight merah tipis untuk form */
-        }
-
-        .dse-link:hover {
-            background-color: #fffaf5; /* Efek highlight oranye tipis untuk DSE */
-        }
-
-        .nav-item:hover .nav-arrow {
-            transform: translateX(6px);
-        }
+        /* Efek Hover / Active Feedback */
+        .nav-item:hover { background-color: #f8fafc; }
+        .nav-item:hover .nav-arrow { transform: translateX(4px); }
         
-        .stok-link:hover .nav-arrow { color: var(--accent-dark-gold); }
-        .form-link:hover .nav-arrow { color: var(--primary-color); }
-        .dse-link:hover .nav-arrow { color: var(--accent-orange); }
+        .gudang-link:hover .nav-arrow { color: var(--accent-gudang); }
+        .form-link:hover .nav-arrow { color: var(--accent-form); }
+        .dse-link:hover .nav-arrow { color: var(--accent-dse); }
+        .penjualan-link:hover .nav-arrow { color: var(--accent-penjualan); }
 
-        .nav-item:active {
-            background-color: #f3f4f6;
+        /* KONTEN SUB-MENU (Gaya Minimalis Baru) */
+        .submenu-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8fafc;
+        }
+
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 15px 16px 15px 36px;
+            border-bottom: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent-submenu);
+            background-color: #f8fafc;
+            transition: background-color 0.2s ease;
+        }
+
+        .submenu-item:hover {
+            background-color: #f0fdfa; /* Efek highlight teal tipis */
+        }
+
+        .submenu-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .submenu-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #475569;
+            flex: 1;
+        }
+
+        .submenu-item:hover .submenu-title {
+            color: var(--accent-submenu);
+        }
+
+        .submenu-arrow {
+            font-size: 12px;
+            color: #cbd5e1;
+            transition: transform 0.2s ease;
+        }
+
+        .submenu-item:hover .submenu-arrow {
+            transform: translateX(3px);
+            color: var(--accent-submenu);
+        }
+
+        /* Animasi rotasi panah menu utama saat drop-down aktif terbuka */
+        .penjualan-link.active .nav-arrow {
+            transform: rotate(90deg);
+            color: var(--accent-penjualan);
         }
 
         /* Footer Aplikasi */
@@ -168,19 +212,20 @@
             text-align: center;
             padding: 20px;
             font-size: 11px;
-            color: #9ca3af;
-            background-color: #fafafa;
-            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
             margin-top: auto;
         }
 
-        /* Penyesuaian jika dibuka di Layar Lebar Tablet / PC */
-        @media (min-width: 600px) {
-            .app-header h1 { font-size: 32px; }
-            .app-header { padding: 55px 20px 45px 20px; }
-            .nav-item { padding: 30px 40px; }
-            .nav-title { font-size: 18px; }
-            .nav-desc { font-size: 14px; }
+        /* Penyesuaian untuk Layar Tablet / Desktop */
+        @media (min-width: 768px) {
+            .app-navigation { padding: 0 20px; }
+            .app-header h1 { font-size: 24px; }
+            .app-header p { font-size: 13px; }
+            .nav-item { padding: 24px 30px; }
+            .submenu-item { padding: 18px 30px 18px 60px; }
+            .nav-title { font-size: 17px; }
+            .nav-desc { font-size: 13px; }
+            .submenu-title { font-size: 15px; }
         }
     </style>
 </head>
@@ -192,40 +237,93 @@
     </div>
     
     <div class="app-navigation">
-        
-        <a href="stok-gudang.html" class="nav-item stok-link">
-            <div class="nav-icon">📦</div>
-            <div class="nav-details">
-                <div class="nav-title">Laporan Stok Gudang</div>
-                <div class="nav-desc">Pantau sisa stok segel, data monitor barang masuk (Sell-in), dan kalkulasi total stok secara real-time.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
-        </a>
+        <div class="nav-wrapper">
+            
+            <a href="stok-gudang.html" class="nav-item gudang-link">
+                <div class="nav-icon">📦</div>
+                <div class="nav-details">
+                    <div class="nav-title">Laporan Stok Gudang</div>
+                    <div class="nav-desc">Pantau sisa stok segel, data monitor barang masuk (Sell-in), dan kalkulasi total stok secara real-time.</div>
+                </div>
+                <div class="nav-arrow">➔</div>
+            </a>
 
-        <a href="form-permintaan.html" class="nav-item form-link">
-            <div class="nav-icon">📝</div>
-            <div class="nav-details">
-                <div class="nav-title">Form Permintaan Barang</div>
-                <div class="nav-desc">Input data kuantitas Starter Pack (SP) atau Voucher yang diperlukan oleh tim sales/DSE di lapangan.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
-        </a>
+            <a href="form-permintaan.html" class="nav-item form-link">
+                <div class="nav-icon">📝</div>
+                <div class="nav-details">
+                    <div class="nav-title">Form Permintaan Barang</div>
+                    <div class="nav-desc">Input data kuantitas Starter Pack (SP) atau Voucher yang diperlukan oleh tim sales/DSE di lapangan.</div>
+                </div>
+                <div class="nav-arrow">➔</div>
+            </a>
 
-        <!-- MENU KETIGA BARU: STOK BARANG DSE -->
-        <a href="stok-barang-dse.html" class="nav-item dse-link">
-            <div class="nav-icon">💼</div>
-            <div class="nav-details">
-                <div class="nav-title">Stok Barang DSE</div>
-                <div class="nav-desc">Lihat dan monitor rincian alokasi produk, sisa barang bawaan, serta status distribusi masing-masing tim sales di lapangan.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
-        </a>
+            <a href="stok-barang-dse.html" class="nav-item dse-link">
+                <div class="nav-icon">💼</div>
+                <div class="nav-details">
+                    <div class="nav-title">Stok Barang DSE</div>
+                    <div class="nav-desc">Lihat dan monitor rincian alokasi produk, sisa barang bawaan, serta status distribusi masing-masing tim sales di lapangan.</div>
+                </div>
+                <div class="nav-arrow">➔</div>
+            </a>
 
+            <div class="nav-item penjualan-link" id="btn-penjualan">
+                <div class="nav-icon">📊</div>
+                <div class="nav-details">
+                    <div class="nav-title">Laporan Penjualan</div>
+                    <div class="nav-desc">Rekapitulasi data penjualan harian, grafik performa tim sales, pencapaian target, dan total omset.</div>
+                </div>
+                <div class="nav-arrow" id="arrow-penjualan">➔</div>
+            </div>
+
+            <div class="submenu-container" id="submenu-penjualan">
+                
+                <a href="penjualan-reguler3.html" class="submenu-item">
+                    <div class="submenu-icon">🛒</div>
+                    <div class="submenu-title">Penjualan Reguler</div>
+                    <div class="submenu-arrow">➔</div>
+                </a>
+
+                <a href="penjualan-paket-tm.html" class="submenu-item">
+                    <div class="submenu-icon">📞</div>
+                    <div class="submenu-title">Penjualan Paket TM</div>
+                    <div class="submenu-arrow">➔</div>
+                </a>
+
+                <a href="penjualan-direct-selling.html" class="submenu-item">
+                    <div class="submenu-icon">🚶</div>
+                    <div class="submenu-title">Penjualan Direct Selling</div>
+                    <div class="submenu-arrow">➔</div>
+                </a>
+
+                <a href="penjualan-hifi.html" class="submenu-item">
+                    <div class="submenu-icon">🌐</div>
+                    <div class="submenu-title">Penjualan Hifi</div>
+                    <div class="submenu-arrow">➔</div>
+                </a>
+
+            </div>
+
+        </div>
     </div>
 
     <div class="app-footer">
         &copy; 2026 MC-SAGARANTEN. All Rights Reserved.
     </div>
 
+    <script>
+        document.getElementById('btn-penjualan').addEventListener('click', function() {
+            const submenu = document.getElementById('submenu-penjualan');
+            this.classList.toggle('active');
+            
+            if (submenu.style.maxHeight && submenu.style.maxHeight !== "0px") {
+                submenu.style.maxHeight = "0px";
+            } else {
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+            }
+        });
+    </script>
+
 </body>
 </html>
+
+
