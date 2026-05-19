@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan Paket TM - Monitor Real-time</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; width: 100%; min-height: 100vh; padding-bottom: 40px; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 20px 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: relative; margin-bottom: 20px; }
+        .header h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.8px; padding-right: 40px; padding-left: 40px; }
+        .header p { margin: 0; opacity: 0.8; font-size: 12px; font-weight: 400; margin-bottom: 6px; padding-right: 40px; padding-left: 40px; }
+        .date-badge { display: inline-block; background-color: rgba(255, 255, 255, 0.15); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .menu-toggle { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; z-index: 100; }
+        .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+        .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
+        .nav-menu.open { max-height: 100vh; overflow-y: auto; } 
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
+        .nav-menu ul li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; color: #334155; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: left; }
+        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+        .nav-submenu-container { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #f8fafc; }
+        .nav-submenu-container a { display: block !important; padding: 12px 20px 12px 35px !important; font-size: 13px !important; color: #475569 !important; border-left: 4px solid #0284c7; border-bottom: 1px solid #f1f5f9; }
+        .nav-submenu-container a:last-child { border-bottom: none; }
+        .nav-submenu-container a:hover { background-color: #f0f9ff !important; color: #0284c7 !important; }
+        .nav-submenu-container a.active-sub { color: #0284c7 !important; background-color: #f0f9ff !important; pointer-events: none; font-weight: 700; border-left: 4px solid #0284c7; }
+        .menu-arrow-icon { transition: transform 0.3s ease; font-size: 11px; color: #94a3b8; }
+        .nav-menu ul li.active-trigger .menu-arrow-icon { transform: rotate(90deg); color: #0284c7; }
+        
+        .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+        .filter-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .filter-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-select { width: 100%; padding: 10px 12px; font-size: 13.5px; color: #1e293b; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; outline: none; cursor: pointer; font-weight: 600; transition: border-color 0.2s; }
+        .filter-select:focus { border-color: #0284c7; background-color: #ffffff; }
+        
+        /* Desain Card Tampilan / Detail DSE */
+        .single-dse-card, .list-dse-card { background: #ffffff; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .single-dse-header, .list-dse-header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; padding: 14px 16px; }
+        .single-dse-header .name, .list-dse-header .name { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Desain Card Khusus Total Gabungan di bawah List */
+        .total-gabungan-card { background: #fffde7; border: 2px solid #facc15; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .total-gabungan-header { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #ffffff; padding: 14px 16px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Desain Card Ranking */
+        .ranking-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .ranking-header { background: linear-gradient(135deg, #475569 0%, #334155 100%); color: #ffffff; padding: 14px 16px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+
+        .detail-row-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .detail-row-item:last-child { border-bottom: none; }
+        .detail-row-item .label { color: #64748b; font-weight: 600; }
+        .detail-row-item .val { font-weight: 700; color: #1e293b; font-variant-numeric: tabular-nums; }
+        .detail-group-title { background-color: #f8fafc; padding: 8px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; }
+        
+        /* Rank Badge Style */
+        .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 700; font-size: 11px; margin-right: 8px; text-align: center; min-width: 24px; }
+        .rank-1 { background-color: #eab308; box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3); }
+        .rank-2 { background-color: #94a3b8; box-shadow: 0 2px 4px rgba(148, 163, 184, 0.3); }
+        .rank-3 { background-color: #b45309; box-shadow: 0 2px 4px rgba(180, 83, 9, 0.3); }
+        .rank-other { background-color: #64748b; }
+
+        .section-title-container { background-color: #1e293b; color: #ffffff; padding: 14px 16px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+        /* Konfigurasi Grid Ringkasan Atas (2x2) */
+        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .summary-card-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .summary-card-box .title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; }
+        .summary-card-box .value { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+        
+        @media(min-width: 640px) {
+            .summary-card-box .value { font-size: 20px; }
+            .summary-grid { gap: 16px; }
+            .filter-card { flex-direction: row; align-items: center; gap: 16px; }
+            .filter-label { white-space: nowrap; }
+            .filter-select { max-width: 300px; }
+            .all-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        @media(min-width: 1024px) {
+            .all-cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Penjualan Paket TM</h1>
+        <p>Data Monitor Tebus Murah Mei 2026</p>
+        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
+        
+        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav-menu" id="nav-dropdown">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="stok-gudang.html">Stok Gudang</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li><a href="form-permintaan.html">Form Permintaan</a></li>
+                <li id="trigger-penjualan" class="active-trigger">
+                    <a href="#" onclick="return false;">
+                        <span>Laporan Penjualan</span>
+                        <span class="menu-arrow-icon">➔</span>
+                    </a>
+                </li>
+                <div class="nav-submenu-container" id="dropdown-submenu-penjualan" style="max-height: 500px;">
+                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
+                    <a href="#" class="active-sub">📞 Penjualan Paket TM</a>
+                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="dashboard-container">
+        
+        <!-- STRUKTUR GRID ATAS YANG SUDAH DISESUAIKAN PASANGAN VERTIKALNYA -->
+        <div class="summary-grid">
+            <!-- Kolom 1 - Baris 1: Pengambilan -->
+            <div class="summary-card-box" style="border-left: 4px solid #0284c7;">
+                <div class="title">Total Tagihan Pengambilan</div>
+                <div class="value" id="topTotalTake" style="color: #0284c7;">Rp 0</div>
+            </div>
+            <!-- Kolom 2 - Baris 1: Sisa Belum Bayar -->
+            <div class="summary-card-box" style="border-left: 4px solid #ef4444;">
+                <div class="title">Sisa Belum Bayar</div>
+                <div class="value" id="topTotalSisa" style="color: #ef4444;">Rp 0</div>
+            </div>
+            <!-- Kolom 1 - Baris 2: Pembayaran (Berada di bawah Pengambilan) -->
+            <div class="summary-card-box" style="border-left: 4px solid #16a34a;">
+                <div class="title">Total Pembayaran</div>
+                <div class="value" id="topTotalPay" style="color: #16a34a;">Rp 0</div>
+            </div>
+            <!-- Kolom 2 - Baris 2: Total Paket (Berada di bawah Sisa Belum Bayar) -->
+            <div class="summary-card-box" style="border-left: 4px solid #64748b;">
+                <div class="title">Total Akumulasi Paket TM</div>
+                <div class="value" id="topTotalQty" style="color: #64748b;">0 Paket</div>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="filter-label">Pilih Data CSO:</div>
+            <select class="filter-select" id="dseFilter">
+                <option value="ALL">-- TAMPILKAN SEMUA DATA --</option>
+            </select>
+        </div>
+
+        <!-- Tampilan Detail CSO Single -->
+        <div class="single-dse-card" id="singleDseView" style="display: none;">
+            <div class="single-dse-header">
+                <div class="name" id="cardNamaDse">Nama CSO</div>
+            </div>
+            <div class="detail-group-title">💰 DETAIL FINANSIAL TAGIHAN</div>
+            <div class="detail-row-item"><span class="label">Nama CSO</span><span class="val" id="singleLabelNama">-</span></div>
+            <div class="detail-row-item"><span class="label">Pengambilan</span><span class="val" id="cardPengambilan" style="color:#0284c7;">Rp 0</span></div>
+            <div class="detail-row-item"><span class="label">Pembayaran</span><span class="val" id="cardPembayaran" style="color:#16a34a;">Rp 0</span></div>
+            <div class="detail-row-item"><span class="label">Sisa</span><span class="val" id="cardSisa">-</span></div>
+            <div class="detail-group-title">📦 RINCIAN TEBUS MURAH (PAKET)</div>
+            <div class="detail-row-item"><span class="label">TM 11</span><span class="val" id="cardTm11">0</span></div>
+            <div class="detail-row-item"><span class="label">TM 28</span><span class="val" id="cardTm28">0</span></div>
+            <div class="detail-row-item"><span class="label">TM 58</span><span class="val" id="cardTm58">0</span></div>
+            <div class="detail-row-item"><span class="label">TM 14</span><span class="val" id="cardTm14">0</span></div>
+            <div class="detail-row-item" style="background-color: #f8fafc; border-top: 1px dashed #cbd5e1;"><span class="label" style="color:#0f172a; font-weight:700;">TOTAL</span><span class="val" id="cardTotal" style="font-size:14px; color:#0284c7; font-weight:700;">0</span></div>
+        </div>
+
+        <div id="mainCardsContainer">
+            <div class="section-title-container">
+                📞 REKAPITULASI TEBUS MURAH MEI 2026 (FROM EXCEL)
+            </div>
+            
+            <div class="all-cards-grid" id="cardsListContainer" style="display: none;">
+            </div>
+            
+            <div class="ranking-card" id="rankingCard">
+            </div>
+
+            <div class="total-gabungan-card" id="totalGabunganCard">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EXCEL_FILE_URL = '/data/penjualan-paket-tm.xlsx'; 
+        const TARGET_SHEET_NAME = 'Lembar1';
+
+        let currentLoadedData = [];
+
+        function formatRupiah(angka) {
+            if (angka === 0 || isNaN(angka)) return '-';
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        function setYesterdayDate() {
+            const targetElement = document.getElementById('reportDate');
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            targetElement.textContent = `Update Penjualan: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setYesterdayDate();
+            loadExcelSpreadsheet();
+
+            const menuBtn = document.getElementById('menu-btn');
+            const navDropdown = document.getElementById('nav-dropdown');
+            const triggerPenjualan = document.getElementById('trigger-penjualan');
+            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
+
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuBtn.classList.toggle('active'); navDropdown.classList.toggle('open'); });
+            triggerPenjualan.addEventListener('click', (e) => { e.stopPropagation(); triggerPenjualan.classList.toggle('active-trigger'); submenuPenjualan.style.maxHeight = submenuPenjualan.style.maxHeight === "0px" || !submenuPenjualan.style.maxHeight ? submenuPenjualan.scrollHeight + "px" : "0px"; });
+            document.addEventListener('click', () => { if(navDropdown.classList.contains('open')) { menuBtn.classList.remove('active'); navDropdown.classList.remove('open'); triggerPenjualan.classList.add('active-trigger'); } });
+        });
+
+        function loadExcelSpreadsheet() {
+            fetch(EXCEL_FILE_URL)
+                .then(response => {
+                    if (!response.ok) throw new Error('File excel tidak ditemukan.');
+                    return response.arrayBuffer();
+                })
+                .then(buffer => {
+                    const data = new Uint8Array(buffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    let sheetName = TARGET_SHEET_NAME;
+                    if (!workbook.SheetNames.includes(sheetName)) {
+                        sheetName = workbook.SheetNames[0]; 
+                    }
+                    
+                    const worksheet = workbook.Sheets[sheetName];
+                    const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: 0 });
+                    
+                    renderDashboard(rawData);
+                })
+                .catch(err => {
+                    console.error("Gagal membaca file spreadsheet Excel:", err);
+                    alert(`Gagal memuat file '${EXCEL_FILE_URL}'.`);
+                });
+        }
+
+        function renderDashboard(rawData) {
+            const cardsListContainer = document.getElementById('cardsListContainer');
+            const rankingCard = document.getElementById('rankingCard');
+            const totalGabunganCard = document.getElementById('totalGabunganCard');
+            const dseFilter = document.getElementById('dseFilter');
+            
+            let totalTake = 0, totalPay = 0, totalTm11 = 0, totalTm28 = 0, totalTm58 = 0, totalTm14 = 0, totalAllQty = 0;
+            
+            cardsListContainer.innerHTML = '';
+            dseFilter.innerHTML = '<option value="ALL">-- TAMPILKAN SEMUA DATA --</option>';
+            currentLoadedData = [];
+
+            for (let i = 2; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || row.length === 0) continue;
+
+                const name = row[0] ? row[0].toString().trim() : '';
+                const clusterMc = row[1] ? row[1].toString().trim() : '';
+                
+                if (!name || name === "0" || name.toLowerCase().includes("total") || clusterMc.toLowerCase().includes("total")) continue; 
+
+                const take = parseInt(row[3]) || 0;
+                const pay = parseInt(row[4]) || 0;
+                const sisa = take - pay;
+                
+                const tm11 = parseInt(row[6]) || 0;
+                const tm28 = parseInt(row[7]) || 0;
+                const tm58 = parseInt(row[8]) || 0;
+                const tm14 = parseInt(row[9]) || 0;
+                const dseTotalQty = parseInt(row[10]) || (tm11 + tm28 + tm58 + tm14);
+
+                totalTake += take;
+                totalPay += pay;
+                totalTm11 += tm11;
+                totalTm28 += tm28;
+                totalTm58 += tm58;
+                totalTm14 += tm14;
+                totalAllQty += dseTotalQty;
+
+                const uniqueId = "cso_" + i;
+
+                const option = document.createElement('option');
+                option.value = uniqueId;
+                option.textContent = name;
+                dseFilter.appendChild(option);
+
+                currentLoadedData.push({
+                    id: uniqueId,
+                    name: name,
+                    take: take,
+                    pay: pay,
+                    sisa: sisa,
+                    tm11: tm11,
+                    tm28: tm28,
+                    tm58: tm58,
+                    tm14: tm14,
+                    total: dseTotalQty
+                });
+
+                const sisaText = sisa !== 0 ? 'Rp ' + formatRupiah(sisa) : '-';
+
+                const cardDse = document.createElement('div');
+                cardDse.className = 'list-dse-card';
+                cardDse.innerHTML = `
+                    <div class="list-dse-header">
+                        <div class="name">${name}</div>
+                    </div>
+                    <div class="detail-group-title">💰 Detail Tagihan (Rp.)</div>
+                    <div class="detail-row-item"><span class="label">Nama CSO</span><span class="val">${name}</span></div>
+                    <div class="detail-row-item"><span class="label">Pengambilan</span><span class="val" style="color:#0284c7;">Rp ${formatRupiah(take)}</span></div>
+                    <div class="detail-row-item"><span class="label">Pembayaran</span><span class="val" style="color:#16a34a;">Rp ${formatRupiah(pay)}</span></div>
+                    <div class="detail-row-item"><span class="label">Sisa</span><span class="val" style="${sisa !== 0 ? 'color:#ef4444;' : ''}">${sisaText}</span></div>
+                    
+                    <div class="detail-group-title">📦 Rincian tebus murah (paket)</div>
+                    <div class="detail-row-item"><span class="label">TM 11</span><span class="val">${tm11}</span></div>
+                    <div class="detail-row-item"><span class="label">TM 28</span><span class="val">${tm28}</span></div>
+                    <div class="detail-row-item"><span class="label">TM 58</span><span class="val">${tm58}</span></div>
+                    <div class="detail-row-item"><span class="label">TM 14</span><span class="val">${tm14}</span></div>
+                    <div class="detail-row-item" style="background-color: #f8fafc; border-top: 1px dashed #cbd5e1;">
+                        <span class="label" style="color:#0f172a; font-weight:700;">TOTAL</span>
+                        <span class="val" style="color:#0284c7; font-weight:700;">${dseTotalQty}</span>
+                    </div>
+                `;
+                cardsListContainer.appendChild(cardDse);
+            }
+
+            // --- PROSES PEMBUATAN RANGKING ---
+            let sortedData = [...currentLoadedData].sort((a, b) => b.total - a.total);
+            
+            let rankingHtml = `
+                <div class="ranking-header">🏆 PERINGKAT PENJUALAN CSO</div>
+                <div class="detail-group-title">📊 URUTAN QUANTITY PAKET TM TERBANYK</div>
+            `;
+
+            sortedData.forEach((cso, index) => {
+                const rank = index + 1;
+                let badgeClass = 'rank-other';
+                
+                if (rank === 1) badgeClass = 'rank-1';
+                else if (rank === 2) badgeClass = 'rank-2';
+                else if (rank === 3) badgeClass = 'rank-3';
+
+                rankingHtml += `
+                    <div class="detail-row-item">
+                        <span class="label" style="color: #1e293b; display: flex; align-items: center;">
+                            <span class="rank-badge ${badgeClass}">${rank}</span>
+                            ${cso.name}
+                        </span>
+                        <span class="val" style="color: #0284c7; font-size: 13.5px;">${cso.total} Paket</span>
+                    </div>
+                `;
+            });
+            rankingCard.innerHTML = rankingHtml;
+
+            const totalSisa = totalTake - totalPay;
+            const totalSisaText = totalSisa !== 0 ? 'Rp ' + formatRupiah(totalSisa) : '-';
+
+            // HTML Total Gabungan Card
+            totalGabunganCard.innerHTML = `
+                <div class="total-gabungan-header">📊 TOTAL GABUNGAN ALL CSO</div>
+                <div class="detail-group-title">💰 TOTAL FINANSIAL TAGIHAN</div>
+                <div class="detail-row-item"><span class="label">Total Pengambilan</span><span class="val" style="color:#0284c7; font-size:13.5px;">Rp ${formatRupiah(totalTake)}</span></div>
+                <div class="detail-row-item"><span class="label">Total Pembayaran</span><span class="val" style="color:#16a34a; font-size:13.5px;">Rp ${formatRupiah(totalPay)}</span></div>
+                <div class="detail-row-item"><span class="label">Total Sisa Tagihan</span><span class="val" style="color:#ef4444; font-size:13.5px;">${totalSisaText}</span></div>
+                
+                <div class="detail-group-title">📦 TOTAL RINCIAN TEBUS MURAH</div>
+                <div class="detail-row-item"><span class="label">Total TM 11</span><span class="val">${totalTm11}</span></div>
+                <div class="detail-row-item"><span class="label">Total TM 28</span><span class="val">${totalTm28}</span></div>
+                <div class="detail-row-item"><span class="label">Total TM 58</span><span class="val">${totalTm58}</span></div>
+                <div class="detail-row-item"><span class="label">Total TM 14</span><span class="val">${totalTm14}</span></div>
+                <div class="detail-row-item" style="background-color: #fffdec; border-top: 1px dashed #eab308;">
+                    <span class="label" style="color:#713f12; font-weight:700;">TOTAL AKUMULASI GABUNGAN</span>
+                    <span class="val" style="color:#ca8a04; font-size:15px; font-weight:700;">${totalAllQty} Paket</span>
+                </div>
+            `;
+
+            // ID target elemen JavaScript tetap sama, hanya posisi rendernya yang mengikuti urutan HTML baru
+            document.getElementById('topTotalTake').textContent = 'Rp ' + formatRupiah(totalTake);
+            document.getElementById('topTotalPay').textContent = 'Rp ' + formatRupiah(totalPay);
+            document.getElementById('topTotalSisa').textContent = totalSisa !== 0 ? 'Rp ' + formatRupiah(totalSisa) : 'Rp 0';
+            document.getElementById('topTotalQty').textContent = totalAllQty + ' Paket';
+
+            setupFilterListener();
+        }
+
+        function setupFilterListener() {
+            const dseFilter = document.getElementById('dseFilter');
+            const mainCardsContainer = document.getElementById('mainCardsContainer');
+            const singleDseView = document.getElementById('singleDseView');
+
+            dseFilter.addEventListener('change', function() {
+                const selectedValue = this.value;
+                if (selectedValue === 'ALL') {
+                    singleDseView.style.display = 'none';
+                    mainCardsContainer.style.display = 'block';
+                } else {
+                    const matchData = currentLoadedData.find(item => item.id === selectedValue);
+                    if (matchData) {
+                        document.getElementById('cardNamaDse').textContent = matchData.name;
+                        document.getElementById('singleLabelNama').textContent = matchData.name;
+                        document.getElementById('cardPengambilan').textContent = 'Rp ' + formatRupiah(matchData.take);
+                        document.getElementById('cardPembayaran').textContent = 'Rp ' + formatRupiah(matchData.pay);
+                        document.getElementById('cardSisa').textContent = matchData.sisa !== 0 ? 'Rp ' + formatRupiah(matchData.sisa) : '-';
+                        
+                        document.getElementById('cardTm11').textContent = matchData.tm11;
+                        document.getElementById('cardTm28').textContent = matchData.tm28;
+                        document.getElementById('cardTm58').textContent = matchData.tm58;
+                        document.getElementById('cardTm14').textContent = matchData.tm14;
+                        document.getElementById('cardTotal').textContent = matchData.total;
+
+                        mainCardsContainer.style.display = 'none';
+                        singleDseView.style.display = 'block';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekapitulasi Amount CSO</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; padding-bottom: 40px; }
+
+        /* HEADER & MENU */
+        .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 20px 16px; text-align: center; position: relative; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+        
+        .date-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+        }
+
+        .menu-toggle { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; z-index: 100; }
+        .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+        
+        /* NAV MENU DROPDOWN */
+        .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
+        .nav-menu.open { max-height: 100vh; }
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; color: #334155; text-decoration: none; font-size: 13.5px; font-weight: 600; border-bottom: 1px solid #f1f5f9; }
+        
+        .nav-submenu-container { max-height: 0; overflow: hidden; background-color: #f8fafc; transition: max-height 0.3s ease-out; }
+        .nav-submenu-container a { display: block !important; padding: 12px 20px 12px 35px !important; font-size: 13px !important; color: #475569 !important; border-left: 4px solid #0d9488; border-bottom: 1px solid #f1f5f9; }
+
+        /* CONTAINER TABEL */
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #1e293b; color: #ffffff; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        
+        /* RANKING DESIGN */
+        .rank-badge { display: inline-block; width: 24px; height: 24px; line-height: 24px; border-radius: 50%; text-align: center; font-weight: bold; margin-right: 10px; font-size: 12px; }
+        .r1 { background: #fbbf24; color: #000; }
+        .r2 { background: #94a3b8; color: #fff; }
+        .r3 { background: #d97706; color: #fff; }
+        
+        .text-right { text-align: right; font-weight: 600; }
+        .grand-total { background-color: #fef08a !important; color: #713f12; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>REKAP SALMO DSE</h1>
+        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
+        
+        <button class="menu-toggle" id="menu-btn"><span></span><span></span><span></span></button>
+
+        <nav class="nav-menu" id="nav-dropdown">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="stok-gudang.html">Stok Gudang</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li><a href="form-permintaan.html">Form Permintaan</a></li>
+                <li id="trigger-penjualan">
+                    <a href="#" onclick="return false;">Laporan Penjualan ➔</a>
+                </li>
+                <div class="nav-submenu-container" id="submenu-penjualan">
+                    <a href="penjualan-salmo.html">🐟 Penjualan SALMO</a>
+                    <a href="penjualan-reguler.html">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-paket-tm2.html">📞 Penjualan Paket TM</a>
+                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr><th>Peringkat & Nama</th><th class="text-right">Amount</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="rank-badge r1">1</span> Andi Setiawan</td><td class="text-right">70.703.400</td></tr>
+                <tr><td><span class="rank-badge r2">2</span> Pebrian Sahri Ramdani</td><td class="text-right">68.853.900</td></tr>
+                <tr><td><span class="rank-badge r3">3</span> M. Enden Abdul Latif</td><td class="text-right">55.577.000</td></tr>
+                <tr><td><span class="rank-badge">4</span> Parhan</td><td class="text-right">45.802.400</td></tr>
+                <tr class="grand-total"><td>Grand Total</td><td class="text-right">240.936.700</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Toggle Menu & Submenu
+        const menuBtn = document.getElementById('menu-btn');
+        const navDropdown = document.getElementById('nav-dropdown');
+        const triggerPenjualan = document.getElementById('trigger-penjualan');
+        const submenuPenjualan = document.getElementById('submenu-penjualan');
+
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            navDropdown.classList.toggle('open');
+        });
+
+        triggerPenjualan.addEventListener('click', (e) => {
+            e.preventDefault();
+            submenuPenjualan.style.maxHeight = (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") ? "0px" : submenuPenjualan.scrollHeight + "px";
+        });
+
+        // Tanggal H-1
+        function setDate() {
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            document.getElementById('reportDate').textContent = `Data Per: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+        }
+        setDate();
+    </script>
+</body>
+</html>
+

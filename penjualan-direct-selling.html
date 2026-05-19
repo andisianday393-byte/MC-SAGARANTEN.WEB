@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan Direct Selling - Monitor Real-time</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; width: 100%; min-height: 100vh; padding-bottom: 40px; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 20px 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: relative; margin-bottom: 20px; }
+        .header h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.8px; padding-right: 40px; padding-left: 40px; }
+        .header p { margin: 0; opacity: 0.8; font-size: 12px; font-weight: 400; margin-bottom: 6px; padding-right: 40px; padding-left: 40px; }
+        .date-badge { display: inline-block; background-color: rgba(255, 255, 255, 0.15); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .menu-toggle { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; z-index: 100; }
+        .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+        .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
+        .nav-menu.open { max-height: 100vh; overflow-y: auto; } 
+        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
+        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
+        .nav-menu ul li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; color: #334155; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: left; }
+        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+        .nav-submenu-container { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #f8fafc; }
+        .nav-submenu-container a { display: block !important; padding: 12px 20px 12px 35px !important; font-size: 13px !important; color: #475569 !important; border-left: 4px solid #0284c7; border-bottom: 1px solid #f1f5f9; }
+        .nav-submenu-container a:last-child { border-bottom: none; }
+        .nav-submenu-container a:hover { background-color: #f0f9ff !important; color: #0284c7 !important; }
+        .nav-submenu-container a.active-sub { color: #0284c7 !important; background-color: #f0f9ff !important; pointer-events: none; font-weight: 700; border-left: 4px solid #0284c7; }
+        .menu-arrow-icon { transition: transform 0.3s ease; font-size: 11px; color: #94a3b8; }
+        .nav-menu ul li.active-trigger .menu-arrow-icon { transform: rotate(90deg); color: #0284c7; }
+        .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+        .filter-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .filter-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-select { width: 100%; padding: 10px 12px; font-size: 13.5px; color: #1e293b; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; cursor: pointer; font-weight: 600; transition: border-color 0.2s; }
+        .filter-select:focus { border-color: #0284c7; background-color: #ffffff; }
+        .single-dse-card { display: none; background: #ffffff; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .single-dse-header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; padding: 16px; }
+        .single-dse-header .badge { display: inline-block; background: rgba(255, 255, 255, 0.2); font-family: monospace; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+        .single-dse-header .name { font-size: 16px; font-weight: 700; }
+        .detail-row-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .detail-row-item:last-child { border-bottom: none; }
+        .detail-row-item .label { color: #64748b; font-weight: 600; }
+        .detail-row-item .val { font-weight: 700; color: #1e293b; }
+        .detail-group-title { background-color: #f8fafc; padding: 8px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; }
+        .section-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; margin-bottom: 20px; overflow: hidden; }
+        .section-title { background-color: #1e293b; color: #ffffff; padding: 14px 16px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 12px 14px; font-size: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 700; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; text-align: center; }
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .dse-info-container { display: flex; flex-direction: column; gap: 2px; }
+        .id-dse-code { font-weight: 700; color: #0284c7; font-family: monospace; font-size: 11px; }
+        .cso-name { font-weight: 600; color: #1e293b; font-size: 13px; }
+        .currency-col { font-variant-numeric: tabular-nums; font-weight: 600; }
+        .qty-col { font-variant-numeric: tabular-nums; text-align: center; }
+        .empty-cell { color: #cbd5e1; font-weight: normal; }
+        .row-item:nth-child(even) { background-color: #f8fafc; }
+        .row-item:hover { background-color: #f0f9ff; }
+        
+        .rem-col-highlight { background-color: #fef2f2 !important; color: #dc2626 !important; font-weight: 700; }
+        .row-item:hover .rem-col-highlight { background-color: #fee2e2 !important; }
+        
+        .total-row td { background-color: #fef08a !important; color: #713f12 !important; font-weight: 700; border-top: 2px solid #ca8a04; border-bottom: 2px solid #ca8a04; font-size: 13px; }
+        .summary-grid { display: block; margin-bottom: 20px; }
+        .summary-card-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .summary-card-box .title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; }
+        .summary-card-box .value { font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+        
+        @media(min-width: 640px) {
+            .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; } /* Diubah ke 4 kolom */
+            .summary-card-box { margin-bottom: 0; }
+            .filter-card { flex-direction: row; align-items: center; gap: 16px; }
+            .filter-label { white-space: nowrap; }
+            .filter-select { max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Penjualan Direct Selling</h1>
+        <p>Data Monitor Direct Selling Mei 2026</p>
+        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
+        
+        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="nav-menu" id="nav-dropdown">
+            <ul>
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="stok-gudang.html">Stok Gudang</a></li>
+                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
+                <li><a href="form-permintaan.html">Form Permintaan</a></li>
+                <li id="trigger-penjualan" class="active-trigger">
+                    <a href="#" onclick="return false;">
+                        <span>Laporan Penjualan</span>
+                        <span class="menu-arrow-icon">➔</span>
+                    </a>
+                </li>
+                <div class="nav-submenu-container" id="dropdown-submenu-penjualan" style="max-height: 500px;">
+                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-paket-tm2.html">📞 Penjualan Paket TM</a>
+                    <a href="#" class="active-sub">🚶 Penjualan Direct Selling</a>
+                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
+                </div>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="dashboard-container">
+        
+        <div class="summary-grid">
+            <div class="summary-card-box" style="border-left: 4px solid #0284c7;">
+                <div class="title">Total Pengambilan</div>
+                <div class="value" id="topTotalTake" style="color: #0284c7;">Rp 0</div>
+            </div>
+            <div class="summary-card-box" style="border-left: 4px solid #16a34a;">
+                <div class="title">Total Pembayaran</div>
+                <div class="value" id="topTotalPay" style="color: #16a34a;">Rp 0</div>
+            </div>
+            <div class="summary-card-box" style="border-left: 4px solid #dc2626;">
+                <div class="title">Sisa Total Tagihan</div>
+                <div class="value" id="topTotalSisa" style="color: #dc2626;">Rp 0</div>
+            </div>
+            <div class="summary-card-box" style="border-left: 4px solid #64748b;">
+                <div class="title">Total Hard Target (HT)</div>
+                <div class="value" id="topTotalQty">0 Pcs</div>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="filter-label">Pilih Data CSO:</div>
+            <select class="filter-select" id="dseFilter">
+                <option value="ALL">-- TAMPILKAN SEMUA CSO --</option>
+            </select>
+        </div>
+
+        <div class="single-dse-card" id="singleDseView">
+            <div class="single-dse-header">
+                <div class="badge" id="cardIdDse">ID DSE</div>
+                <div class="name" id="cardNamaDse">Nama CSO</div>
+            </div>
+            
+            <div class="detail-group-title">💰 DETAIL FINANSIAL TAGIHAN</div>
+            <div class="detail-row-item">
+                <span class="label">Pengambilan</span>
+                <span class="val" id="cardPengambilan" style="color:#0284c7;">Rp 0</span>
+            </div>
+            <div class="detail-row-item">
+                <span class="label">Pembayaran</span>
+                <span class="val" id="cardPembayaran" style="color:#16a34a;">Rp 0</span>
+            </div>
+            <div class="detail-row-item" id="cardSisaContainer">
+                <span class="label" id="cardSisaLabel">Sisa Tagihan</span>
+                <span class="val" id="cardSisa">-</span>
+            </div>
+
+            <div class="detail-group-title">📦 RINCIAN HARD TARGET MEI 2026</div>
+            <div class="detail-row-item">
+                <span class="label">SP 3GB</span>
+                <span class="val" id="cardSp3gb">0 Pcs</span>
+            </div>
+            <div class="detail-row-item">
+                <span class="label">HT10</span>
+                <span class="val" id="cardHt10">0 Pcs</span>
+            </div>
+            <div class="detail-row-item">
+                <span class="label">HT</span>
+                <span class="val" id="cardHt">0 Pcs</span>
+            </div>
+            <div class="detail-row-item" style="background-color: #f8fafc; border-top: 1px dashed #cbd5e1;">
+                <span class="label" style="color:#0f172a; font-weight:700;">TOTAL TARGET</span>
+                <span class="val" id="cardTotal" style="font-size:15px; color:#0284c7; font-weight:700;">0 Pcs</span>
+            </div>
+        </div>
+
+        <div class="section-card" id="mainTableCard">
+            <div class="section-title">
+                🚶 REKAPITULASI DIRECT SELLING MEI 2026
+            </div>
+            <div class="table-responsive">
+                <table id="salesTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="text-left" style="min-width: 200px;">ID DSE & Nama CSO</th>
+                            <th rowspan="2">SP 3GB</th>
+                            <th colspan="3" style="border-bottom: 1px solid #cbd5e1;">Detail Tagihan (Rp)</th>
+                            <th colspan="3" style="border-bottom: 1px solid #cbd5e1;">Hard Target Mei 2026</th>
+                        </tr>
+                        <tr>
+                            <th>Pengambilan</th>
+                            <th>Pembayaran</th>
+                            <th style="background-color: #fee2e2; color: #991b1b;">Sisa</th>
+                            <th>HT10</th>
+                            <th>HT</th>
+                            <th style="background-color: #f1f5f9;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data akan di-load via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EXCEL_FILE_URL = '/data/penjualan-direct-selling.xlsx'; 
+        const TARGET_SHEET_NAME = 'Lembar1';
+
+        function formatRupiah(angka) {
+            if (angka === 0 || isNaN(angka) || angka <= 0) return '-';
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        function setYesterdayDate() {
+            const targetElement = document.getElementById('reportDate');
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            targetElement.textContent = `Update Penjualan: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setYesterdayDate();
+            loadExcelSpreadsheet();
+
+            const menuBtn = document.getElementById('menu-btn');
+            const navDropdown = document.getElementById('nav-dropdown');
+            const triggerPenjualan = document.getElementById('trigger-penjualan');
+            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
+
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuBtn.classList.toggle('active'); navDropdown.classList.toggle('open'); });
+            triggerPenjualan.addEventListener('click', (e) => { e.stopPropagation(); triggerPenjualan.classList.toggle('active-trigger'); submenuPenjualan.style.maxHeight = submenuPenjualan.style.maxHeight === "0px" || !submenuPenjualan.style.maxHeight ? submenuPenjualan.scrollHeight + "px" : "0px"; });
+            document.addEventListener('click', () => { if(navDropdown.classList.contains('open')) { menuBtn.classList.remove('active'); navDropdown.classList.remove('open'); triggerPenjualan.classList.add('active-trigger'); } });
+        });
+
+        function loadExcelSpreadsheet() {
+            fetch(EXCEL_FILE_URL)
+                .then(response => { if (!response.ok) throw new Error('File tidak ditemukan'); return response.arrayBuffer(); })
+                .then(buffer => {
+                    const data = new Uint8Array(buffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    if (!workbook.SheetNames.includes(TARGET_SHEET_NAME)) throw new Error(`Tab Sheet tidak ditemukan.`);
+                    const worksheet = workbook.Sheets[TARGET_SHEET_NAME];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: 0 });
+                    renderDashboard(jsonData);
+                })
+                .catch(err => console.log("Menggunakan data dasar HTML (File excel eksternal tidak ditemukan)."));
+        }
+
+        function renderDashboard(data) {
+            const tableBody = document.getElementById('tableBody');
+            const dseFilter = document.getElementById('dseFilter');
+            
+            let totalTake = 0, totalPay = 0, totalSp3gb = 0, totalHt10 = 0, totalHt = 0, totalAllQty = 0;
+            
+            tableBody.innerHTML = '';
+            data.forEach(row => {
+                const name = row['Nama CSO'] || '';
+                const idDse = row['ID DSE'] || ''; 
+                if (!name && !idDse) return; 
+
+                const sp3gb = parseInt(row['SP 3GB']) || 0;
+                const take = parseInt(row['Pengambilan']) || 0;
+                const pay = parseInt(row['Pembayaran']) || 0;
+                const sisa = take - pay;
+                const ht10 = parseInt(row['HT10']) || 0;
+                const ht = parseInt(row['HT']) || 0;
+                const dseTotalQty = parseInt(row['TOTAL']) || (ht10 + ht);
+
+                totalTake += take;
+                totalPay += pay;
+                totalSp3gb += sp3gb;
+                totalHt10 += ht10;
+                totalHt += ht;
+                totalAllQty += dseTotalQty;
+
+                const option = document.createElement('option');
+                option.value = idDse;
+                option.textContent = `${idDse} - ${name}`;
+                dseFilter.appendChild(option);
+
+                const tr = document.createElement('tr');
+                tr.className = 'row-item';
+                tr.setAttribute('data-id', idDse);
+                tr.setAttribute('data-name', name);
+                tr.setAttribute('data-mc', idDse);
+                tr.setAttribute('data-sp3gb', sp3gb);
+                tr.setAttribute('data-take', take);
+                tr.setAttribute('data-pay', pay);
+                tr.setAttribute('data-rem', sisa);
+                tr.setAttribute('data-ht10', ht10);
+                tr.setAttribute('data-ht', ht);
+                tr.setAttribute('data-total', dseTotalQty);
+
+                tr.innerHTML = `
+                    <td><div class="dse-info-container"><span class="id-dse-code">${idDse}</span><span class="cso-name">${name}</span></div></td>
+                    <td class="qty-col">${sp3gb}</td>
+                    <td class="text-right currency-col">Rp ${formatRupiah(take)}</td>
+                    <td class="text-right currency-col" style="color: #16a34a;">Rp ${formatRupiah(pay)}</td>
+                    <td class="text-center currency-col ${sisa > 0 ? 'rem-col-highlight' : ''}">${sisa <= 0 ? 'LUNAS' : 'Rp ' + formatRupiah(sisa)}</td>
+                    <td class="qty-col">${ht10}</td>
+                    <td class="qty-col">${ht}</td>
+                    <td class="qty-col" style="font-weight: 700; background-color: #f8fafc;">${dseTotalQty}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Update Summary Cards
+            const totalSisa = totalTake - totalPay;
+            document.getElementById('topTotalTake').textContent = 'Rp ' + formatRupiah(totalTake);
+            document.getElementById('topTotalPay').textContent = 'Rp ' + formatRupiah(totalPay);
+            document.getElementById('topTotalQty').textContent = totalAllQty + ' Pcs';
+            
+            const sisaEl = document.getElementById('topTotalSisa');
+            sisaEl.textContent = totalSisa <= 0 ? 'LUNAS' : 'Rp ' + formatRupiah(totalSisa);
+            sisaEl.style.color = totalSisa <= 0 ? '#16a34a' : '#dc2626';
+
+            setupFilterListener();
+        }
+
+        function setupFilterListener() {
+            const dseFilter = document.getElementById('dseFilter');
+            const mainTableCard = document.getElementById('mainTableCard');
+            const singleDseView = document.getElementById('singleDseView');
+
+            dseFilter.addEventListener('change', function() {
+                if (this.value === 'ALL') {
+                    singleDseView.style.display = 'none';
+                    mainTableCard.style.display = 'block';
+                } else {
+                    const row = document.querySelector(`.row-item[data-id="${this.value}"]`);
+                    if (row) {
+                        document.getElementById('cardIdDse').textContent = row.getAttribute('data-mc');
+                        document.getElementById('cardNamaDse').textContent = row.getAttribute('data-name');
+                        document.getElementById('cardPengambilan').textContent = 'Rp ' + formatRupiah(parseInt(row.getAttribute('data-take')));
+                        document.getElementById('cardPembayaran').textContent = 'Rp ' + formatRupiah(parseInt(row.getAttribute('data-pay')));
+                        
+                        const sisa = parseInt(row.getAttribute('data-rem'));
+                        const sisaEl = document.getElementById('cardSisa');
+                        sisaEl.textContent = sisa <= 0 ? 'LUNAS' : 'Rp ' + formatRupiah(sisa);
+                        sisaEl.style.color = sisa <= 0 ? '#16a34a' : '#dc2626';
+
+                        document.getElementById('cardSp3gb').textContent = row.getAttribute('data-sp3gb') + ' Pcs';
+                        document.getElementById('cardHt10').textContent = row.getAttribute('data-ht10') + ' Pcs';
+                        document.getElementById('cardHt').textContent = row.getAttribute('data-ht') + ' Pcs';
+                        document.getElementById('cardTotal').textContent = row.getAttribute('data-total') + ' Pcs';
+
+                        mainTableCard.style.display = 'none';
+                        singleDseView.style.display = 'block';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
