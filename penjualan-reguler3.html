@@ -163,15 +163,6 @@
             color: #10b981;
         }
 
-        /* STYLE KHUSUS UNTUK HALAMAN YANG SEDANG AKTIF DI MENU UTAMA (TIDAK BISA DIKLIK) */
-        .nav-menu ul li.disabled-menu-item a {
-            color: #94a3b8 !important; 
-            background-color: #f8fafc !important;
-            pointer-events: none; 
-            cursor: default;
-            user-select: none;
-        }
-
         /* CONTAINER LAYAR */
         .selector-container {
             max-width: 600px;
@@ -455,11 +446,29 @@
         let itemPrices = {};
         let dbSales = {};
 
-        const orderSP = ["SP ZERO", "SP 3GB INJEK", "SP 3GB", "SP 3GB ORI", "SP 9GB"];
+        // Daftar Urutan Produk SP Baru
+        const orderSP = [
+            "SP ZERO", 
+            "SP 3GB", 
+            "SP 3GB ORI", 
+            "SP 9GB"
+        ];
+
+        // Daftar Urutan Produk Voucher Baru
         const orderVoucher = [
-            "VDK", "3GB 14HR", "Voucher 2,5GB", "2,5GB", "Freedom Internet 3 GB", "FI 3 GB", "Fi 3 GB", 
-            "Voucher 3.5GB 5HR", "3.5GB 5HR", "Voucher 5GB 5HR", "5GB 5HR", "Voucher 7GB 7HR", "7GB 7HR", 
-            "Fi 6GB", "Voucher 1GB 2Hari", "V 10K", "Fi 1.5GB/1D", "Fi 3GB/1D", "Fi 3GB/3D", "Fi 5GB/2D", "Fi 5GB/3D"
+            "VDK", 
+            "3GB 14HR", 
+            "Voucher 2.5GB", 
+            "Freedom Internet 3 GB", 
+            "Voucher 3.5GB 5HR", 
+            "Voucher 5GB 5HR", 
+            "Voucher 7GB 7HR", 
+            "Fi 6GB", 
+            "Fi 1.5GB/1D", 
+            "Fi 3GB/1D", 
+            "Fi 3GB/3D", 
+            "Fi 5GB/2D", 
+            "Fi 5GB/3D"
         ];
 
         async function loadCSVData() {
@@ -472,14 +481,16 @@
                 let salesHeaders = [];
 
                 lines.forEach(line => {
-                    if(line === "[KATEGORI_HARGA]") { currentSection = "harga"; return; }
-                    if(line === "[DB_SALES]") { currentSection = "sales"; return; }
+                    // Diubah ke .startsWith agar kebal terhadap sisa koma pembatas di file CSV Anda
+                    if(line.startsWith("[KATEGORI_HARGA]")) { currentSection = "harga"; return; }
+                    if(line.startsWith("[DB_SALES]")) { currentSection = "sales"; return; }
                     
-                    const cols = line.split(',');
+                    const cols = line.split(',').map(c => c.trim());
 
                     if(currentSection === "harga" && cols[0] !== "Nama Produk") {
-                        if(cols[0] === "SP 6GB") return; 
-                        itemPrices[cols[0]] = parseFloat(cols[1]) || 0;
+                        if(cols[0]) {
+                            itemPrices[cols[0]] = parseFloat(cols[1]) || 0;
+                        }
                     }
                     
                     if(currentSection === "sales") {
@@ -488,15 +499,16 @@
                         } else {
                             const idDse = cols[0];
                             const namaDse = cols[1];
+                            if(!idDse) return;
+                            
                             dseMapping[idDse] = namaDse;
-
                             dbSales[idDse] = { sp: {}, voucher: {} };
 
                             for(let i = 2; i < cols.length; i++) {
                                 const productName = salesHeaders[i];
-                                const pcs = parseInt(cols[i]) || 0;
+                                if(!productName) continue;
                                 
-                                if(!productName || productName === "SP 6GB") continue;
+                                const pcs = parseInt(cols[i]) || 0;
 
                                 if(productName.startsWith("SP")) {
                                     dbSales[idDse].sp[productName] = pcs;
@@ -564,8 +576,8 @@
             });
             const currentOrderList = (type === 'sp') ? orderSP : orderVoucher;
             return Object.values(productMap).sort((a, b) => {
-                let idxA = currentOrderList.findIndex(item => a.name.toLowerCase().includes(item.toLowerCase()));
-                let idxB = currentOrderList.findIndex(item => b.name.toLowerCase().includes(item.toLowerCase()));
+                let idxA = currentOrderList.findIndex(item => a.name.trim().toLowerCase() === item.trim().toLowerCase());
+                let idxB = currentOrderList.findIndex(item => b.name.trim().toLowerCase() === item.trim().toLowerCase());
                 return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
             });
         }
@@ -595,6 +607,7 @@
                 spTitle.textContent = "Rangking Performa SP Per DSE";
                 voucherTitle.textContent = "Rangking Performa Voucher Per DSE";
                 
+                // Mode SUMMARY: Menggunakan struktur 4 Kolom penuh
                 spHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE / Salesforce</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
                 voucherHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE / Salesforce</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
 
@@ -604,7 +617,8 @@
                     gSpPcs += dse.pcs; gSpAmt += dse.amount;
                     spBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedSp.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
                 });
-                spBody.innerHTML += `<tr class="total-row"><td></td><td class="item-name-col">TOTAL GABUNGAN SP</td><td class="number-col">${formatPcs(gSpPcs)}</td><td class="amount-col">${formatRupiah(gSpAmt)}</td></tr>`;
+                // SINKRONISASI BARIS TOTAL GABUNGAN SP: Menggunakan colspan="2" sehingga teks bergeser ke kiri penuh sejajar kolom Rank
+                spBody.innerHTML += `<tr class="total-row"><td colspan="2" class="item-name-col">TOTAL GABUNGAN SP</td><td class="number-col">${formatPcs(gSpPcs)}</td><td class="amount-col">${formatRupiah(gSpAmt)}</td></tr>`;
 
                 const sortedVch = getSortedPerformance('voucher');
                 let gVchPcs = 0, gVchAmt = 0;
@@ -612,8 +626,10 @@
                     gVchPcs += dse.pcs; gVchAmt += dse.amount;
                     voucherBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedVch.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
                 });
-                voucherBody.innerHTML += `<tr class="total-row"><td></td><td class="item-name-col">TOTAL GABUNGAN VOUCHER</td><td class="number-col">${formatPcs(gVchPcs)}</td><td class="amount-col">${formatRupiah(gVchAmt)}</td></tr>`;
+                // SINKRONISASI BARIS TOTAL GABUNGAN VOUCHER: Menggunakan colspan="2" sehingga teks bergeser ke kiri penuh sejajar kolom Rank
+                voucherBody.innerHTML += `<tr class="total-row"><td colspan="2" class="item-name-col">TOTAL GABUNGAN VOUCHER</td><td class="number-col">${formatPcs(gVchPcs)}</td><td class="amount-col">${formatRupiah(gVchAmt)}</td></tr>`;
 
+                // ACCORDION UTK DETAIL SUMMARY (Menggunakan struktur standard 3 kolom)
                 const summarySpList = getProductSummaryCustomOrder('sp');
                 let totalSummarySpPcs = 0;
                 let totalSummarySpAmt = 0;
@@ -642,20 +658,24 @@
                 accordionSection.style.display = "none";
                 spTitle.textContent = "Penjualan SP";
                 voucherTitle.textContent = "Penjualan Voucher";
+                
+                // Mode DETAIL PILIH DSE INDIVIDU: Menggunakan struktur standard 3 kolom (Tanpa kolom Rank)
                 spHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
                 voucherHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
 
                 let tSpPcs = 0, tSpAmt = 0;
-                Object.keys(dbSales[dseId].sp).forEach(item => {
-                    let pcs = dbSales[dseId].sp[item]; let amt = pcs * (itemPrices[item] || 0);
+                orderSP.forEach(item => {
+                    let pcs = dbSales[dseId].sp[item] || 0;
+                    let amt = pcs * (itemPrices[item] || 0);
                     tSpPcs += pcs; tSpAmt += amt;
                     spBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
                 });
                 spBody.innerHTML += `<tr class="total-row"><td class="item-name-col">TOTAL SP</td><td class="number-col">${formatPcs(tSpPcs)}</td><td class="amount-col">${formatRupiah(tSpAmt)}</td></tr>`;
 
                 let tVchPcs = 0, tVchAmt = 0;
-                Object.keys(dbSales[dseId].voucher).forEach(item => {
-                    let pcs = dbSales[dseId].voucher[item]; let amt = pcs * (itemPrices[item] || 0);
+                orderVoucher.forEach(item => {
+                    let pcs = dbSales[dseId].voucher[item] || 0;
+                    let amt = pcs * (itemPrices[item] || 0);
                     tVchPcs += pcs; tVchAmt += amt;
                     voucherBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
                 });
@@ -667,7 +687,6 @@
             setYesterdayDate();
             loadCSVData();
 
-            // JS NAVIGASI MENU RESPONSIVE (ANTI TUMPANG TINDIH)
             const menuBtn = document.getElementById('menu-btn');
             const navDropdown = document.getElementById('nav-dropdown');
             const triggerPenjualan = document.getElementById('trigger-penjualan');
@@ -702,6 +721,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
