@@ -468,7 +468,11 @@
                 
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                const rawRows = XLSX.utils.sheet_to_json(worksheet, {
+    header: 1,
+    defval: 0,
+    raw: true
+});
                 
                 if(rawRows.length < 2) throw new Error('Format baris data Excel tidak mencukupi.');
 
@@ -480,7 +484,7 @@
                 dseIds = [];
                 dseMapping = { "SUMMARY": "SUMMARY (TOTAL GABUNGAN ALL DSE)" };
 
-                for(let col = 1; col <= 5; col++) {
+                for(let col = 1; col <= 4; col++) {
                     let idVal = String(idRow[col]).trim();
                     let nameVal = String(nameRow[col]).trim();
                     
@@ -493,27 +497,31 @@
 
                 // 2. Looping data produk & harga dari baris indeks ke-2 ke bawah
                 for(let i = 2; i < rawRows.length; i++) {
-                    const row = rawRows[i];
-                    if(!row || row.length === 0) continue;
+    const row = rawRows[i];
+    if(!row || row.length === 0) continue;
 
-                    let rawItemName = String(row[0]).trim();
-                    if(!rawItemName || rawItemName === "0" || rawItemName.startsWith(",")) continue;
+    let rawItemName = String(row[0] || "").trim();
 
-                    // Kolom ke-7 (Index h) adalah Kolom HARGA di file Excel Anda
-                    let price = parseFloat(row[7]) || 0;
-                    itemPrices[rawItemName] = price;
+    // Skip baris kosong
+    if(!rawItemName) continue;
 
-                    // Masukkan jumlah pcs data jualan per Kolom DSE (kolom index 1 s.d 5)
-                    dseIds.forEach((id, idx) => {
-                        let pcsValue = parseInt(row[idx + 1]) || 0;
-                        
-                        if (rawItemName.toUpperCase().startsWith("SP")) {
-                            dbSales[id].sp[rawItemName] = pcsValue;
-                        } else {
-                            dbSales[id].voucher[rawItemName] = pcsValue;
-                        }
-                    });
-                }
+    // Harga ada di kolom G = index 6
+    let price = parseFloat(row[6]) || 0;
+
+    itemPrices[rawItemName] = price;
+
+    dseIds.forEach((id, idx) => {
+
+        // Data DSE ada di kolom B-E
+        let pcsValue = parseInt(row[idx + 1]) || 0;
+
+        if (rawItemName.toUpperCase().startsWith("SP")) {
+            dbSales[id].sp[rawItemName] = pcsValue;
+        } else {
+            dbSales[id].voucher[rawItemName] = pcsValue;
+        }
+    });
+}
 
                 initDseSelector();
             } catch (error) {
