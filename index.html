@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC-SAGARANTEN - Home Portal</title>
+
+    <style>
+        :root {
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-color: #f1f5f9;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-gudang: #0284c7;
+            --accent-form: #f59e0b;
+            --accent-dse: #6366f1;
+            --accent-penjualan: #10b981;
+            --accent-submenu: #0d9488;
+        }
+
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            font-family:'Segoe UI', sans-serif;
+        }
+
+        body{
+            background:var(--bg-color);
+            color:var(--text-main);
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            padding-bottom:30px;
+        }
+
+        .app-header{
+            background:var(--header-gradient);
+            color:#fff;
+            padding:35px 20px 30px;
+            text-align:center;
+            box-shadow:0 4px 6px rgba(0,0,0,.1);
+            margin-bottom:20px;
+        }
+
+        .app-header h1{
+            font-size:20px;
+            font-weight:700;
+            letter-spacing:1px;
+            margin-bottom:4px;
+        }
+
+        .app-header p{
+            font-size:12px;
+            opacity:.8;
+        }
+
+        .saldo-card{
+            background:#1e3a8a;
+            color:white;
+            padding:20px;
+            border-radius:12px;
+            margin:0 10px 20px;
+            box-shadow:0 10px 15px rgba(30,58,138,.3);
+        }
+
+        .saldo-label{
+            font-size:12px;
+            opacity:.9;
+            margin-bottom:5px;
+            text-transform:uppercase;
+        }
+
+        .saldo-amount{
+            font-size:22px;
+            font-weight:700;
+            margin-bottom:15px;
+        }
+
+        .main-summary{
+            margin-bottom:15px;
+            text-align:center;
+        }
+
+        .sub-summary-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:8px;
+        }
+
+        .sub-stat{
+            background:white;
+            padding:10px 5px;
+            border-radius:8px;
+            text-align:center;
+            color:#1e3a8a;
+        }
+
+        .sub-label{
+            font-size:9px;
+            font-weight:800;
+            text-transform:uppercase;
+            margin-bottom:4px;
+        }
+
+        .sub-value{
+            font-size:11px;
+            font-weight:700;
+        }
+
+        .app-navigation{
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            width:100%;
+            padding:0 10px;
+        }
+
+        .nav-wrapper{
+            background:#fff;
+            border-radius:8px;
+            overflow:hidden;
+            border:1px solid var(--border-color);
+        }
+
+        .nav-item{
+            display:flex;
+            align-items:center;
+            text-decoration:none;
+            padding:20px 16px;
+            background:#fff;
+            border-bottom:1px solid var(--border-color);
+            cursor:pointer;
+        }
+
+        .gudang-link{border-left:5px solid var(--accent-gudang);}
+        .form-link{border-left:5px solid var(--accent-form);}
+        .dse-link{border-left:5px solid var(--accent-dse);}
+        .penjualan-link{border-left:5px solid var(--accent-penjualan);}
+
+        .nav-icon{
+            font-size:26px;
+            margin-right:16px;
+            width:35px;
+            text-align:center;
+        }
+
+        .nav-details{
+            flex:1;
+        }
+
+        .nav-title{
+            font-size:15px;
+            font-weight:700;
+            margin-bottom:3px;
+        }
+
+        .nav-desc{
+            font-size:12px;
+            color:var(--text-muted);
+            line-height:1.4;
+        }
+
+        .nav-arrow{
+            font-size:14px;
+            color:#cbd5e1;
+            padding-left:10px;
+            transition:.2s;
+        }
+
+        .submenu-container{
+            max-height:0;
+            overflow:hidden;
+            transition:max-height .3s ease-out;
+            background:#f8fafc;
+        }
+
+        .submenu-item{
+            display:flex;
+            align-items:center;
+            text-decoration:none;
+            padding:15px 16px 15px 36px;
+            border-bottom:1px solid var(--border-color);
+            border-left:5px solid var(--accent-submenu);
+        }
+
+        .submenu-img{
+            width:20px;
+            height:20px;
+            object-fit:cover;
+            margin-right:12px;
+            border-radius:50%;
+        }
+
+        .submenu-icon{
+            font-size:18px;
+            margin-right:12px;
+            width:25px;
+            text-align:center;
+        }
+
+        .submenu-title{
+            font-size:13.5px;
+            font-weight:600;
+            color:#475569;
+            flex:1;
+        }
+
+        .penjualan-link.active .nav-arrow{
+            transform:rotate(90deg);
+            color:var(--accent-penjualan);
+        }
+
+        .app-footer{
+            text-align:center;
+            padding:20px;
+            font-size:11px;
+            color:var(--text-muted);
+            margin-top:auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-header">
+    <h1>MC-SAGARANTEN</h1>
+    <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+</div>
+
+<div class="saldo-card">
+
+    <div class="main-summary">
+        <div class="saldo-label">Total Penjualan Salmo</div>
+        <div class="saldo-amount" id="grand-total">Memuat...</div>
+    </div>
+
+    <div class="sub-summary-grid">
+
+        <div class="sub-stat">
+            <div class="sub-label">SP & Voucher</div>
+            <div class="sub-value" id="total-sp">...</div>
+        </div>
+
+        <div class="sub-stat">
+            <div class="sub-label">All Paket</div>
+            <div class="sub-value" id="total-paket">...</div>
+        </div>
+
+        <div class="sub-stat">
+            <div class="sub-label">Hifi</div>
+            <div class="sub-value" id="total-hifi">...</div>
+        </div>
+
+    </div>
+</div>
+
+<div class="app-navigation">
+
+    <div class="nav-wrapper">
+
+        <a href="stok-gudang.html" class="nav-item gudang-link">
+            <div class="nav-icon">📦</div>
+
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-gudang)">
+                    Laporan Stok Gudang
+                </div>
+
+                <div class="nav-desc">
+                    Pantau sisa stok dan monitor barang masuk.
+                </div>
+            </div>
+
+            <div class="nav-arrow">➔</div>
+        </a>
+
+        <a href="form-permintaan.html" class="nav-item form-link">
+            <div class="nav-icon">📝</div>
+
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-form)">
+                    Form Permintaan Barang
+                </div>
+
+                <div class="nav-desc">
+                    Input permintaan barang tim lapangan.
+                </div>
+            </div>
+
+            <div class="nav-arrow">➔</div>
+        </a>
+
+        <a href="stok-barang-dse.html" class="nav-item dse-link">
+            <div class="nav-icon">💼</div>
+
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-dse)">
+                    Stok Barang DSE
+                </div>
+
+                <div class="nav-desc">
+                    Monitor stok dan distribusi sales.
+                </div>
+            </div>
+
+            <div class="nav-arrow">➔</div>
+        </a>
+
+        <div class="nav-item penjualan-link" id="btn-penjualan">
+
+            <div class="nav-icon">📊</div>
+
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-penjualan)">
+                    Laporan Penjualan
+                </div>
+
+                <div class="nav-desc">
+                    Rekap data penjualan dan performa.
+                </div>
+            </div>
+
+            <div class="nav-arrow">➔</div>
+
+        </div>
+
+        <div class="submenu-container" id="submenu-penjualan">
+
+            <a href="penjualan-salmo.html" class="submenu-item">
+                <img src="img/mobii.jpg" class="submenu-img">
+                <div class="submenu-title">Penjualan SALMO</div>
+            </a>
+
+            <a href="penjualan-reguler3.html" class="submenu-item">
+                <div class="submenu-icon">🛒</div>
+                <div class="submenu-title">Penjualan Reguler</div>
+            </a>
+
+            <a href="penjualan-paket-tm2.html" class="submenu-item">
+                <div class="submenu-icon">📞</div>
+                <div class="submenu-title">Penjualan Paket TM</div>
+            </a>
+
+            <a href="penjualan-direct-selling.html" class="submenu-item">
+                <div class="submenu-icon">🚶</div>
+                <div class="submenu-title">Penjualan Direct Selling</div>
+            </a>
+
+            <a href="penjualan-hifi.html" class="submenu-item">
+                <img src="img/hifi.png" class="submenu-img">
+                <div class="submenu-title">Penjualan Hifi</div>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="app-footer">
+    &copy; 2026 MC-SAGARANTEN
+</div>
+
+<!-- XLSX MASIH DIPAKAI -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+
+// =========================
+// FORMAT RUPIAH
+// =========================
+function formatRupiah(number) {
+
+    return "Rp " +
+        Number(number).toLocaleString('id-ID');
+}
+
+// =========================
+// AMBIL ANGKA
+// =========================
+function ambilAngka(value) {
+
+    if (!value) return 0;
+
+    return parseInt(
+        String(value)
+        .replace(/[^\d]/g, '')
+    ) || 0;
+}
+
+// =========================
+// FILE EXCEL
+// =========================
+const EXCEL_FILE_URL =
+    'index-data.xlsx';
+
+// =========================
+// TOTAL SALMO
+// =========================
+async function updateSaldoSalmo() {
+
+    try {
+
+        const response =
+            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        const worksheet =
+            workbook.Sheets['penjualan-salmo'];
+
+        if (!worksheet) return;
+
+        const data =
+            XLSX.utils.sheet_to_json(worksheet);
+
+        let grandTotal = 0;
+
+        data.forEach(row => {
+
+            const nama =
+                String(row['Nama cso'] || '')
+                .trim()
+                .toUpperCase();
+
+            if (nama === 'GRAND TOTAL') return;
+
+            grandTotal +=
+                ambilAngka(row['Amount']);
+        });
+
+        document.getElementById('grand-total')
+            .innerText =
+            formatRupiah(grandTotal);
+
+    } catch(error) {
+
+        console.log(error);
+
+        document.getElementById('grand-total')
+            .innerText = 'Error';
+    }
+}
+
+// =========================
+// TOTAL SP + VOUCHER
+// =========================
+async function updateTotalSPVoucher() {
+
+    try {
+
+        const response =
+            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        const worksheet =
+            workbook.Sheets['penjualan-reguler'];
+
+        if (!worksheet) return;
+
+        const rows =
+            XLSX.utils.sheet_to_json(
+                worksheet,
+                {
+                    header:1,
+                    defval:0
+                }
+            );
+
+        let total = 0;
+
+        for(let i=2; i<rows.length; i++) {
+
+            const row = rows[i];
+
+            if(!row) continue;
+
+            const harga =
+                ambilAngka(row[6]);
+
+            let qty = 0;
+
+            for(let c=1; c<=4; c++) {
+
+                qty +=
+                    ambilAngka(row[c]);
+            }
+
+            total += qty * harga;
+        }
+
+        document.getElementById('total-sp')
+            .innerText =
+            formatRupiah(total);
+
+    } catch(error) {
+
+        console.log(error);
+
+        document.getElementById('total-sp')
+            .innerText = 'Error';
+    }
+}
+
+// =========================
+// TOTAL ALL PAKET
+// =========================
+async function updateTotalPaket() {
+
+    try {
+
+        const response =
+            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        let grandTotal = 0;
+
+        // =========================
+        // AMBIL NILAI CELL
+        // =========================
+        function ambilCell(sheetName, cell) {
+
+            const worksheet =
+                workbook.Sheets[sheetName];
+
+            if (!worksheet) {
+
+                console.log(
+                    'Sheet tidak ditemukan:',
+                    sheetName
+                );
+
+                return 0;
+            }
+
+            const value =
+                worksheet[cell]
+                ? worksheet[cell].v
+                : 0;
+
+            return ambilAngka(value);
+        }
+
+        // =========================
+        // AMBIL E10
+        // =========================
+        const totalTM =
+            ambilCell(
+                'penjualan-paket-tm',
+                'E7'
+            );
+
+        const totalDS =
+            ambilCell(
+                'penjualan-direct-selling',
+                'E6'
+            );
+
+        grandTotal =
+            totalTM + totalDS;
+
+        // =========================
+        // TAMPILKAN
+        // =========================
+        document.getElementById('total-paket')
+            .innerText =
+            formatRupiah(grandTotal);
+
+    } catch(error) {
+
+        console.error(error);
+
+        document.getElementById('total-paket')
+            .innerText = 'Error';
+    }
+}
+// =========================
+// TOTAL HIFI (FIXED)
+// =========================
+async function updateTotalHifi() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const worksheet = workbook.Sheets['penjualan-hifi'];
+
+        if (!worksheet) return;
+
+        const data = XLSX.utils.sheet_to_json(worksheet);
+
+        let total = 0;
+
+        data.forEach(row => {
+            // Sesuai data Anda: Kolom tanggal bernama 'Tgl Bayar'
+            const tglBayar = row['Tgl Bayar'];
+            
+            // Sesuai data Anda: Kolom harga bernama 'HARGA'
+            const harga = row['HARGA'];
+
+            // Cek apakah kolom Tgl Bayar ada isinya (tidak null/undefined)
+            if (tglBayar && String(tglBayar).trim() !== "") {
+                total += ambilAngka(harga);
+            }
+        });
+
+        document.getElementById('total-hifi').innerText = formatRupiah(total);
+
+    } catch(error) {
+        console.log("Error Hifi:", error);
+        document.getElementById('total-hifi').innerText = 'Error';
+    }
+}
+
+// =========================
+// LOAD SEMUA
+// =========================
+function loadSemua() {
+
+    updateSaldoSalmo();
+    updateTotalSPVoucher();
+    updateTotalPaket();
+    updateTotalHifi();
+}
+
+loadSemua();
+
+setInterval(loadSemua, 10000);
+
+// =========================
+// SUBMENU
+// =========================
+document
+.getElementById('btn-penjualan')
+.addEventListener('click', function() {
+
+    const submenu =
+        document.getElementById('submenu-penjualan');
+
+    this.classList.toggle('active');
+
+    submenu.style.maxHeight =
+        submenu.style.maxHeight &&
+        submenu.style.maxHeight !== '0px'
+        ? '0px'
+        : submenu.scrollHeight + 'px';
+});
+
+</script>
+
+</body>
+</html>
+
+
