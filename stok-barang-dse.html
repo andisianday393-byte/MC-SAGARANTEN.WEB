@@ -333,8 +333,10 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
+				if (!workbook.SheetNames.includes(TARGET_SHEET_NAME)) {
+    throw new Error(`Sheet '${TARGET_SHEET_NAME}' tidak ditemukan`);
+}
+                const worksheet = workbook.Sheets[TARGET_SHEET_NAME];
                 const matrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
                 
                 processAndRender(matrix);
