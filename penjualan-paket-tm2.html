@@ -185,8 +185,8 @@
     </div>
 
     <script>
-        const EXCEL_FILE_URL = 'penjualan-paket-tm.xlsx'; 
-        const TARGET_SHEET_NAME = 'Lembar1';
+        const EXCEL_FILE_URL = 'index-data.xlsx'; 
+        const TARGET_SHEET_NAME = 'penjualan-paket-tm';
 
         let currentLoadedData = [];
 
@@ -243,12 +243,18 @@
         }
 
         function renderDashboard(rawData) {
-            const cardsListContainer = document.getElementById('cardsListContainer');
-            const rankingCard = document.getElementById('rankingCard');
-            const totalGabunganCard = document.getElementById('totalGabunganCard');
-            const dseFilter = document.getElementById('dseFilter');
-            
-            let totalTake = 0, totalPay = 0, totalTm11 = 0, totalTm28 = 0, totalTm58 = 0, totalTm14 = 0, totalAllQty = 0;
+    const cardsListContainer = document.getElementById('cardsListContainer');
+    const rankingCard = document.getElementById('rankingCard');
+    const totalGabunganCard = document.getElementById('totalGabunganCard');
+    const dseFilter = document.getElementById('dseFilter');
+
+    let totalTake = 0,
+        totalPay = 0,
+        totalTm11 = 0,
+        totalTm28 = 0,
+        totalTm58 = 0,
+        totalTm14 = 0,
+        totalAllQty = 0;
             
             cardsListContainer.innerHTML = '';
             dseFilter.innerHTML = '<option value="ALL">-- TAMPILKAN SEMUA DATA --</option>';
@@ -326,6 +332,7 @@
                     </div>
                 `;
                 cardsListContainer.appendChild(cardDse);
+				
             }
 
             // --- PROSES PEMBUATAN RANGKING ---
@@ -383,8 +390,9 @@
             document.getElementById('topTotalPay').textContent = 'Rp ' + formatRupiah(totalPay);
             document.getElementById('topTotalSisa').textContent = totalSisa !== 0 ? 'Rp ' + formatRupiah(totalSisa) : 'Rp 0';
             document.getElementById('topTotalQty').textContent = totalAllQty + ' Paket';
-
+			cardsListContainer.style.display = 'grid';
             setupFilterListener();
+			
         }
 
         function setupFilterListener() {
