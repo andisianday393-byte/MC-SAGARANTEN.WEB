@@ -467,8 +467,11 @@
                 const dataArray = new Uint8Array(buffer);
                 const workbook = XLSX.read(dataArray, { type: 'array' });
                 
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
+                // KODE BARU YANG HARUS DIGANTI:
+const worksheet = workbook.Sheets["penjualan-reguler"]; // Ganti dengan nama sheet yang tepat
+if (!worksheet) {
+    throw new Error('Sheet "penjualan-reguler" tidak ditemukan dalam file Excel.');
+}
                 const rawRows = XLSX.utils.sheet_to_json(worksheet, {
     header: 1,
     defval: 0,

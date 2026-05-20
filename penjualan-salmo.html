@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekapitulasi Amount CSO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; padding-bottom: 40px; }
@@ -29,7 +31,13 @@
         .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
         .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
         .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); } 
+        /* Mengubah warna teks dan memberikan sedikit ketebalan pada menu aktif */
+.menu-aktif {
+    color: #0284c7 !important; /* Warna biru cerah */
+    font-weight: 800 !important;
+}
+
         
         /* NAV MENU DROPDOWN */
         .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
@@ -74,8 +82,8 @@
                     <a href="#" onclick="return false;">Laporan Penjualan ➔</a>
                 </li>
                 <div class="nav-submenu-container" id="submenu-penjualan">
-                    <a href="penjualan-salmo.html">🐟 Penjualan SALMO</a>
-                    <a href="penjualan-reguler.html">🛒 Penjualan Reguler</a>
+                    <a href="penjualan-salmo.html" id="nav-penjualan-salmo">🐟 Penjualan SALMO</a>
+                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
                     <a href="penjualan-paket-tm2.html">📞 Penjualan Paket TM</a>
                     <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
                     <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
@@ -100,32 +108,102 @@
     </div>
 
     <script>
-		const EXCEL_FILE_URL = 'index-data.xlsx'; 
-		const TARGET_SHEET_NAME = "penjualan-salmo";
-        // Toggle Menu & Submenu
-        const menuBtn = document.getElementById('menu-btn');
-        const navDropdown = document.getElementById('nav-dropdown');
-        const triggerPenjualan = document.getElementById('trigger-penjualan');
-        const submenuPenjualan = document.getElementById('submenu-penjualan');
+    // Konfigurasi file
+    const EXCEL_FILE_URL = 'index-data.xlsx';
+    const TARGET_SHEET_NAME = "penjualan-salmo";
 
-        menuBtn.addEventListener('click', () => {
-            menuBtn.classList.toggle('active');
-            navDropdown.classList.toggle('open');
-        });
+        async function updateDataFromExcel() {
+        try {
+            const response = await fetch(EXCEL_FILE_URL);
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-        triggerPenjualan.addEventListener('click', (e) => {
-            e.preventDefault();
-            submenuPenjualan.style.maxHeight = (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") ? "0px" : submenuPenjualan.scrollHeight + "px";
-        });
+            const worksheet = workbook.Sheets[TARGET_SHEET_NAME];
+            const data = XLSX.utils.sheet_to_json(worksheet);
 
-        // Tanggal H-1
-        function setDate() {
-            const date = new Date();
-            date.setDate(date.getDate() - 1);
-            document.getElementById('reportDate').textContent = `Data Per: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+            // 1. FILTER: Hapus baris yang namanya "Grand Total" dari data agar tidak ganda
+            const dataCSO = data.filter(row => row['Nama cso'] !== "Grand Total");
+
+            // 2. Urutkan berdasarkan Amount
+            dataCSO.sort((a, b) => b.Amount - a.Amount);
+
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; 
+
+            let totalCalculation = 0;
+            
+            // 3. Tampilkan data CSO
+            dataCSO.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                const rankClass = index < 3 ? `r${index + 1}` : '';
+                const rankDisplay = index < 3 ? `<span class="rank-badge ${rankClass}">${index + 1}</span>` : `<span class="rank-badge">${index + 1}</span>`;
+                
+                tr.innerHTML = `
+                    <td>${rankDisplay} ${row['Nama cso']}</td>
+                    <td class="text-right">${parseInt(row.Amount).toLocaleString('id-ID')}</td>
+                `;
+                tbody.appendChild(tr);
+                totalCalculation += parseInt(row.Amount);
+            });
+
+            // 4. Buat baris "Grand Total" (Sekarang hanya muncul satu kali)
+            const footer = document.createElement('tr');
+            footer.className = 'grand-total';
+            footer.innerHTML = `<td>Grand Total</td><td class="text-right" id="grand-total">${totalCalculation.toLocaleString('id-ID')}</td>`;
+            tbody.appendChild(footer);
+
+        } catch (error) {
+            console.error("Gagal memuat data Excel:", error);
         }
-        setDate();
-    </script>
+    }
+
+
+    // Jalankan fungsi
+    updateDataFromExcel();
+
+    // Fungsi Menu (sama seperti sebelumnya)
+    const menuBtn = document.getElementById('menu-btn');
+    const navDropdown = document.getElementById('nav-dropdown');
+    const triggerPenjualan = document.getElementById('trigger-penjualan');
+    const submenuPenjualan = document.getElementById('submenu-penjualan');
+
+    menuBtn.addEventListener('click', () => {
+        menuBtn.classList.toggle('active');
+        navDropdown.classList.toggle('open');
+    });
+
+    triggerPenjualan.addEventListener('click', (e) => {
+        e.preventDefault();
+        submenuPenjualan.style.maxHeight = (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") ? "0px" : submenuPenjualan.scrollHeight + "px";
+    });
+
+    function setDate() {
+        const date = new Date();
+        date.setDate(date.getDate() - 1);
+        document.getElementById('reportDate').textContent = `Data Per: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+    }
+    setDate(); 
+    // Menandai menu aktif berdasarkan URL halaman
+function setActiveMenu() {
+    const path = window.location.pathname;
+    const navLink = document.getElementById('nav-penjualan-salmo');
+    
+    // Jika URL mengandung "penjualan-salmo.html"
+    if (path.includes("penjualan-salmo.html")) {
+        // Menambahkan class baru yang mengubah warna teks
+        navLink.classList.add('menu-aktif');
+        
+        // Memastikan submenu terbuka otomatis
+        const submenuPenjualan = document.getElementById('submenu-penjualan');
+        submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
+    }
+}
+
+// Panggil fungsi setelah fungsi lain
+setActiveMenu();
+
+</script>
+
 </body>
 </html>
 
