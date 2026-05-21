@@ -34,6 +34,30 @@
             flex-direction:column;
             padding-bottom:30px;
         }
+        .back-button {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    padding-left: 12px;
+}
+
 
         .app-header{
             background:var(--header-gradient);
@@ -80,7 +104,7 @@
 
         .main-summary{
             margin-bottom:15px;
-            text-align:center;
+            text-align:left;
         }
 
         .sub-summary-grid{
@@ -223,6 +247,10 @@
 </head>
 
 <body>
+<!-- Tombol Kembali -->
+<a href="#" id="back-btn" class="back-button">
+    <span class="back-icon">←</span> Kembali
+</a>
 
 <div class="app-header">
     <h1>MC-SAGARANTEN</h1>
@@ -230,31 +258,35 @@
 </div>
 
 <div class="saldo-card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
+        
+        <div class="main-summary" style="margin-bottom: 0;">
+            <div class="saldo-label">Total Penjualan Salmo</div>
+            <div class="saldo-amount" id="grand-total" style="margin-bottom: 0;">Memuat...</div>
+        </div>
 
-    <div class="main-summary">
-        <div class="saldo-label">Total Penjualan Salmo</div>
-        <div class="saldo-amount" id="grand-total">Memuat...</div>
+        <div id="live-clock-container" style="text-align: right;">
+            <div id="live-date" style="font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">--/--/----</div>
+            <div id="live-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">--:--:--</div>
+        </div>
     </div>
-
+    
     <div class="sub-summary-grid">
-
         <div class="sub-stat">
             <div class="sub-label">SP & Voucher</div>
             <div class="sub-value" id="total-sp">...</div>
         </div>
-
         <div class="sub-stat">
             <div class="sub-label">All Paket</div>
             <div class="sub-value" id="total-paket">...</div>
         </div>
-
         <div class="sub-stat">
             <div class="sub-label">Hifi</div>
             <div class="sub-value" id="total-hifi">...</div>
         </div>
-
     </div>
 </div>
+
 
 <div class="app-navigation">
 
@@ -366,7 +398,19 @@
 <!-- XLSX MASIH DIPAKAI -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-<script>
+<script> 
+document.getElementById('back-btn').addEventListener('click', function(e) {
+    e.preventDefault(); // Mencegah link berpindah otomatis
+    
+    // Konfirmasi dengan jendela bawaan browser
+    const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari Dashboard?");
+    
+    if (konfirmasi) {
+        // Ganti 'index.html' dengan halaman tujuan Anda
+        window.location.href = 'index.html'; 
+    }
+});
+
 
 // =========================
 // FORMAT RUPIAH
@@ -632,6 +676,29 @@ async function updateTotalHifi() {
         document.getElementById('total-hifi').innerText = 'Error';
     }
 }
+// =========================
+// WIDGET JAM & TANGGAL
+// =========================
+function updateClock() {
+    const now = new Date();
+    
+    // Opsi format bahasa Indonesia
+    const optionsDate = { weekday: 'short', day: 'numeric', month: 'long' };
+    const dateString = now.toLocaleDateString('id-ID', optionsDate);
+    
+    // Format Waktu: HH:MM:SS
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    document.getElementById('live-date').innerText = dateString;
+    document.getElementById('live-time').innerText = `${hours}:${minutes}:${seconds}`;
+}
+
+// Jalankan setiap 1 detik
+setInterval(updateClock, 1000);
+updateClock();
+
 
 // =========================
 // LOAD SEMUA
