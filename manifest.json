@@ -1,6 +1,6 @@
 {
   "name": "MC-SAGARANTEN",
-  "short_name": "MC",
+  "short_name": "Mobile Website",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

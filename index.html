@@ -43,31 +43,7 @@
             flex-direction:column;
             padding-bottom:30px;
         }
-        .back-button {
-    position: absolute;
-    top: 8px;
-    left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    padding-left: 12px;
-}
-
-
+        
         .app-header{
             background:var(--header-gradient);
             color:#fff;
@@ -301,10 +277,6 @@
 </head>
 
 <body>
-<!-- Tombol Kembali -->
-<a href="#" id="back-btn" class="back-button">
-    <span class="back-icon">←</span> 
-    Keluar</a>
 
 <div class="app-header">
     <h1>MC-SAGARANTEN</h1>
@@ -470,32 +442,6 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script> 
-document.getElementById('back-btn').addEventListener('click', function(e) {
-    e.preventDefault();
-
-    const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari Dashboard?");
-
-    if (konfirmasi) {
-
-        // Jika ada riwayat halaman sebelumnya
-        if (window.history.length > 1) {
-
-            // Kembali ke halaman sebelumnya
-            window.history.back();
-
-        } else {
-
-            // Coba tutup tab/browser
-            window.close();
-
-            // Jika gagal, pindah ke index
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 300);
-        }
-    }
-});
-
 
 // =========================
 // FORMAT RUPIAH

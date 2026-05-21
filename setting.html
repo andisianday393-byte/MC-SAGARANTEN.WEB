@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e293b">
+    <title>Setting - MC-SAGARANTEN</title>
+    <style>
+
+        :root {
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-color: #f1f5f9;
+            --border-color: #e2e8f0;
+        }
+        *{ box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif; }
+        body{ background:var(--bg-color); min-height:100vh; padding-bottom:30px; }
+        
+        .app-header{ background:var(--header-gradient); color:#fff; padding:35px 20px 30px; text-align:center; margin-bottom:20px; }
+        .back-button { position: absolute; top: 8px; left: 10px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; border-radius: 10px; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .content-wrapper { padding: 0 10px; }
+        .setting-card { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
+        .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+}
+.setting-item:active{
+    transform:none;
+    opacity:1;
+}
+        .setting-label { font-size: 13px; font-weight: 600; color: #334155; }
+        .setting-desc { font-size: 10px; color: #64748b; }
+        .toggle-btn { width: 40px; height: 20px; background: #cbd5e1; border-radius: 20px; position: relative; transition: 0.3s; }
+        
+    #btn-install{
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(16,185,129,0.3);
+}
+
+#btn-install:active{
+    transform: scale(0.95);
+}
+
+#btn-install:hover{
+    background:#059669;
+}
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-button">← Kembali</a>
+
+<div class="app-header">
+    <h1>Pengaturan</h1>
+    <p>Konfigurasi sistem portal</p>
+</div>
+
+<div class="content-wrapper">
+    <div class="setting-card">
+<div class="setting-item" id="install-section">
+    <div>
+        <div class="setting-label">Silakan Instal Aplikasi</div>
+        <div class="setting-desc">Tambahkan ke layar utama perangkat Anda</div>
+    </div>
+    <button id="btn-install" style="background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">
+        Install
+    </button>
+</div>
+        <!-- Contoh Menu -->
+        <div class="setting-item">
+            <div>
+                <div class="setting-label">Mode Sinkronisasi Otomatis</div>
+                <div class="setting-desc">Update data setiap 10 detik</div>
+            </div>
+            <div class="toggle-btn" style="background: #10b981;"></div>
+        </div>
+
+        <div class="setting-item" onclick="alert('Fitur ini akan segera tersedia!')">
+            <div>
+                <div class="setting-label">Ganti Nama User</div>
+                <div class="setting-desc">Identitas CSO: Admin_01</div>
+            </div>
+            <div style="color: #6366f1;">Edit</div>
+        </div>
+
+        <div class="setting-item">
+            <div>
+                <div class="setting-label">Bersihkan Cache Data</div>
+                <div class="setting-desc">Menghapus data sementara untuk refresh</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; font-size: 10px; color: #94a3b8;">
+        Versi 1.0.2 - Sistem MC-SAGARANTEN
+    </div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('Service Worker aktif'))
+    .catch(err => console.log('SW gagal', err));
+}
+</script>
+</body>
+<script>
+let deferredPrompt;
+
+const installSection = document.getElementById('install-section');
+const btnInstall = document.getElementById('btn-install');
+
+// Deteksi apakah aplikasi sudah terinstall
+window.addEventListener('appinstalled', () => {
+    btnInstall.innerText = 'Terinstall';
+    btnInstall.style.background = '#64748b';
+    btnInstall.disabled = true;
+});
+
+// Menangkap event install PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    btnInstall.style.display = 'inline-block';
+});
+
+// Tombol install diklik
+btnInstall.addEventListener('click', async () => {
+
+    // Efek loading
+    btnInstall.innerText = 'Memproses...';
+    btnInstall.style.opacity = '0.7';
+
+    if (deferredPrompt) {
+
+        // Menampilkan popup install
+        deferredPrompt.prompt();
+
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+
+            btnInstall.innerText = 'Berhasil Diinstall';
+            btnInstall.style.background = '#64748b';
+
+        } else {
+
+            btnInstall.innerText = 'Install';
+            btnInstall.style.opacity = '1';
+
+        }
+
+        deferredPrompt = null;
+
+    } else {
+
+        // Jika browser tidak mendukung
+        alert('Install aplikasi belum didukung atau aplikasi sudah terinstall.');
+
+        btnInstall.innerText = 'Install';
+        btnInstall.style.opacity = '1';
+    }
+});
+</script>
+
+</html>
