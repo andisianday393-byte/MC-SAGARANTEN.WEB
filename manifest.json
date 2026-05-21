@@ -1,6 +1,6 @@
 {
-  "name": "Webis",
-  "short_name": "Webis",
+  "name": "Mosa",
+  "short_name": "Mosa",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
