@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MC-SAGARANTEN - Home Portal</title>
@@ -243,14 +245,59 @@
             color:var(--text-muted);
             margin-top:auto;
         }
+        /* Container tetap */
+.quick-action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px; /* Sedikit dirapatkan */
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+
+/* Tombol dibuat lebih tipis */
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 8px 5px; /* Padding vertikal dikurangi */
+    border-radius: 8px;
+    text-decoration: none;
+    color: #334155;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow lebih tipis */
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Ikon diperkecil */
+.action-icon {
+    font-size: 16px; /* Ikon lebih kecil */
+    margin-bottom: 2px; /* Jarak ke teks dipersempit */
+}
+
+/* Teks label diperkecil */
+.action-label {
+    font-size: 9px; /* Font lebih kecil */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+
     </style>
 </head>
 
 <body>
 <!-- Tombol Kembali -->
 <a href="#" id="back-btn" class="back-button">
-    <span class="back-icon">←</span> Kembali
-</a>
+    <span class="back-icon">←</span> 
+    Keluar</a>
 
 <div class="app-header">
     <h1>MC-SAGARANTEN</h1>
@@ -285,6 +332,23 @@
             <div class="sub-value" id="total-hifi">...</div>
         </div>
     </div>
+</div>
+<!-- Tombol Aksi Cepat -->
+<div class="quick-action-grid">
+    <a href="download-data.html" class="action-btn">
+        <div class="action-icon">📥</div>
+        <div class="action-label">Download File</div>
+    </a>
+    
+    <a href="info-log.html" class="action-btn">
+        <div class="action-icon">📜</div>
+        <div class="action-label">Info Log</div>
+    </a>
+    
+    <a href="setting.html" class="action-btn">
+        <div class="action-icon">⚙️</div>
+        <div class="action-label">Setting</div>
+    </a>
 </div>
 
 
@@ -392,7 +456,7 @@
 </div>
 
 <div class="app-footer">
-    &copy; 2026 MC-SAGARANTEN
+    &copy; 2026 Designed and developed by [Andi Ramdani] WEB MC-SAGARANTEN
 </div>
 
 <!-- XLSX MASIH DIPAKAI -->
@@ -400,14 +464,28 @@
 
 <script> 
 document.getElementById('back-btn').addEventListener('click', function(e) {
-    e.preventDefault(); // Mencegah link berpindah otomatis
-    
-    // Konfirmasi dengan jendela bawaan browser
+    e.preventDefault();
+
     const konfirmasi = confirm("Apakah Anda yakin ingin keluar dari Dashboard?");
-    
+
     if (konfirmasi) {
-        // Ganti 'index.html' dengan halaman tujuan Anda
-        window.location.href = 'index.html'; 
+
+        // Jika ada riwayat halaman sebelumnya
+        if (window.history.length > 1) {
+
+            // Kembali ke halaman sebelumnya
+            window.history.back();
+
+        } else {
+
+            // Coba tutup tab/browser
+            window.close();
+
+            // Jika gagal, pindah ke index
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 300);
+        }
     }
 });
 
