@@ -1,6 +1,6 @@
 {
-  "name": "Mobile Website",
-  "short_name": "Mobile Website",
+  "name": "Webis",
+  "short_name": "Webis",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
