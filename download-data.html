@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Data File - MC-SAGARANTEN</title>
+    
+    <style>
+        :root {
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-color: #f1f5f9;
+            --text-main: #334155;
+            --accent-penjualan: #10b981;
+            --border-color: #e2e8f0;
+        }
+
+        *{ box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif; }
+        body{ background:var(--bg-color); color:var(--text-main); padding-bottom:30px; }
+
+        .app-header{
+            background:var(--header-gradient);
+            color:#fff;
+            padding:35px 20px 30px;
+            text-align:center;
+            box-shadow:0 4px 6px rgba(0,0,0,.1);
+            margin-bottom:30px;
+        }
+
+        .container { padding: 0 20px; max-width: 600px; margin: auto; }
+        
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+
+        .file-item:last-child { border-bottom: none; }
+
+        .file-icon { font-size: 24px; margin-right: 15px; width: 30px; text-align: center; }
+
+        .file-info { flex: 1; }
+        .file-name { font-weight: 700; display: block; margin-bottom: 4px; color: #1e293b; }
+        .file-desc { font-size: 12px; color: #64748b; }
+
+        .btn-download {
+            background: var(--accent-penjualan);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: #1e293b; /* Warna lebih gelap agar kontras */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700; /* Dibuat tebal */
+    padding: 8px 16px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    background: #cbd5e1;
+    padding-left: 20px; /* Efek bergeser saat di-hover */
+}
+
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <h1>Download Data File</h1>
+    <p>Portal unduhan data dari Google Drive</p>
+</div>
+
+<div class="container">
+    <a href="index.html" class="back-link">
+    <span>←</span> Kembali ke Dashboard Utama
+</a>
+
+
+    <div class="card">
+        <!-- Database Penjualan -->
+        <div class="file-item">
+            <div class="file-icon">📊</div>
+            <div class="file-info">
+                <span class="file-name">Database Penjualan</span>
+                <span class="file-desc">Rekapitulasi utama sistem</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+
+        <!-- Report Stock Barang -->
+        <div class="file-item">
+            <div class="file-icon">📦</div>
+            <div class="file-info">
+                <span class="file-name">Report Stock Barang</span>
+                <span class="file-desc">Laporan sisa stok gudang</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+
+        <!-- Report Stock dan Pembayaran Hifi -->
+        <div class="file-item">
+            <div class="file-icon">🎧</div>
+            <div class="file-info">
+                <span class="file-name">Report Stock & Pembayaran Hifi</span>
+                <span class="file-desc">Monitor data Hifi</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+
+        <!-- Program Mei TM2 -->
+        <div class="file-item">
+            <div class="file-icon">📞</div>
+            <div class="file-info">
+                <span class="file-name">Program Mei TM2</span>
+                <span class="file-desc">Data program paket TM</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+
+        <!-- Program Target 10K -->
+        <div class="file-item">
+            <div class="file-icon">🎯</div>
+            <div class="file-info">
+                <span class="file-name">Program Target 10K</span>
+                <span class="file-desc">Rekapitulasi target pencapaian</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+        
+        <!-- Template Form Permintaan -->
+        <div class="file-item">
+            <div class="file-icon">📝</div>
+            <div class="file-info">
+                <span class="file-name">Template Form Permintaan</span>
+                <span class="file-desc">Format standar laporan tim</span>
+            </div>
+            <a href="#" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
