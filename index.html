@@ -26,6 +26,8 @@
             --accent-dse: #6366f1;
             --accent-penjualan: #10b981;
             --accent-submenu: #0d9488;
+            --accent-trade: #ec4899; 
+            --accent-kpi: #8b5cf6; /* Warna ungu premium untuk KPI DSE & Data Outlet */
         }
 
         *{
@@ -44,25 +46,29 @@
             padding-bottom:30px;
         }
         
-        .app-header{
-            background:var(--header-gradient);
-            color:#fff;
-            padding:35px 20px 30px;
-            text-align:center;
-            box-shadow:0 4px 6px rgba(0,0,0,.1);
-            margin-bottom:20px;
+        /* Warna gradasi tipis dengan batas bawah garis kuning emas elegan */
+        .app-header {
+            background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
+            color: #fff;
+            padding: 15px 20px; 
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,.12); 
+            margin-bottom: 15px;
+            border-bottom: 3px solid #eab308; 
         }
 
-        .app-header h1{
-            font-size:20px;
-            font-weight:700;
-            letter-spacing:1px;
-            margin-bottom:4px;
+        /* Ukuran font judul disusutkan */
+        .app-header h1 {
+            font-size: 16px; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
         }
 
-        .app-header p{
-            font-size:12px;
-            opacity:.8;
+        /* Ukuran sub-judul disesuaikan */
+        .app-header p {
+            font-size: 10px; 
+            opacity: .75;
         }
 
         .saldo-card{
@@ -147,6 +153,8 @@
         .form-link{border-left:5px solid var(--accent-form);}
         .dse-link{border-left:5px solid var(--accent-dse);}
         .penjualan-link{border-left:5px solid var(--accent-penjualan);}
+        .trade-link{border-left:5px solid var(--accent-trade);}
+        .kpi-link{border-left:5px solid var(--accent-kpi);} /* Border warna menu KPI DSE & Data Outlet */
 
         .nav-icon{
             font-size:26px;
@@ -228,51 +236,52 @@
             color:var(--text-muted);
             margin-top:auto;
         }
-        /* Container tetap */
-.quick-action-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px; /* Sedikit dirapatkan */
-    padding: 0 10px;
-    margin-bottom: 10px;
-}
 
-/* Tombol dibuat lebih tipis */
-.action-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    padding: 8px 5px; /* Padding vertikal dikurangi */
-    border-radius: 8px;
-    text-decoration: none;
-    color: #334155;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow lebih tipis */
-    transition: all 0.2s ease;
-}
+        /* Container dengan 4 kolom seimbang */
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+            padding: 0 10px;
+            margin-bottom: 10px;
+        }
 
-.action-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-}
+        /* Tombol dibuat jauh lebih tipis */
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            padding: 5px 2px; 
+            border-radius: 6px; 
+            text-decoration: none;
+            color: #334155;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03); 
+            transition: all 0.2s ease;
+        }
 
-/* Ikon diperkecil */
-.action-icon {
-    font-size: 16px; /* Ikon lebih kecil */
-    margin-bottom: 2px; /* Jarak ke teks dipersempit */
-}
+        .action-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
 
-/* Teks label diperkecil */
-.action-label {
-    font-size: 9px; /* Font lebih kecil */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-}
+        /* Ikon diperkecil ukurannya */
+        .action-icon {
+            font-size: 14px; 
+            margin-bottom: 1px; 
+        }
 
-
+        /* Teks label disesuaikan ukurannya */
+        .action-label {
+            font-size: 8.5px; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1px;
+            text-align: center;
+            line-height: 1.1;
+        }
     </style>
 </head>
 
@@ -312,11 +321,17 @@
         </div>
     </div>
 </div>
-<!-- Tombol Aksi Cepat -->
+
+<!-- Tombol Aksi Cepat dengan Tombol Cari Baru -->
 <div class="quick-action-grid">
     <a href="download-data.html" class="action-btn">
         <div class="action-icon">📥</div>
         <div class="action-label">Download File</div>
+    </a>
+
+    <a href="cari-data.html" class="action-btn">
+        <div class="action-icon">🔍</div>
+        <div class="action-label">Cari</div>
     </a>
     
     <a href="info-log.html" class="action-btn">
@@ -330,412 +345,218 @@
     </a>
 </div>
 
-
 <div class="app-navigation">
-
     <div class="nav-wrapper">
-
         <a href="stok-gudang.html" class="nav-item gudang-link">
             <div class="nav-icon">📦</div>
-
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-gudang)">
-                    Laporan Stok Gudang
-                </div>
-
-                <div class="nav-desc">
-                    Pantau sisa stok dan monitor barang masuk.
-                </div>
+                <div class="nav-title" style="color:var(--accent-gudang)">Laporan Stok Gudang</div>
+                <div class="nav-desc">Pantau sisa stok dan monitor barang masuk.</div>
             </div>
-
             <div class="nav-arrow">➔</div>
         </a>
 
         <a href="form-permintaan.html" class="nav-item form-link">
             <div class="nav-icon">📝</div>
-
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-form)">
-                    Form Permintaan Barang
-                </div>
-
-                <div class="nav-desc">
-                    Input permintaan barang tim lapangan.
-                </div>
+                <div class="nav-title" style="color:var(--accent-form)">Form Permintaan Barang</div>
+                <div class="nav-desc">Input permintaan barang tim lapangan.</div>
             </div>
-
             <div class="nav-arrow">➔</div>
         </a>
 
         <a href="stok-barang-dse.html" class="nav-item dse-link">
             <div class="nav-icon">💼</div>
-
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-dse)">
-                    Stok Barang DSE
-                </div>
-
-                <div class="nav-desc">
-                    Monitor stok dan distribusi sales.
-                </div>
+                <div class="nav-title" style="color:var(--accent-dse)">Stok Barang DSE</div>
+                <div class="nav-desc">Monitor stok dan distribusi sales.</div>
             </div>
-
             <div class="nav-arrow">➔</div>
         </a>
 
         <div class="nav-item penjualan-link" id="btn-penjualan">
-
             <div class="nav-icon">📊</div>
-
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-penjualan)">
-                    Laporan Penjualan
-                </div>
-
-                <div class="nav-desc">
-                    Rekap data penjualan dan performa.
-                </div>
+                <div class="nav-title" style="color:var(--accent-penjualan)">Laporan Penjualan</div>
+                <div class="nav-desc">Rekap data penjualan dan performa.</div>
             </div>
-
             <div class="nav-arrow">➔</div>
-
         </div>
 
         <div class="submenu-container" id="submenu-penjualan">
-
             <a href="penjualan-salmo.html" class="submenu-item">
                 <img src="img/mobii.jpg" class="submenu-img">
                 <div class="submenu-title">Penjualan SALMO</div>
             </a>
-
             <a href="penjualan-reguler3.html" class="submenu-item">
                 <div class="submenu-icon">🛒</div>
-                <div class="submenu-title">Penjualan Reguler</div>
+                <div class="submenu-title">Penjualan Regular</div>
             </a>
-
             <a href="penjualan-paket-tm2.html" class="submenu-item">
                 <div class="submenu-icon">📞</div>
                 <div class="submenu-title">Penjualan Paket TM</div>
             </a>
-
             <a href="penjualan-direct-selling.html" class="submenu-item">
                 <div class="submenu-icon">🚶</div>
                 <div class="submenu-title">Penjualan Direct Selling</div>
             </a>
-
             <a href="penjualan-hifi.html" class="submenu-item">
                 <img src="img/hifi.png" class="submenu-img">
                 <div class="submenu-title">Penjualan Hifi</div>
             </a>
-
         </div>
 
-    </div>
+        <a href="trade-program.html" class="nav-item trade-link">
+            <div class="nav-icon">🎁</div>
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-trade)">Trade Program</div>
+                <div class="nav-desc">Kelola program insentif, retail trade, dan promo mitra.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
 
+        <!-- MENU BARU: KPI DSE Dan Data Outlet ditempatkan di bawah Trade Program -->
+        <a href="kpi-dse-data-outlet.html" class="nav-item kpi-link">
+            <div class="nav-icon">📊</div>
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-kpi)">KPI DSE DAN DATA OUTLET</div>
+                <div class="nav-desc">Pantau pencapaian target sales, produktivitas, serta basis data retail outlet.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
+    </div>
 </div>
 
 <div class="app-footer">
     &copy; 2026 Designed and developed by [Andi Ramdani] WEB MC-SAGARANTEN
 </div>
 
-<!-- XLSX MASIH DIPAKAI -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script> 
-
-// =========================
-// FORMAT RUPIAH
-// =========================
 function formatRupiah(number) {
-
-    return "Rp " +
-        Number(number).toLocaleString('id-ID');
+    return "Rp " + Number(number).toLocaleString('id-ID');
 }
 
-// =========================
-// AMBIL ANGKA
-// =========================
 function ambilAngka(value) {
-
     if (!value) return 0;
-
-    return parseInt(
-        String(value)
-        .replace(/[^\d]/g, '')
-    ) || 0;
+    return parseInt(String(value).replace(/[^\d]/g, '')) || 0;
 }
 
-// =========================
-// FILE EXCEL
-// =========================
-const EXCEL_FILE_URL =
-    'index-data.xlsx';
+const EXCEL_FILE_URL = 'index-data.xlsx';
 
-// =========================
-// TOTAL SALMO
-// =========================
 async function updateSaldoSalmo() {
-
     try {
-
-        const response =
-            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-
-        const arrayBuffer =
-            await response.arrayBuffer();
-
-        const workbook =
-            XLSX.read(arrayBuffer, {
-                type:'array'
-            });
-
-        const worksheet =
-            workbook.Sheets['penjualan-salmo'];
-
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        const worksheet = workbook.Sheets['penjualan-salmo'];
         if (!worksheet) return;
-
-        const data =
-            XLSX.utils.sheet_to_json(worksheet);
-
+        const data = XLSX.utils.sheet_to_json(worksheet);
         let grandTotal = 0;
-
         data.forEach(row => {
-
-            const nama =
-                String(row['Nama cso'] || '')
-                .trim()
-                .toUpperCase();
-
+            const nama = String(row['Nama cso'] || '').trim().toUpperCase();
             if (nama === 'GRAND TOTAL') return;
-
-            grandTotal +=
-                ambilAngka(row['Amount']);
+            grandTotal += ambilAngka(row['Amount']);
         });
-
-        document.getElementById('grand-total')
-            .innerText =
-            formatRupiah(grandTotal);
-
+        document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
     } catch(error) {
-
         console.log(error);
-
-        document.getElementById('grand-total')
-            .innerText = 'Error';
+        document.getElementById('grand-total').innerText = 'Error';
     }
 }
 
-// =========================
-// TOTAL SP + VOUCHER
-// =========================
 async function updateTotalSPVoucher() {
-
     try {
-
-        const response =
-            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-
-        const arrayBuffer =
-            await response.arrayBuffer();
-
-        const workbook =
-            XLSX.read(arrayBuffer, {
-                type:'array'
-            });
-
-        const worksheet =
-            workbook.Sheets['penjualan-reguler'];
-
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        const worksheet = workbook.Sheets['penjualan-reguler'];
         if (!worksheet) return;
-
-        const rows =
-            XLSX.utils.sheet_to_json(
-                worksheet,
-                {
-                    header:1,
-                    defval:0
-                }
-            );
-
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header:1, defval:0 });
         let total = 0;
-
         for(let i=2; i<rows.length; i++) {
-
             const row = rows[i];
-
             if(!row) continue;
-
-            const harga =
-                ambilAngka(row[6]);
-
+            const harga = ambilAngka(row[6]);
             let qty = 0;
-
             for(let c=1; c<=4; c++) {
-
-                qty +=
-                    ambilAngka(row[c]);
+                qty += ambilAngka(row[c]);
             }
-
             total += qty * harga;
         }
-
-        document.getElementById('total-sp')
-            .innerText =
-            formatRupiah(total);
-
+        document.getElementById('total-sp').innerText = formatRupiah(total);
     } catch(error) {
-
         console.log(error);
-
-        document.getElementById('total-sp')
-            .innerText = 'Error';
+        document.getElementById('total-sp').innerText = 'Error';
     }
 }
 
-// =========================
-// TOTAL ALL PAKET
-// =========================
 async function updateTotalPaket() {
-
     try {
-
-        const response =
-            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-
-        const arrayBuffer =
-            await response.arrayBuffer();
-
-        const workbook =
-            XLSX.read(arrayBuffer, {
-                type:'array'
-            });
-
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
         let grandTotal = 0;
 
-        // =========================
-        // AMBIL NILAI CELL
-        // =========================
         function ambilCell(sheetName, cell) {
-
-            const worksheet =
-                workbook.Sheets[sheetName];
-
+            const worksheet = workbook.Sheets[sheetName];
             if (!worksheet) {
-
-                console.log(
-                    'Sheet tidak ditemukan:',
-                    sheetName
-                );
-
+                console.log('Sheet tidak ditemukan:', sheetName);
                 return 0;
             }
-
-            const value =
-                worksheet[cell]
-                ? worksheet[cell].v
-                : 0;
-
+            const value = worksheet[cell] ? worksheet[cell].v : 0;
             return ambilAngka(value);
         }
 
-        // =========================
-        // AMBIL E10
-        // =========================
-        const totalTM =
-            ambilCell(
-                'penjualan-paket-tm',
-                'E7'
-            );
-
-        const totalDS =
-            ambilCell(
-                'penjualan-direct-selling',
-                'E6'
-            );
-
-        grandTotal =
-            totalTM + totalDS;
-
-        // =========================
-        // TAMPILKAN
-        // =========================
-        document.getElementById('total-paket')
-            .innerText =
-            formatRupiah(grandTotal);
-
+        const totalTM = ambilCell('penjualan-paket-tm', 'E7');
+        const totalDS = ambilCell('penjualan-direct-selling', 'E6');
+        grandTotal = totalTM + totalDS;
+        document.getElementById('total-paket').innerText = formatRupiah(grandTotal);
     } catch(error) {
-
         console.error(error);
-
-        document.getElementById('total-paket')
-            .innerText = 'Error';
+        document.getElementById('total-paket').innerText = 'Error';
     }
 }
-// =========================
-// TOTAL HIFI (FIXED)
-// =========================
+
 async function updateTotalHifi() {
     try {
         const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
         const arrayBuffer = await response.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const worksheet = workbook.Sheets['penjualan-hifi'];
-
         if (!worksheet) return;
-
         const data = XLSX.utils.sheet_to_json(worksheet);
-
         let total = 0;
-
         data.forEach(row => {
-            // Sesuai data Anda: Kolom tanggal bernama 'Tgl Bayar'
             const tglBayar = row['Tgl Bayar'];
-            
-            // Sesuai data Anda: Kolom harga bernama 'HARGA'
             const harga = row['HARGA'];
-
-            // Cek apakah kolom Tgl Bayar ada isinya (tidak null/undefined)
             if (tglBayar && String(tglBayar).trim() !== "") {
                 total += ambilAngka(harga);
             }
         });
-
         document.getElementById('total-hifi').innerText = formatRupiah(total);
-
     } catch(error) {
         console.log("Error Hifi:", error);
         document.getElementById('total-hifi').innerText = 'Error';
     }
 }
-// =========================
-// WIDGET JAM & TANGGAL
-// =========================
+
 function updateClock() {
     const now = new Date();
-    
-    // Opsi format bahasa Indonesia
     const optionsDate = { weekday: 'short', day: 'numeric', month: 'long' };
     const dateString = now.toLocaleDateString('id-ID', optionsDate);
-    
-    // Format Waktu: HH:MM:SS
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
     document.getElementById('live-date').innerText = dateString;
     document.getElementById('live-time').innerText = `${hours}:${minutes}:${seconds}`;
 }
 
-// Jalankan setiap 1 detik
 setInterval(updateClock, 1000);
 updateClock();
 
-
-// =========================
-// LOAD SEMUA
-// =========================
 function loadSemua() {
-
     updateSaldoSalmo();
     updateTotalSPVoucher();
     updateTotalPaket();
@@ -743,31 +564,19 @@ function loadSemua() {
 }
 
 loadSemua();
-
 setInterval(loadSemua, 10000);
 
-// =========================
-// SUBMENU
-// =========================
-document
-.getElementById('btn-penjualan')
-.addEventListener('click', function() {
-
-    const submenu =
-        document.getElementById('submenu-penjualan');
-
+document.getElementById('btn-penjualan').addEventListener('click', function() {
+    const submenu = document.getElementById('submenu-penjualan');
     this.classList.toggle('active');
-
-    submenu.style.maxHeight =
-        submenu.style.maxHeight &&
-        submenu.style.maxHeight !== '0px'
+    submenu.style.maxHeight = submenu.style.maxHeight && submenu.style.maxHeight !== '0px'
         ? '0px'
         : submenu.scrollHeight + 'px';
 });
-
 </script>
-
 </body>
 </html>
+
+
 
 
