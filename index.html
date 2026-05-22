@@ -52,8 +52,8 @@
             top: 0;
             z-index: 100;
             background: var(--bg-color);
-            padding-bottom: 5px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding-bottom: 10px; /* Ditambahkan ruang agar tombol aksi tidak terpotong bayangan */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
         }
         
         /* Warna gradasi tipis dengan batas bawah garis kuning emas elegan */
@@ -134,12 +134,15 @@
             font-weight:700;
         }
 
+        /* PERBAIKAN: Mengatur ulang padding atas agar konten scroll tidak merayap ke belakang header */
         .app-navigation{
             flex:1;
             display:flex;
             flex-direction:column;
             width:100%;
-            padding:10px 10px 0 10px; /* Ditambahkan padding atas tipis agar tidak menempel kontainer */
+            padding:15px 10px 0 10px; 
+            position: relative;
+            z-index: 1; /* Menjaga konteks tumpukan elemen tetap di bawah sticky container */
         }
 
         .nav-wrapper{
@@ -590,6 +593,7 @@ document.getElementById('btn-penjualan').addEventListener('click', function() {
 </script>
 </body>
 </html>
+
 
 
 
