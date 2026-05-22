@@ -27,7 +27,7 @@
             --accent-penjualan: #10b981;
             --accent-submenu: #0d9488;
             --accent-trade: #ec4899; 
-            --accent-kpi: #8b5cf6; /* Warna ungu premium untuk KPI DSE & Data Outlet */
+            --accent-kpi: #8b5cf6; 
         }
 
         *{
@@ -44,6 +44,16 @@
             display:flex;
             flex-direction:column;
             padding-bottom:30px;
+        }
+
+        /* Container khusus untuk mengunci elemen bagian atas */
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-color);
+            padding-bottom: 5px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         /* Warna gradasi tipis dengan batas bawah garis kuning emas elegan */
@@ -129,7 +139,7 @@
             display:flex;
             flex-direction:column;
             width:100%;
-            padding:0 10px;
+            padding:10px 10px 0 10px; /* Ditambahkan padding atas tipis agar tidak menempel kontainer */
         }
 
         .nav-wrapper{
@@ -154,7 +164,7 @@
         .dse-link{border-left:5px solid var(--accent-dse);}
         .penjualan-link{border-left:5px solid var(--accent-penjualan);}
         .trade-link{border-left:5px solid var(--accent-trade);}
-        .kpi-link{border-left:5px solid var(--accent-kpi);} /* Border warna menu KPI DSE & Data Outlet */
+        .kpi-link{border-left:5px solid var(--accent-kpi);} 
 
         .nav-icon{
             font-size:26px;
@@ -287,64 +297,69 @@
 
 <body>
 
-<div class="app-header">
-    <h1>MC-SAGARANTEN</h1>
-    <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
-</div>
+<!-- BAGIAN ATAS DI-FREEZE / STICKY DI SINI -->
+<div class="sticky-container">
+    <div class="app-header">
+        <h1>MC-SAGARANTEN</h1>
+        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+    </div>
 
-<div class="saldo-card">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
+    <div class="saldo-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
+            
+            <div class="main-summary" style="margin-bottom: 0;">
+                <div class="saldo-label">Total Penjualan Salmo</div>
+                <div class="saldo-amount" id="grand-total" style="margin-bottom: 0;">Memuat...</div>
+            </div>
+
+            <div id="live-clock-container" style="text-align: right;">
+                <div id="live-date" style="font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">--/--/----</div>
+                <div id="live-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">--:--:--</div>
+            </div>
+        </div>
         
-        <div class="main-summary" style="margin-bottom: 0;">
-            <div class="saldo-label">Total Penjualan Salmo</div>
-            <div class="saldo-amount" id="grand-total" style="margin-bottom: 0;">Memuat...</div>
-        </div>
-
-        <div id="live-clock-container" style="text-align: right;">
-            <div id="live-date" style="font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">--/--/----</div>
-            <div id="live-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">--:--:--</div>
-        </div>
-    </div>
-    
-    <div class="sub-summary-grid">
-        <div class="sub-stat">
-            <div class="sub-label">SP & Voucher</div>
-            <div class="sub-value" id="total-sp">...</div>
-        </div>
-        <div class="sub-stat">
-            <div class="sub-label">All Paket</div>
-            <div class="sub-value" id="total-paket">...</div>
-        </div>
-        <div class="sub-stat">
-            <div class="sub-label">Hifi</div>
-            <div class="sub-value" id="total-hifi">...</div>
+        <div class="sub-summary-grid">
+            <div class="sub-stat">
+                <div class="sub-label">SP & Voucher</div>
+                <div class="sub-value" id="total-sp">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">All Paket</div>
+                <div class="sub-value" id="total-paket">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">Hifi</div>
+                <div class="sub-value" id="total-hifi">...</div>
+            </div>
         </div>
     </div>
+
+    <!-- Tombol Aksi Cepat -->
+    <div class="quick-action-grid">
+        <a href="download-data.html" class="action-btn">
+            <div class="action-icon">📥</div>
+            <div class="action-label">Download File</div>
+        </a>
+
+        <a href="cari-data.html" class="action-btn">
+            <div class="action-icon">🔍</div>
+            <div class="action-label">Cari</div>
+        </a>
+        
+        <a href="info-log.html" class="action-btn">
+            <div class="action-icon">📜</div>
+            <div class="action-label">Info Log</div>
+        </a>
+        
+        <a href="setting.html" class="action-btn">
+            <div class="action-icon">⚙️</div>
+            <div class="action-label">Setting</div>
+        </a>
+    </div>
 </div>
+<!-- AKHIR DARI AREA STICKY -->
 
-<!-- Tombol Aksi Cepat dengan Tombol Cari Baru -->
-<div class="quick-action-grid">
-    <a href="download-data.html" class="action-btn">
-        <div class="action-icon">📥</div>
-        <div class="action-label">Download File</div>
-    </a>
-
-    <a href="cari-data.html" class="action-btn">
-        <div class="action-icon">🔍</div>
-        <div class="action-label">Cari</div>
-    </a>
-    
-    <a href="info-log.html" class="action-btn">
-        <div class="action-icon">📜</div>
-        <div class="action-label">Info Log</div>
-    </a>
-    
-    <a href="setting.html" class="action-btn">
-        <div class="action-icon">⚙️</div>
-        <div class="action-label">Setting</div>
-    </a>
-</div>
-
+<!-- BAGIAN NAVIGASI YANG BISA DI-SCROLL -->
 <div class="app-navigation">
     <div class="nav-wrapper">
         <a href="stok-gudang.html" class="nav-item gudang-link">
@@ -415,7 +430,6 @@
             <div class="nav-arrow">➔</div>
         </a>
 
-        <!-- MENU BARU: KPI DSE Dan Data Outlet ditempatkan di bawah Trade Program -->
         <a href="kpi-dse-data-outlet.html" class="nav-item kpi-link">
             <div class="nav-icon">📊</div>
             <div class="nav-details">
@@ -576,6 +590,7 @@ document.getElementById('btn-penjualan').addEventListener('click', function() {
 </script>
 </body>
 </html>
+
 
 
 
