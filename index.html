@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MC-SAGARANTEN - Home Portal</title>
-<!-- Favicon Browser -->
-<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon.png">
+    <!-- Favicon Browser -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon.png">
 
-<!-- Android / Home Screen -->
-<link rel="apple-touch-icon" sizes="180x180" href="./img/favicon.png">
+    <!-- Android / Home Screen -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon.png">
 
-<!-- Progressive Web App -->
-<link rel="manifest" href="manifest.json">
+    <!-- Progressive Web App -->
+    <link rel="manifest" href="manifest.json">
 
-<meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0f172a">
     <style>
         :root {
             --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -52,7 +52,7 @@
             top: 0;
             z-index: 100;
             background: var(--bg-color);
-            padding-bottom: 10px; /* Ditambahkan ruang agar tombol aksi tidak terpotong bayangan */
+            padding-bottom: 10px; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
         }
         
@@ -134,7 +134,7 @@
             font-weight:700;
         }
 
-        /* PERBAIKAN: Mengatur ulang padding atas agar konten scroll tidak merayap ke belakang header */
+        /* Perbaikan padding atas agar konten scroll tidak merayap ke belakang header */
         .app-navigation{
             flex:1;
             display:flex;
@@ -142,7 +142,7 @@
             width:100%;
             padding:15px 10px 0 10px; 
             position: relative;
-            z-index: 1; /* Menjaga konteks tumpukan elemen tetap di bawah sticky container */
+            z-index: 1; 
         }
 
         .nav-wrapper{
@@ -171,6 +171,7 @@
 
         .nav-icon{
             font-size:26px;
+            margin-right:166px;
             margin-right:16px;
             width:35px;
             text-align:center;
@@ -259,7 +260,7 @@
             margin-bottom: 10px;
         }
 
-        /* Tombol dibuat jauh lebih tipis */
+        /* Tombol aksi cepat */
         .action-btn {
             display: flex;
             flex-direction: column;
@@ -280,13 +281,11 @@
             border-color: #cbd5e1;
         }
 
-        /* Ikon diperkecil ukurannya */
         .action-icon {
             font-size: 14px; 
             margin-bottom: 1px; 
         }
 
-        /* Teks label disesuaikan ukurannya */
         .action-label {
             font-size: 8.5px; 
             font-weight: 700;
@@ -448,6 +447,7 @@
     &copy; 2026 Designed and developed by [Andi Ramdani] WEB MC-SAGARANTEN
 </div>
 
+<!-- Library Pembaca file Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script> 
@@ -583,6 +583,7 @@ function loadSemua() {
 loadSemua();
 setInterval(loadSemua, 10000);
 
+// Kontrol Slide Toggle Submenu Laporan Penjualan
 document.getElementById('btn-penjualan').addEventListener('click', function() {
     const submenu = document.getElementById('submenu-penjualan');
     this.classList.toggle('active');
@@ -593,9 +594,3 @@ document.getElementById('btn-penjualan').addEventListener('click', function() {
 </script>
 </body>
 </html>
-
-
-
-
-
-
