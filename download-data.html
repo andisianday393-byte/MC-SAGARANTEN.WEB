@@ -121,6 +121,7 @@
     </a>
 
     <div class="card">
+        <!-- BARU: Menu Report Mobo diletakkan paling atas -->
         <div class="file-item">
             <div class="file-icon">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -130,7 +131,24 @@
                 </svg>
             </div>
             <div class="file-info">
-                <span class="file-name">Penjualan Fisik</span>
+                <span class="file-name">Report Mobo</span>
+                <span class="file-desc">Laporan penjualan saldo mobo dse</span>
+                <span class="update-date" id="date-mobo">Memuat tanggal...</span>
+            </div>
+            <!-- Catatan: Ganti atribut href di bawah ini dengan link Google Drive Mobo Anda jika sudah ada -->
+            <a href="#" class="btn-download">Download</a>
+        </div>
+
+        <div class="file-item">
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
+            </div>
+            <div class="file-info">
+                <span class="file-name">Report Penjualan Fisik</span>
                 <span class="file-desc">Rekapitulasi Penjualan SP dan Voucher</span>
                 <span class="update-date" id="date-penjualan">Memuat tanggal...</span>
             </div>
@@ -204,7 +222,7 @@
 </div>
 
 <script>
-const apiURL = "https://script.google.com/macros/s/AKfycbyGsARVfODOW6s_bN88PCOdXEeTgieVHsLzqxBVb_2UcOEwnpWLuNw-0NgCpiYoY4Yw/exec";
+const apiURL = "https://script.google.com/macros/s/AKfycbysn0h3FuiscJp_0VhHakEDXc9ixFmzGzLfh_xWFSGh4o2CILNImg5BzvTBE54ihQonBQ/exec";
 
 fetch(apiURL)
 .then(response => {
@@ -215,12 +233,13 @@ fetch(apiURL)
     console.log("RAW RESPONSE:");
     console.log(text);
 
-    // coba parse JSON manual
     const data = JSON.parse(text);
-
     console.log("JSON DATA:", data);
 
-    // tampilkan semua walaupun kosong
+    // Integrasi Tanggal Update untuk 'Report Mobo'
+    document.getElementById('date-mobo').innerText =
+        "Update: " + (data.mobo ?? "Tidak ada data");
+
     document.getElementById('date-penjualan').innerText =
         "Update: " + (data.penjualan ?? "Tidak ada data");
 
@@ -239,6 +258,7 @@ fetch(apiURL)
 .catch(error => {
     console.error("ERROR:", error);
 
+    document.getElementById('date-mobo').innerText = "Gagal load";
     document.getElementById('date-penjualan').innerText = "Gagal load";
     document.getElementById('date-target_10k').innerText = "Gagal load";
 });
@@ -246,5 +266,6 @@ fetch(apiURL)
 
 </body>
 </html>
+
 
 
