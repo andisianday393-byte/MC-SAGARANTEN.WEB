@@ -47,11 +47,33 @@
 
         .file-item:last-child { border-bottom: none; }
 
-        .file-icon { font-size: 24px; margin-right: 15px; width: 30px; text-align: center; }
+        .file-icon { 
+            margin-right: 15px; 
+            width: 32px; 
+            height: 32px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .file-icon svg {
+            width: 100%;
+            height: 100%;
+        }
 
         .file-info { flex: 1; }
-        .file-name { font-weight: 700; display: block; margin-bottom: 4px; color: #1e293b; }
-        .file-desc { font-size: 12px; color: #64748b; }
+        .file-name { font-weight: 700; display: block; margin-bottom: 2px; color: #1e293b; }
+        .file-desc { font-size: 12px; color: #64748b; display: block; margin-bottom: 4px; }
+        
+        .update-date { 
+            font-size: 11px; 
+            color: #ef4444; 
+            background: #fef2f2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 600;
+        }
 
         .btn-download {
             background: var(--accent-penjualan);
@@ -66,25 +88,24 @@
         }
 
         .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    color: #1e293b; /* Warna lebih gelap agar kontras */
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 700; /* Dibuat tebal */
-    padding: 8px 16px;
-    background: #e2e8f0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: #1e293b;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 16px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-.back-link:hover {
-    background: #cbd5e1;
-    padding-left: 20px; /* Efek bergeser saat di-hover */
-}
-
+        .back-link:hover {
+            background: #cbd5e1;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -96,72 +117,134 @@
 
 <div class="container">
     <a href="index.html" class="back-link">
-    <span>←</span> Kembali ke Dashboard Utama
-</a>
-
+        <span>←</span> Kembali ke Dashboard Utama
+    </a>
 
     <div class="card">
-        <!-- Database Penjualan -->
         <div class="file-item">
-            <div class="file-icon">📊</div>
-            <div class="file-info">
-                <span class="file-name">Database Penjualan</span>
-                <span class="file-desc">Rekapitulasi utama sistem</span>
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
             </div>
-            <a href="#" class="btn-download">Download</a>
+            <div class="file-info">
+                <span class="file-name">Penjualan Fisik</span>
+                <span class="file-desc">Rekapitulasi Penjualan SP dan Voucher</span>
+                <span class="update-date" id="date-penjualan">Memuat tanggal...</span>
+            </div>
+            <a href="https://drive.google.com/file/d/1srYgvUqQ77bC30SJEhyJ-YAudkE3IHx3/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
 
-        <!-- Report Stock Barang -->
         <div class="file-item">
-            <div class="file-icon">📦</div>
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
+            </div>
             <div class="file-info">
                 <span class="file-name">Report Stock Barang</span>
-                <span class="file-desc">Laporan sisa stok gudang</span>
+                <span class="file-desc">Laporan stok gudang</span>
+                <span class="update-date" id="date-stok_barang">Memuat tanggal...</span>
             </div>
-            <a href="#" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1epVKN_jz14q7bjFm1BBCTKkxxpIFDzMl/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
 
-        <!-- Report Stock dan Pembayaran Hifi -->
         <div class="file-item">
-            <div class="file-icon">🎧</div>
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
+            </div>
             <div class="file-info">
                 <span class="file-name">Report Stock & Pembayaran Hifi</span>
                 <span class="file-desc">Monitor data Hifi</span>
+                <span class="update-date" id="date-hifi">Memuat tanggal...</span>
             </div>
-            <a href="#" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1b1byEwFMS88a-sh2y1TpSPk__YHA_jO4/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
 
-        <!-- Program Mei TM2 -->
         <div class="file-item">
-            <div class="file-icon">📞</div>
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
+            </div>
             <div class="file-info">
                 <span class="file-name">Program Mei TM2</span>
                 <span class="file-desc">Data program paket TM</span>
+                <span class="update-date" id="date-mei_tm2">Memuat tanggal...</span>
             </div>
-            <a href="#" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/12mjoovqN2Yq-aotzC6fRyPOyL1GSBu27/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
 
-        <!-- Program Target 10K -->
         <div class="file-item">
-            <div class="file-icon">🎯</div>
-            <div class="file-info">
-                <span class="file-name">Program Target 10K</span>
-                <span class="file-desc">Rekapitulasi target pencapaian</span>
+            <div class="file-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.5 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V7.5L14.5 2Z" fill="#107C41"/>
+                    <path d="M14 2V5.5C14 6.3 14.7 7 15.5 7H19L14 2Z" fill="#33C481"/>
+                    <path d="M8 11H13V13H8V11ZM8 14H16V16H8V14ZM8 17H16V19H8V17ZM14 11H16V13H14V11Z" fill="white"/>
+                </svg>
             </div>
-            <a href="#" class="btn-download">Download</a>
-        </div>
-        
-        <!-- Template Form Permintaan -->
-        <div class="file-item">
-            <div class="file-icon">📝</div>
             <div class="file-info">
-                <span class="file-name">Template Form Permintaan</span>
-                <span class="file-desc">Format standar laporan tim</span>
+                <span class="file-name">Program Target 10k</span>
+                <span class="file-desc">Data program sp 3gb direct selling</span>
+                <span class="update-date" id="date-target_10k">Memuat tanggal...</span>
             </div>
-            <a href="#" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1QRtlcHnGTTulKKV9iWQTaMND_D5-fhPB/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
     </div>
 </div>
 
+<script>
+const apiURL = "https://script.google.com/macros/s/AKfycbyGsARVfODOW6s_bN88PCOdXEeTgieVHsLzqxBVb_2UcOEwnpWLuNw-0NgCpiYoY4Yw/exec";
+
+fetch(apiURL)
+.then(response => {
+    console.log("STATUS:", response.status);
+    return response.text();
+})
+.then(text => {
+    console.log("RAW RESPONSE:");
+    console.log(text);
+
+    // coba parse JSON manual
+    const data = JSON.parse(text);
+
+    console.log("JSON DATA:", data);
+
+    // tampilkan semua walaupun kosong
+    document.getElementById('date-penjualan').innerText =
+        "Update: " + (data.penjualan ?? "Tidak ada data");
+
+    document.getElementById('date-stok_barang').innerText =
+        "Update: " + (data.stok_barang ?? "Tidak ada data");
+
+    document.getElementById('date-hifi').innerText =
+        "Update: " + (data.hifi ?? "Tidak ada data");
+
+    document.getElementById('date-mei_tm2').innerText =
+        "Update: " + (data.mei_tm2 ?? "Tidak ada data");
+
+    document.getElementById('date-target_10k').innerText =
+        "Update: " + (data.target_10k ?? "Tidak ada data");
+})
+.catch(error => {
+    console.error("ERROR:", error);
+
+    document.getElementById('date-penjualan').innerText = "Gagal load";
+    document.getElementById('date-target_10k').innerText = "Gagal load";
+});
+</script>
+
 </body>
 </html>
+
+
