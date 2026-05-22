@@ -16,6 +16,29 @@
             min-height: 100vh;
             padding-bottom: 40px;
         }
+        .back-button {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    padding-left: 12px;
+}
 
         .header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -62,7 +85,13 @@
         .active-trigger .menu-arrow-icon { transform: rotate(90deg); color: #10b981; }
 
         /* TABEL DENGAN ALIGNMENT TETAP */
-        .dashboard-container { width: 100%; padding: 0 10px; }
+        .dashboard-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
         table { width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
         th, td { padding: 12px 10px; font-size: 12px; border-bottom: 1px solid #e2e8f0; }
         th { background-color: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; }
@@ -70,7 +99,16 @@
         /* Perbaikan Alignment */
         th:nth-child(2), th:nth-child(3), th:nth-child(4) { text-align: right; }
         td:nth-child(2), td:nth-child(3), td:nth-child(4) { text-align: right; font-variant-numeric: tabular-nums; }
-        
+        @media (min-width: 1024px) {
+    .dashboard-container {
+        max-width: 800px;
+    }
+
+    th, td {
+        font-size: 13px;
+        padding: 14px 12px;
+    }
+}
         .item-name-col { text-align: left; font-weight: 600; color: #334155; }
         .total-row td { background-color: #fef08a !important; color: #713f12 !important; font-weight: 700; }
         .loading-text { text-align: center; padding: 30px; font-size: 13px; color: #64748b; }
@@ -82,7 +120,9 @@
         <h1>Stok Barang Gudang</h1>
         <p>Data Monitor Stok Segel dan Sellin</p>
         <div class="date-badge" id="reportDate">Memuat tanggal...</div>
-        
+        <a href="#" class="back-button" id="back-btn">
+    ← Kembali
+</a>
         <button class="menu-toggle" id="menu-btn"><span></span><span></span><span></span></button>
 
         <nav class="nav-menu" id="nav-dropdown">
@@ -116,6 +156,15 @@
     </div>
 
     <script>
+      document.getElementById('back-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = 'index.html';
+    }
+});
         const excelFileUrl = "index-data.xlsx"; 
 		const TARGET_SHEET_NAME = "stok-gudang";
 
@@ -131,9 +180,19 @@
                 const response = await fetch(excelFileUrl);
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-                const matrix = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, defval: "" });
-                
-                renderTable(matrix);
+
+const sheet = workbook.Sheets[TARGET_SHEET_NAME];
+
+if (!sheet) {
+    throw new Error("Sheet tidak ditemukan");
+}
+
+const matrix = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
+    defval: ""
+});
+
+renderTable(matrix);
             } catch (error) {
                 document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" class="loading-text">⚠️ Gagal memuat Excel.</td></tr>`;
             }
@@ -175,25 +234,5 @@
             });
         });
     </script>
-</body>
+<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

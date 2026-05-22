@@ -20,6 +20,29 @@
             min-height: 100vh;
             padding-bottom: 40px;
         }
+        .back-button {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    padding-left: 12px;
+}
 
         /* HEADER */
         .header {
@@ -162,7 +185,7 @@
         /* CONTAINER RESPONSIF */
         .dashboard-container {
             width: 100%;
-            max-width: 100%;
+            max-width: 900%;
             margin: 0;
             padding: 0 10px;
         }
@@ -193,6 +216,16 @@
             text-transform: uppercase;
             border-bottom: 2px solid #cbd5e1;
         }
+        @media (min-width: 1024px) {
+    .dashboard-container {
+        max-width: 800px;
+    }
+
+    th, td {
+        font-size: 13px;
+        padding: 14px 12px;
+    }
+}
 
         .item-name-col {
             text-align: left;
@@ -275,6 +308,9 @@
     <div class="header">
         <h1>Stock Akhir CSO Sagaranten</h1>
         <p>Tanggal Laporan: <span id="current-date" style="font-weight: 700;">-</span> (Live via Excel)</p>
+        <a href="#" class="back-button" id="back-btn">
+    ← Kembali
+</a>
         
         <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
             <span></span><span></span><span></span>
@@ -323,6 +359,15 @@
     </div>
 
     <script>
+      document.getElementById('back-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = 'index.html';
+    }
+});
         const excelFileUrl = "index-data.xlsx";
 		const TARGET_SHEET_NAME = "stok-barang-dse";
 
@@ -485,7 +530,7 @@
             });
         });
     </script>
-</body>
+<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
 </html>
 
 
