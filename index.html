@@ -399,14 +399,14 @@
     <!-- Kategori: Operasional -->
     <div class="section-title">Operasional & Gudang</div>
     <div class="nav-wrapper">
-      <div class="nav-item form-link" id="btn-form">
-            <div class="nav-icon">📝</div>
-            <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-form)">Form</div>
-                <div class="nav-desc">Pilih Formulir yang diperlukan.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
+      <div class="nav-item form-link toggle-btn" id="btn-form" data-target="submenu-form">
+        <div class="nav-icon">📝</div>
+        <div class="nav-details">
+            <div class="nav-title" style="color:var(--accent-form)">Form</div>
+            <div class="nav-desc">Pilih Formulir yang diperlukan.</div>
         </div>
+        <div class="nav-arrow">➔</div>
+    </div>
 
         <!-- Submenu Form -->
         <div class="submenu-container" id="submenu-form">
@@ -438,14 +438,15 @@
             <div class="nav-arrow">➔</div>
         </a>
 
-        <div class="nav-item penjualan-link" id="btn-penjualan">
-            <div class="nav-icon">📊</div>
-            <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-penjualan)">Laporan Penjualan</div>
-                <div class="nav-desc">Rekap data penjualan dan performa.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
+        <!-- Tambahkan class 'toggle-btn' dan data-target -->
+    <div class="nav-item penjualan-link toggle-btn" id="btn-penjualan" data-target="submenu-penjualan">
+        <div class="nav-icon">📊</div>
+        <div class="nav-details">
+            <div class="nav-title" style="color:var(--accent-penjualan)">Laporan Penjualan</div>
+            <div class="nav-desc">Rekap data penjualan dan performa.</div>
         </div>
+        <div class="nav-arrow">➔</div>
+    </div>
 
         <div class="submenu-container" id="submenu-penjualan">
             <!-- Isi submenu tetap sama -->
@@ -474,15 +475,28 @@
 
     <!-- Kategori: Marketing & Performance -->
     <div class="section-title">Marketing & Monitoring</div>
-    <div class="nav-wrapper">
-        <a href="trade-program.html" class="nav-item trade-link">
-            <div class="nav-icon">🎁</div>
-            <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-trade)">Trade Program</div>
-                <div class="nav-desc">Kelola program insentif, retail trade, dan promo mitra.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
+<div class="nav-wrapper">
+    <!-- Tombol Utama Trade Program -->
+    <div class="nav-item trade-link toggle-btn" id="btn-trade" data-target="submenu-trade">
+        <div class="nav-icon">🎁</div>
+        <div class="nav-details">
+            <div class="nav-title" style="color:var(--accent-trade)">Trade Program</div>
+            <div class="nav-desc">Kelola program insentif dan promo mitra.</div>
+        </div>
+        <div class="nav-arrow">➔</div>
+    </div>
+
+    <!-- Submenu Trade Program -->
+    <div class="submenu-container" id="submenu-trade">
+        <a href="https://andisianday393-byte.github.io/Program_Bonus_Melimpah_SP-3GB/" class="submenu-item">
+            <div class="submenu-icon">⚡</div>
+            <div class="submenu-title">Program SP 3GB</div>
         </a>
+        <a href="program-berjalan.html" class="submenu-item">
+            <div class="submenu-icon">🔄</div>
+            <div class="submenu-title">Program Berjalan</div>
+        </a>
+    </div>
 
         <a href="kpi-dse-data-outlet.html" class="nav-item kpi-link">
             <div class="nav-icon">📊</div>
@@ -672,30 +686,35 @@ loadSemua();
 setInterval(loadSemua, 10000);
 
 document.addEventListener('DOMContentLoaded', function() {
-    function setupToggle(buttonId, submenuId) {
-        const btn = document.getElementById(buttonId);
-        const submenu = document.getElementById(submenuId);
-        const arrow = btn.querySelector('.nav-arrow');
+    // Menangkap semua elemen dengan class 'toggle-btn'
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
 
+    toggleButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Toggle class active pada tombol
-            btn.classList.toggle('active');
-            
-            // Logika Animasi max-height
+            const targetId = this.getAttribute('data-target');
+            const submenu = document.getElementById(targetId);
+            const arrow = this.querySelector('.nav-arrow');
+
+            // Toggle active class pada tombol
+            this.classList.toggle('active');
+
+            // Logika buka-tutup
             if (submenu.style.maxHeight && submenu.style.maxHeight !== '0px') {
                 submenu.style.maxHeight = '0px';
                 if(arrow) arrow.style.transform = "rotate(0deg)";
             } else {
+                // Menutup semua submenu lain (Opsional: agar hanya satu yang terbuka)
+                document.querySelectorAll('.submenu-container').forEach(sub => sub.style.maxHeight = '0px');
+                document.querySelectorAll('.toggle-btn .nav-arrow').forEach(arr => arr.style.transform = "rotate(0deg)");
+                
+                // Membuka submenu yang diklik
                 submenu.style.maxHeight = submenu.scrollHeight + 'px';
                 if(arrow) arrow.style.transform = "rotate(90deg)";
             }
         });
-    }
-
-    // Inisialisasi
-    setupToggle('btn-form', 'submenu-form');
-    setupToggle('btn-penjualan', 'submenu-penjualan');
+    });
 });
+
 </script>
 </body>
 </html>
