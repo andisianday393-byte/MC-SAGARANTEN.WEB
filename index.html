@@ -306,6 +306,24 @@
 
     gap:12px;
 }
+/* Sembunyikan submenu */
+.submenu-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: #f8fafc;
+}
+
+
+/* Class untuk menampilkan submenu */
+.submenu-container.active {
+    display: block;
+}
+
+/* Agar tombol terlihat bisa diklik */
+#btn-form, #btn-penjualan {
+    cursor: pointer;
+}
 
     </style>
 </head>
@@ -381,14 +399,26 @@
     <!-- Kategori: Operasional -->
     <div class="section-title">Operasional & Gudang</div>
     <div class="nav-wrapper">
-      <a href="form-permintaan.html" class="nav-item form-link">
+      <div class="nav-item form-link" id="btn-form">
             <div class="nav-icon">📝</div>
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-form)">Form Permintaan Barang</div>
-                <div class="nav-desc">Input permintaan barang tim lapangan.</div>
+                <div class="nav-title" style="color:var(--accent-form)">Form</div>
+                <div class="nav-desc">Pilih Formulir yang diperlukan.</div>
             </div>
             <div class="nav-arrow">➔</div>
-        </a>
+        </div>
+
+        <!-- Submenu Form -->
+        <div class="submenu-container" id="submenu-form">
+            <a href="form-permintaan.html" class="submenu-item">
+                <div class="submenu-icon">📋</div>
+                <div class="submenu-title">Form Permintaan Barang</div>
+            </a>
+            <a href="form-daily.html" class="submenu-item">
+                <div class="submenu-icon">🗒️</div>
+                <div class="submenu-title">Form Daily Report DSE</div>
+            </a>
+        </div>
       
         <a href="stok-gudang.html" class="nav-item gudang-link">
             <div class="nav-icon">📦</div>
@@ -641,13 +671,30 @@ function loadSemua() {
 loadSemua();
 setInterval(loadSemua, 10000);
 
-// Kontrol Slide Toggle Submenu Laporan Penjualan
-document.getElementById('btn-penjualan').addEventListener('click', function() {
-    const submenu = document.getElementById('submenu-penjualan');
-    this.classList.toggle('active');
-    submenu.style.maxHeight = submenu.style.maxHeight && submenu.style.maxHeight !== '0px'
-        ? '0px'
-        : submenu.scrollHeight + 'px';
+document.addEventListener('DOMContentLoaded', function() {
+    function setupToggle(buttonId, submenuId) {
+        const btn = document.getElementById(buttonId);
+        const submenu = document.getElementById(submenuId);
+        const arrow = btn.querySelector('.nav-arrow');
+
+        btn.addEventListener('click', function() {
+            // Toggle class active pada tombol
+            btn.classList.toggle('active');
+            
+            // Logika Animasi max-height
+            if (submenu.style.maxHeight && submenu.style.maxHeight !== '0px') {
+                submenu.style.maxHeight = '0px';
+                if(arrow) arrow.style.transform = "rotate(0deg)";
+            } else {
+                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                if(arrow) arrow.style.transform = "rotate(90deg)";
+            }
+        });
+    }
+
+    // Inisialisasi
+    setupToggle('btn-form', 'submenu-form');
+    setupToggle('btn-penjualan', 'submenu-penjualan');
 });
 </script>
 </body>
