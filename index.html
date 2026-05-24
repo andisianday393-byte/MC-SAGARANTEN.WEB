@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MC-SAGARANTEN - Home Portal</title>
+    <link rel="stylesheet" href="global-ui.css">
     <!-- Favicon Browser -->
     <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon.png">
 
@@ -15,293 +16,245 @@
 
     <meta name="theme-color" content="#0f172a">
     <style>
-        :root {
-            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --bg-color: #f1f5f9;
-            --text-main: #334155;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --accent-gudang: #0284c7;
-            --accent-form: #f59e0b;
-            --accent-dse: #6366f1;
-            --accent-penjualan: #10b981;
-            --accent-submenu: #0d9488;
-            --accent-trade: #ec4899; 
-            --accent-kpi: #8b5cf6; 
-            --accent-md: #7c3aed; /* Akses warna baru untuk Merchant Diser */
+    
+/* =========================================
+   WRAPPER PUTIH ELEGANT
+========================================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.summary-wrapper{
+    background:rgba(255,255,255,.9);
+
+    backdrop-filter:blur(10px);
+
+    margin:12px 10px;
+
+    border-radius:12px;
+
+    border:1px solid #f1f5f9;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.06);
+
+    overflow:hidden;
+
+    /* PENTING */
+    display:flex;
+    flex-direction:column;
+}
+
+/* =========================================
+   SALDO CARD FULL
+========================================= */
+.saldo-card{
+    background:#1e3a8a;
+    color:white;
+
+    width:100%;
+
+    padding:12px 14px;
+
+    margin:0;
+
+    border-radius:0;
+
+    box-sizing:border-box;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    /* AGAR MENEMPEL PENUH */
+    align-self:stretch;
+    margin-bottom:10px;
+}
+
+/* Rounded hanya atas */
+.saldo-card:first-child{
+    border-radius:12px 12px 0 0;
+}
+
+/* =========================================
+   CONTENT BAWAH
+========================================= */
+.summary-content{
+    padding:12px;
+}
+/* =========================================
+   TEXT
+========================================= */
+
+.saldo-label{
+    font-size:10px;
+    margin-bottom:2px;
+    opacity:.9;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    border-radius:12px 12px 0 0;
+}
+
+.saldo-amount{
+    font-size:16px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+/* --- Grid 3 Kolom (Lebih Rapat) --- */
+.sub-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px; /* Jarak antar kotak lebih rapat */
+}
+
+.sub-stat {
+    background: white;
+    padding: 6px 4px; /* Padding isi kotak diperkecil */
+    border-radius: 8px;
+    text-align: center;
+    color: #1e3a8a;
+}
+
+.sub-label {
+    font-size: 8px; /* Ukuran label diperkecil agar pas */
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.sub-value {
+    font-size: 10px; /* Ukuran nilai dibuat agar tidak terpotong */
+    font-weight: 700;
+}
+
+/* Container 4 kolom seimbang */
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+            padding: 0 10px;
+            margin-bottom: 10px;
+            
         }
 
-        *{
-            box-sizing:border-box;
-            margin:0;
-            padding:0;
-            font-family:'Segoe UI', sans-serif;
-        }
-
-        body{
-            background:var(--bg-color);
-            color:var(--text-main);
-            min-height:100vh;
-            display:flex;
-            flex-direction:column;
-            padding-bottom: 0; /* padding diatur ulang karena footer sekarang lebih tinggi */
-        }
-
-        /* Container khusus untuk mengunci elemen bagian atas */
-        .sticky-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg-color);
-            padding-bottom: 10px; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-        }
-        
-        /* Warna gradasi tipis dengan batas bawah garis kuning emas elegan */
-        .app-header {
-            background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
-            color: #fff;
-            padding: 15px 20px; 
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,.12); 
-            margin-bottom: 15px;
-            border-bottom: 3px solid #eab308; 
-        }
-
-        /* Ukuran font judul disusutkan */
-        .app-header h1 {
-            font-size: 16px; 
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        /* Ukuran sub-judul disesuaikan */
-        .app-header p {
-            font-size: 10px; 
-            opacity: .75;
-        }
-
-        .saldo-card{
-            background:#1e3a8a;
-            color:white;
-            padding:20px;
-            border-radius:12px;
-            margin:0 10px 20px;
-            box-shadow:0 10px 15px rgba(30,58,138,.3);
-        }
-
-        .saldo-label{
-            font-size:12px;
-            opacity:.9;
-            margin-bottom:5px;
-            text-transform:uppercase;
-        }
-
-        .saldo-amount{
-            font-size:22px;
-            font-weight:700;
-            margin-bottom:15px;
-        }
-
-        .main-summary{
-            margin-bottom:15px;
-            text-align:left;
-        }
-
-        .sub-summary-grid{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            gap:8px;
-        }
-
-        .sub-stat{
-            background:white;
-            padding:10px 5px;
-            border-radius:8px;
-            text-align:center;
-            color:#1e3a8a;
-        }
-
-        .sub-label{
-            font-size:9px;
-            font-weight:800;
-            text-transform:uppercase;
-            margin-bottom:4px;
-        }
-
-        .sub-value{
-            font-size:11px;
-            font-weight:700;
-        }
-
-        /* Perbaikan padding atas agar konten scroll tidak merayap ke belakang header */
-        .app-navigation{
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            width:100%;
-            padding:15px 10px 20px 10px; 
-            position: relative;
-            z-index: 1; 
-        }
-
-        .nav-wrapper{
-            background:#fff;
-            border-radius:8px;
-            overflow:hidden;
-            border:1px solid var(--border-color);
-        }
-
-        .nav-item{
-            display:flex;
-            align-items:center;
-            text-decoration:none;
-            padding:20px 16px;
-            background:#fff;
-            border-bottom:1px solid var(--border-color);
-            cursor:pointer;
-        }
-
-        .gudang-link{border-left:5px solid var(--accent-gudang);}
-        .form-link{border-left:5px solid var(--accent-form);}
-        .dse-link{border-left:5px solid var(--accent-dse);}
-        .penjualan-link{border-left:5px solid var(--accent-penjualan);}
-        .trade-link{border-left:5px solid var(--accent-trade);}
-        .kpi-link{border-left:5px solid var(--accent-kpi);} 
-        .md-link{border-left:5px solid var(--accent-md);} 
-
-        .nav-icon{
-            font-size:26px;
-            margin-right:16px;
-            width:35px;
-            text-align:center;
-        }
-
-        .nav-details{
-            flex:1;
-        }
-
-        .nav-title{
-            font-size:15px;
-            font-weight:700;
-            margin-bottom:3px;
-        }
-
-        .nav-desc{
-            font-size:12px;
-            color:var(--text-muted);
-            line-height:1.4;
-        }
-
-        .nav-arrow{
-            font-size:14px;
-            color:#cbd5e1;
-            padding-left:10px;
-            transition:.2s;
-        }
-
-        .submenu-container{
-            max-height:0;
-            overflow:hidden;
-            transition:max-height .3s ease-out;
-            background:#f8fafc;
-        }
-
-        .submenu-item{
-            display:flex;
-            align-items:center;
-            text-decoration:none;
-            padding:15px 16px 15px 36px;
-            border-bottom:1px solid var(--border-color);
-            border-left:5px solid var(--accent-submenu);
-        }
-
-        .submenu-img{
-            width:20px;
-            height:20px;
-            object-fit:cover;
-            margin-right:12px;
-            border-radius:50%;
-        }
-
-        .submenu-icon{
-            font-size:18px;
-            margin-right:12px;
-            width:25px;
-            text-align:center;
-        }
-
-        .submenu-title{
-            font-size:13.5px;
-            font-weight:600;
-            color:#475569;
-            flex:1;
-        }
-
-        .penjualan-link.active .nav-arrow{
-            transform:rotate(90deg);
-            color:var(--accent-penjualan);
-        }
-
-        /* Style Khusus Area Footer Aplikasi */
-        .app-footer {
-            background-color: #1e293b;
-            color: #94a3b8;
-            padding: 24px 16px 20px 16px;
-            font-size: 11px;
-            margin-top: auto;
-            border-top: 1px solid #334155;
-        }
-
-        .footer-content {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .footer-support {
-            background-color: #0f172a;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid #334155;
-            text-align: left;
-        }
-
-        .support-title {
-            color: #f8fafc;
-            font-weight: 700;
-            font-size: 11.5px;
-            margin-bottom: 4px;
+        /* Tombol aksi cepat */
+        .action-btn {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
-        }
-
-        .support-desc {
-            line-height: 1.5;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-        }
-
-        .support-links {
-            display: flex;
-            gap: 12px;
-        }
-
-        .support-links a {
-            color: #38bdf8;
+            justify-content: center;
+            background: #fff;
+            padding: 5px 2px; 
+            border-radius: 8px; 
             text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            color: #334155;
+            border: 1px solid var(--border-color);
+            /* EFEK TIMBUL */
+        box-shadow:
+    0 2px 8px rgba(15,23,42,.06);
+            transition: all 0.2s ease;
         }
 
-        .support-links a:hover {
-            text-decoration: underline;
+        .action-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
+
+        .action-icon {
+            font-size: 14px; 
+            margin-bottom: 1px; 
+        }
+
+        .action-label {
+            font-size: 8.5px; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1px;
+            text-align: center;
+            line-height: 1.1;
+        }
+/* ---Judil diatas Navigasi menu utama  --- */
+.section-title:first-of-type{
+    margin-top:2px;
+}
+    .section-title{
+    font-size:0.75rem;
+    font-weight:bold;
+
+    color:#94a3b8;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    margin-top:14px;
+    margin-bottom:5px;
+    margin-left:10px;
+}
+/* --- Navigasi menu utama  --- */
+.app-navigation {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1px 10px 1px 10px; /* Sedikit disesuaikan agar lebih rapat ke atas */
+    position: relative;
+    z-index: 1; 
+    
+}
+
+.nav-wrapper{
+    background:#fff;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    border:1px solid var(--border-color);
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+
+    text-decoration:none;
+
+    padding:16px 16px;
+
+    background:#fff;
+
+    border-bottom:1px solid var(--border-color);
+
+    cursor:pointer;
+
+    margin-top:0;
+    height:65px;
+}
+.nav-icon {font-size: 29px; margin-right: 14px; width: 30px; text-align: center;}
+.nav-title {font-size: 14px; font-weight: 700; margin-bottom: 2px;}
+.nav-desc {font-size: 11px; color: var(--text-muted); line-height: 1.3;}
+.nav-arrow {font-size: 12px; color: #cbd5e1; padding-left: 8px; transition: .2s;}
+.nav-details{
+    margin-left:8px;
+}
+
+.gudang-link {border-left: 5px solid var(--accent-gudang);}
+.form-link {border-left: 5px solid var(--accent-form);}
+.dse-link {border-left: 5px solid var(--accent-dse);}
+.penjualan-link {border-left: 5px solid var(--accent-penjualan);}
+.trade-link {border-left: 5px solid var(--accent-trade);}
+.kpi-link {border-left: 5px solid var(--accent-kpi);} 
+.md-link {border-left: 5px solid var(--accent-md);} 
+
+.submenu-container {max-height: 0; overflow: hidden; transition: max-height .3s ease-out; background: #f8fafc;}
+.submenu-item {display: flex; align-items: center; text-decoration: none; padding: 12px 16px 12px 36px; border-bottom: 1px solid var(--border-color); border-left: 5px solid var(--accent-submenu);}
+.submenu-icon {font-size: 23px; margin-right: 10px; width: 20px; text-align: center;}
+.submenu-title {font-size: 13px; font-weight: 600; color: #475569; flex: 1;}
+
+.penjualan-link.active .nav-arrow {transform: rotate(90deg); color: var(--accent-penjualan);}
+
 
         .footer-sys-links {
             margin-bottom: 14px;
@@ -329,49 +282,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Container dengan 4 kolom seimbang */
-        .quick-action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 6px; 
-            padding: 0 10px;
-            margin-bottom: 10px;
-        }
-
-        /* Tombol aksi cepat */
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            padding: 5px 2px; 
-            border-radius: 6px; 
-            text-decoration: none;
-            color: #334155;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03); 
-            transition: all 0.2s ease;
-        }
-
-        .action-btn:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        .action-icon {
-            font-size: 14px; 
-            margin-bottom: 1px; 
-        }
-
-        .action-label {
-            font-size: 8.5px; 
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1px;
-            text-align: center;
-            line-height: 1.1;
-        }
         .support-custom-icon {
     width: 14px;      /* Mengatur lebar ikon */
     height: 14px;     /* Mengatur tinggi ikon */
@@ -381,18 +291,35 @@
     margin-top: -2px; /* Menyelaraskan posisi tengah dengan teks */
 }
 
+/* Bagian menu didalam penjualan*/
+.submenu-img{
+    width:30px;
+    height:30px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+}
+.submenu-item{
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+}
+
     </style>
 </head>
 
 <body>
 
 <!-- BAGIAN ATAS DI-FREEZE / STICKY DI SINI -->
-<div class="sticky-container">
+<div class="header-wrapper">
     <div class="app-header">
         <h1>MC-SAGARANTEN</h1>
         <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
     </div>
-
+</div>
+<div class="summary-wrapper">
     <div class="saldo-card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
             
@@ -446,21 +373,15 @@
         </a>
     </div>
 </div>
+</div>
 <!-- AKHIR DARI AREA STICKY -->
 
 <!-- BAGIAN NAVIGASI YANG BISA DI-SCROLL -->
 <div class="app-navigation">
+    <!-- Kategori: Operasional -->
+    <div class="section-title">Operasional & Gudang</div>
     <div class="nav-wrapper">
-        <a href="stok-gudang.html" class="nav-item gudang-link">
-            <div class="nav-icon">📦</div>
-            <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-gudang)">Laporan Stok Gudang</div>
-                <div class="nav-desc">Pantau sisa stok dan monitor barang masuk.</div>
-            </div>
-            <div class="nav-arrow">➔</div>
-        </a>
-
-        <a href="form-permintaan.html" class="nav-item form-link">
+      <a href="form-permintaan.html" class="nav-item form-link">
             <div class="nav-icon">📝</div>
             <div class="nav-details">
                 <div class="nav-title" style="color:var(--accent-form)">Form Permintaan Barang</div>
@@ -468,11 +389,20 @@
             </div>
             <div class="nav-arrow">➔</div>
         </a>
+      
+        <a href="stok-gudang.html" class="nav-item gudang-link">
+            <div class="nav-icon">📦</div>
+            <div class="nav-details">
+                <div class="nav-title" style="color:var(--accent-gudang)">Stok Gudang</div>
+                <div class="nav-desc">Pantau sisa stok dan monitor barang masuk.</div>
+            </div>
+            <div class="nav-arrow">➔</div>
+        </a>
 
         <a href="stok-barang-dse.html" class="nav-item dse-link">
             <div class="nav-icon">💼</div>
             <div class="nav-details">
-                <div class="nav-title" style="color:var(--accent-dse)">Stok Barang DSE</div>
+                <div class="nav-title" style="color:var(--accent-dse)">Stok DSE</div>
                 <div class="nav-desc">Monitor stok dan distribusi sales.</div>
             </div>
             <div class="nav-arrow">➔</div>
@@ -488,6 +418,7 @@
         </div>
 
         <div class="submenu-container" id="submenu-penjualan">
+            <!-- Isi submenu tetap sama -->
             <a href="penjualan-salmo.html" class="submenu-item">
                 <img src="img/mobii.jpg" class="submenu-img">
                 <div class="submenu-title">Penjualan SALMO</div>
@@ -509,7 +440,11 @@
                 <div class="submenu-title">Penjualan Hifi</div>
             </a>
         </div>
+    </div>
 
+    <!-- Kategori: Marketing & Performance -->
+    <div class="section-title">Marketing & Monitoring</div>
+    <div class="nav-wrapper">
         <a href="trade-program.html" class="nav-item trade-link">
             <div class="nav-icon">🎁</div>
             <div class="nav-details">
@@ -528,7 +463,6 @@
             <div class="nav-arrow">➔</div>
         </a>
 
-        <!-- BARU: Menu Merchant Diser (MD) Ditambahkan di Paling Bawah -->
         <a href="merchant-diser.html" class="nav-item md-link">
             <div class="nav-icon">🏪</div>
             <div class="nav-details">
@@ -540,40 +474,35 @@
     </div>
 </div>
 
-<!-- PERUBAHAN STRUKTUR MENU BAWAH (FOOTER) -->
-<footer class="app-footer">
-    <div class="footer-content">
-        <!-- Blok Informasi Bantuan & Kontak Darurat -->
-        <div class="footer-support">
-            <div class="support-title">🚨 Urgent Support / Admin Gudang</div>
-            <div class="support-desc">Jika terjadi selisih data pada berkas Excel atau kendala saat proses sinkronisasi sistem otomatis, segera hubungi admin melalui kontak di bawah ini.</div>
-            <div class="support-links">
-    <!-- Tombol WhatsApp dengan Ikon Sendiri -->
-    <a href="https://wa.me/6285759695969" target="_blank">
-        <img src="img/wa.png" style= "image-size: 2px;" class="support-custom-icon" alt="WA">
-        WhatsApp
+<!-- =========================================
+     BOTTOM NAVIGATION
+========================================= -->
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
     </a>
-    
-    <!-- Tombol Email dengan Ikon Sendiri -->
-    <a href="mailto:andisianday393@gmail.com">
-        <img src="img/gmail.png" class="support-custom-icon" alt="Email">
-        Email Support
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
     </a>
-</div>
 
-        </div>
+    <!-- NOTIF -->
+    <a href="#" class="bottom-item">
+        <div>🔔</div>
+        <span>Notif</span>
+    </a>
 
-        <!-- Tautan Sistem Sekunder -->
-        <div class="footer-sys-links">
-            <a href="user-guide.html">📘 Panduan Penggunaan</a>
-            <a href="changelog.html">🕒 Log Pembaruan</a>
-        </div>
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
 
-        <!-- Informasi Hak Cipta -->
-        <div class="footer-copyright">
-            &copy; 2026 Developer by Andi Ramdani / MC-SAGARANTEN. All Rights Reserved.
-        </div>
-    </div>
 </footer>
 
 <!-- Library Pembaca file Excel -->
@@ -723,12 +652,3 @@ document.getElementById('btn-penjualan').addEventListener('click', function() {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
