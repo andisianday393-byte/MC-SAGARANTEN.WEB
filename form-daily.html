@@ -4,22 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Report - DSE MC Sagaranten</title>
+    <link rel="stylesheet" href="global-ui.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background-color: #f0f2f5;
+            background: var(--bg-color);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
         }
         .report-container {
-            max-width: 500px;
+            width: 100%;            /* Paksa lebar 100% */
+            min-height: 100vh;      /* Paksa tinggi minimal 1 layar */
             background: #fff;
-            margin: auto;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 0;              /* Hapus margin */
+            padding: 20px;
+            border-radius: 0;       /* Hapus radius agar full */
+            box-shadow: none;       /* Hapus shadow agar menyatu dengan layar */
+            box-sizing: border-box;
+        }
+
+        /* Opsional: Agar inputan tidak terlalu lebar di layar besar */
+        @media (min-width: 600px) {
+            .report-container {
+                max-width: 500px;
+                margin: auto;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
         }
         h2 { text-align: center; color: #d32f2f; margin-bottom: 5px; }
         .header-info { text-align: center; font-weight: bold; margin-bottom: 20px; color: #555; }
@@ -66,7 +79,12 @@
     </style>
 </head>
 <body>
-
+<div class="header-wrapper">
+    <div class="app-header">
+        <h1>MC-SAGARANTEN</h1>
+        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+    </div>
+</div>
 <div class="report-container">
     <h2>Daily Report - DSE MC</h2>
     <div class="header-info">Sagaranten</div>
@@ -139,7 +157,7 @@
     <div class="field-group"><span class="label">Target ONO:</span><span class="value"><input type="number" id="target_ono" placeholder="0"></span></div>
     <div class="field-group"><span class="label">Actual ONO:</span><span class="value"><input type="number" id="actual_ono" placeholder="0"></span></div>
 
-    <div class="section-title">BRANDING</div>
+        <div class="section-title">BRANDING</div>
     <div class="field-group"><span class="label">Total Shopblind:</span><span class="value"><input type="number" id="b_shopblind" placeholder="0"></span></div>
     <div class="field-group"><span class="label">Total Poster:</span><span class="value"><input type="number" id="b_poster" placeholder="0"></span></div>
     <div class="field-group"><span class="label">Biometric:</span><span class="value"><input type="number" id="b_biometric" placeholder="0"></span></div>
@@ -147,15 +165,11 @@
     <p class="note">Note: Input branding berdasarkan outlet yg sudah di submit ke MKID</p>
 
     <div class="btn-container">
-        <button class="btn btn-excel"
-onclick="exportToExcel()">
-💾 Simpan ke Download
-</button>
+        <button class="btn btn-excel" onclick="exportToExcel()">💾 Simpan ke Download</button>
         <button class="btn btn-print" onclick="kirimWhatsApp()">📎 Kirim Hasil Download</button>
         <button class="btn btn-reset" onclick="window.location.reload()">🔄 Reset Form</button>
     </div>
 </div>
-
 <script>
 
 // ==========================
