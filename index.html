@@ -850,31 +850,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 async function loadSemua() {
+
     try {
-        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type:'array' });
-        
-        // 1. Hitung Total SALMO (Contoh)
-        const wsSalmo = workbook.Sheets['penjualan-salmo'];
-        const dataSalmo = XLSX.utils.sheet_to_json(wsSalmo);
-        let totalSekarang = 0;
-        dataSalmo.forEach(row => totalSekarang += ambilAngka(row['Amount']));
-        
-        // --- LETAKKAN KODE DI SINI ---
-        // Fungsi ini akan mengecek apakah totalSekarang berbeda dengan yang di localStorage
-        
-        // -----------------------------
-        
-        // 2. Update UI seperti biasa
-        updateSaldoSalmo();
-        updateTotalSPVoucher();
-        updateTotalPaket();
-        updateTotalHifi();
-        
+
+        // UPDATE SEMUA DASHBOARD
+        await updateSaldoSalmo();
+
+        await updateTotalSPVoucher();
+
+        await updateTotalPaket();
+
+        await updateTotalHifi();
+
     } catch(e) {
-        console.error("Gagal update:", e);
+
+        console.error(
+            'Gagal load dashboard:',
+            e
+        );
+
     }
+
 }
 /* =========================
    SEARCH MENU
