@@ -4,27 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download Data File - MC-SAGARANTEN</title>
-    
+    <link rel="stylesheet" href="global-ui.css">
     <style>
-        :root {
-            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --bg-color: #f1f5f9;
-            --text-main: #334155;
-            --accent-penjualan: #10b981;
-            --border-color: #e2e8f0;
-        }
-
-        *{ box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif; }
-        body{ background:var(--bg-color); color:var(--text-main); padding-bottom:30px; }
-
-        .app-header{
-            background:var(--header-gradient);
-            color:#fff;
-            padding:35px 20px 30px;
-            text-align:center;
-            box-shadow:0 4px 6px rgba(0,0,0,.1);
-            margin-bottom:30px;
-        }
+       
 
         .container { padding: 0 20px; max-width: 600px; margin: auto; }
         
@@ -34,7 +16,8 @@
             border-radius: 12px;
             border: 1px solid var(--border-color);
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            margin-top: -10px;
+            margin-bottom: 10px; 
         }
 
         .file-item {
@@ -109,14 +92,20 @@
     </style>
 </head>
 <body>
-
-<div class="app-header">
+<div class="sticky-container">
+    <div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+    </div>
+        <div class="app-header">
     <h1>Download Data File</h1>
     <p>Portal unduhan data dari Google Drive</p>
-</div>
+        </div>
+      </div>
+    </div>
 
 <div class="container">
-    <a href="index.html" class="back-link">
+    <a href="index.html" class="back-link" style="margin-top: 10px;">
         <span>←</span> Kembali ke Dashboard Utama
     </a>
 
@@ -136,7 +125,7 @@
                 <span class="update-date" id="date-mobo">Memuat tanggal...</span>
             </div>
             <!-- Catatan: Ganti atribut href di bawah ini dengan link Google Drive Mobo Anda jika sudah ada -->
-            <a href="https://drive.google.com/file/d/1ck-f-HFlat8B59bXCAx4lr7F_nhYB5Tb/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="#" class="btn-download">Download</a>
         </div>
 
         <div class="file-item">
@@ -263,7 +252,7 @@ fetch(apiURL)
     document.getElementById('date-target_10k').innerText = "Gagal load";
 });
 </script>
-
+<script src="global-ui.js"></script>
 </body>
 </html>
 

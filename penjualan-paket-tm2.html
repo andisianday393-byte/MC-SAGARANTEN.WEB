@@ -4,55 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penjualan Paket TM - Monitor Real-time</title>
+    <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; width: 100%; min-height: 100vh; padding-bottom: 40px; }
-        .back-button {
-    position: absolute;
-    top: 8px;
-    left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    padding-left: 12px;
-}
-        .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 20px 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: relative; margin-bottom: 20px; }
-        .header h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.8px; padding-right: 40px; padding-left: 40px; }
-        .header p { margin: 0; opacity: 0.8; font-size: 12px; font-weight: 400; margin-bottom: 6px; padding-right: 40px; padding-left: 40px; }
-        .date-badge { display: inline-block; background-color: rgba(255, 255, 255, 0.15); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .menu-toggle { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; z-index: 100; }
-        .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
-        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
-        .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
-        .nav-menu.open { max-height: 100vh; overflow-y: auto; } 
-        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
-        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
-        .nav-menu ul li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; color: #334155; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: left; }
-        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
-        .nav-submenu-container { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: #f8fafc; }
-        .nav-submenu-container a { display: block !important; padding: 12px 20px 12px 35px !important; font-size: 13px !important; color: #475569 !important; border-left: 4px solid #0284c7; border-bottom: 1px solid #f1f5f9; }
-        .nav-submenu-container a:last-child { border-bottom: none; }
-        .nav-submenu-container a:hover { background-color: #f0f9ff !important; color: #0284c7 !important; }
-        .nav-submenu-container a.active-sub { color: #0284c7 !important; background-color: #f0f9ff !important; pointer-events: none; font-weight: 700; border-left: 4px solid #0284c7; }
-        .menu-arrow-icon { transition: transform 0.3s ease; font-size: 11px; color: #94a3b8; }
-        .nav-menu ul li.active-trigger .menu-arrow-icon { transform: rotate(90deg); color: #0284c7; }
         
         .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
         .filter-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
@@ -78,6 +32,7 @@
         .detail-row-item .label { color: #64748b; font-weight: 600; }
         .detail-row-item .val { font-weight: 700; color: #1e293b; font-variant-numeric: tabular-nums; }
         .detail-group-title { background-color: #f8fafc; padding: 8px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; }
+        
         
         /* Rank Badge Style */
         .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 700; font-size: 11px; margin-right: 8px; text-align: center; min-width: 24px; }
@@ -108,42 +63,24 @@
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>Penjualan Paket TM</h1>
-        <p>Data Monitor Tebus Murah Mei 2026</p>
-        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
-        <a href="#" class="back-button" id="back-btn">
-    ← Kembali
-</a>
-        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
-            <span></span><span></span><span></span>
-        </button>
-
-        <nav class="nav-menu" id="nav-dropdown">
-            <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="stok-gudang.html">Stok Gudang</a></li>
-                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
-                <li><a href="form-permintaan.html">Form Permintaan</a></li>
-                <li id="trigger-penjualan" class="active-trigger">
-                    <a href="#" onclick="return false;">
-                        <span>Laporan Penjualan</span>
-                        <span class="menu-arrow-icon">➔</span>
-                    </a>
-                </li>
-                <div class="nav-submenu-container" id="dropdown-submenu-penjualan" style="max-height: 500px;">
-                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
-                    <a href="#" class="active-sub">📞 Penjualan Paket TM</a>
-                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
-                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
-                </div>
-            </ul>
-        </nav>
+<div class="sticky-container">
+    <div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
     </div>
+        <div class="app-header">
+        <h1>PENJUALAN PAKET TM</h1>
+        <p>Data Monitor Tebus Murah Mei 2026</p>
+        
+</div>
+</div>
+</div>
+       
 
     <div class="dashboard-container">
-        
+      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-top: 10px; margin-bottom: 5px; font-weight: 500;">
+        Update Data: Memuat...
+    </div>  
         <!-- STRUKTUR GRID ATAS YANG SUDAH DISESUAIKAN PASANGAN VERTIKALNYA -->
         <div class="summary-grid">
             <!-- Kolom 1 - Baris 1: Pengambilan -->
@@ -211,16 +148,35 @@
 <div id="sync-total-paket" style="display:none;">
     2500000
 </div>
-    <script>
-      document.getElementById('back-btn').addEventListener('click', function(e) {
-    e.preventDefault();
+<footer class="bottom-nav">
 
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = 'index.html';
-    }
-});
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="#" class="bottom-item">
+        <div>🔔</div>
+        <span>Notif</span>
+    </a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+    <script>
+      
         const EXCEL_FILE_URL = 'index-data.xlsx'; 
         const TARGET_SHEET_NAME = 'penjualan-paket-tm';
 
@@ -231,15 +187,10 @@
             return new Intl.NumberFormat('id-ID').format(angka);
         }
 
-        function setYesterdayDate() {
-            const targetElement = document.getElementById('reportDate');
-            const date = new Date();
-            date.setDate(date.getDate() - 1);
-            targetElement.textContent = `Update Penjualan: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
-        }
+        
 
         document.addEventListener('DOMContentLoaded', () => {
-            setYesterdayDate();
+            
             loadExcelSpreadsheet();
 
             const menuBtn = document.getElementById('menu-btn');
@@ -463,7 +414,8 @@
             });
         }
     </script>
-<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
+<script src="global-ui.js"></script>
+</body>
 </html>
 
 

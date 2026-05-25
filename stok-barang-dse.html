@@ -4,106 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Akhir CSO Sagaranten - Monitor Excel Real-time</title>
+    <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            color: #334155;
-            background-color: #f1f5f9;
-            width: 100%;
-            min-height: 100vh;
-            padding-bottom: 40px;
-        }
-        .back-button {
-    position: absolute;
-    top: 8px;
-    left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    padding-left: 12px;
-}
-
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: #ffffff;
-            padding: 20px 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative; 
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding-right: 40px;
-            padding-left: 40px;
-            text-align: center;
-        }
-        .header p {
-            margin: 0;
-            opacity: 0.8;
-            font-size: 12px;
-            font-weight: 400;
-            margin-bottom: 6px;
-            padding-right: 40px;
-            padding-left: 40px;
-            text-align: center;
-        }
-
-        /* TOMBOL MENU GARIS TIGA */
-        .menu-toggle {
-            position: absolute;
-            top: 50%;
-            right: 16px;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 22px;
-            height: 16px;
-            z-index: 100;
-        }
-        .menu-toggle span {
-            display: block;
-            height: 2.5px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-        
-        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
-
         /* DROPDOWN NAVIGASI MENU UTAMA */
         .nav-menu {
             position: absolute;
@@ -199,6 +103,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
+            margin-top:5px;
         }
 
         th, td {
@@ -305,40 +210,22 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1>Stock Akhir CSO Sagaranten</h1>
-        <p>Tanggal Laporan: <span id="current-date" style="font-weight: 700;">-</span> (Live via Excel)</p>
-        <a href="#" class="back-button" id="back-btn">
-    ← Kembali
-</a>
-        
-        <button class="menu-toggle" id="menu-btn" aria-label="Buka Menu">
-            <span></span><span></span><span></span>
-        </button>
-
-        <nav class="nav-menu" id="nav-dropdown">
-            <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="stok-gudang.html">Stok Gudang</a></li>
-                <li class="disabled-menu-item"><a href="#">Stok Akhir CSO</a></li>
-                <li><a href="form-permintaan.html">Form Permintaan</a></li>
-                <li id="trigger-penjualan">
-                    <a href="#" onclick="return false;">
-                        <span>Laporan Penjualan</span>
-                        <span class="menu-arrow-icon">➔</span>
-                    </a>
-                </li>
-                <div class="nav-submenu-container" id="dropdown-submenu-penjualan">
-                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
-                    <a href="penjualan-paket-tm2.html">📞 Penjualan Paket TM</a>
-                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
-                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
-                </div>
-            </ul>
-        </nav>
+  <div class="sticky-container">
+      <div class="header-wrapper">
+        <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
     </div>
-    
+          <div class="app-header">
+    <h1>STOK AKHIR DSE</h1>
+    <p>Monitoring Stok penambahan dan pengeluaran </p>
+</div>
+      </div>
+  </div>
+         
     <div class="dashboard-container">
+      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-top: 15px; font-weight: 500;">
+        Update Data: Memuat...
+    </div>
         <table>
             <thead>
                 <tr>
@@ -357,180 +244,435 @@
             </tbody>
         </table>
     </div>
+<footer class="bottom-nav">
 
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="#" class="bottom-item">
+        <div>🔔</div>
+        <span>Notif</span>
+    </a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
     <script>
-      document.getElementById('back-btn').addEventListener('click', function(e) {
-    e.preventDefault();
 
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = 'index.html';
-    }
-});
-        const excelFileUrl = "index-data.xlsx";
-		const TARGET_SHEET_NAME = "stok-barang-dse";
+const excelFileUrl = "index-data.xlsx";
+const TARGET_SHEET_NAME = "stok-barang-dse";
 
-        async function fetchExcelData() {
-            try {
-                const response = await fetch(excelFileUrl);
-                if (!response.ok) throw new Error("Gagal mengunduh file Excel.");
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-				if (!workbook.SheetNames.includes(TARGET_SHEET_NAME)) {
-    throw new Error(`Sheet '${TARGET_SHEET_NAME}' tidak ditemukan`);
+// ===============================
+// AMBIL DATA EXCEL
+// ===============================
+
+async function fetchExcelData() {
+
+    try {
+
+        const response = await fetch(excelFileUrl);
+
+        if (!response.ok) {
+            throw new Error("Gagal mengunduh file Excel.");
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+
+        const workbook = XLSX.read(
+            new Uint8Array(arrayBuffer),
+            { type: 'array' }
+        );
+
+        // CEK SHEET
+        if (!workbook.SheetNames.includes(TARGET_SHEET_NAME)) {
+            throw new Error(
+                `Sheet '${TARGET_SHEET_NAME}' tidak ditemukan`
+            );
+        }
+
+        const worksheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        const matrix =
+            XLSX.utils.sheet_to_json(
+                worksheet,
+                {
+                    header: 1,
+                    defval: ""
+                }
+            );
+
+        processAndRender(matrix);
+
+        // UPDATE JAM
+        const now = new Date();
+
+const updateEl =
+    document.getElementById("updateTime");
+
+if(updateEl){
+
+    updateEl.textContent =
+        'Update Data: ' +
+
+        now.toLocaleDateString(
+            'id-ID',
+            {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }
+        )
+
+        +
+
+        ' • ' +
+
+        now.toLocaleTimeString(
+            'id-ID',
+            {
+                hour: '2-digit',
+                minute: '2-digit'
+            }
+        );
 }
-                const worksheet = workbook.Sheets[TARGET_SHEET_NAME];
-                const matrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-                
-                processAndRender(matrix);
-            } catch (error) {
-                console.error(error);
-                document.getElementById('cso-stock-table').innerHTML = `<tr><td colspan="6" style="color:#ef4444; text-align:center; padding:20px; font-weight:bold;">⚠️ Gagal memuat data Excel.<br><span style="font-size:11px; font-weight:normal; color:#64748b;">Pesan Masalah: ${error.message}</span></td></tr>`;
-            }
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            'cso-stock-table'
+        ).innerHTML = `
+            <tr>
+                <td colspan="6"
+                    style="
+                        color:#ef4444;
+                        text-align:center;
+                        padding:20px;
+                        font-weight:bold;
+                    ">
+                    ⚠️ Gagal memuat data Excel.
+                    <br>
+
+                    <span style="
+                        font-size:11px;
+                        font-weight:normal;
+                        color:#64748b;
+                    ">
+                        Pesan Masalah:
+                        ${error.message}
+                    </span>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// ===============================
+// FORMAT ANGKA
+// ===============================
+
+function parseNum(val) {
+
+    if (
+        val === undefined ||
+        val === null ||
+        val === "-" ||
+        val === ""
+    ) return null;
+
+    if (typeof val === 'number') return val;
+
+    let clean = val
+        .toString()
+        .trim()
+        .replace(/^"|"$/g, '');
+
+    if (clean === "0") return 0;
+
+    if (
+        clean.toLowerCase() === "total" ||
+        clean === "-"
+    ) return null;
+
+    clean = clean
+        .replace(/\./g, '')
+        .replace(/,/g, '');
+
+    let parsed = parseInt(clean);
+
+    return isNaN(parsed)
+        ? null
+        : parsed;
+}
+
+function formatDisplay(num) {
+
+    if (num === null) {
+        return `<span class="zero-val">-</span>`;
+    }
+
+    if (num === 0) {
+        return `0`;
+    }
+
+    return num.toLocaleString('id-ID');
+}
+
+// ===============================
+// RENDER TABLE
+// ===============================
+
+function processAndRender(matrix) {
+
+    let html = "";
+
+    let dataSp = [];
+    let dataVdk = [];
+
+    let isVdkActiveGroup = false;
+
+    let grandAndi = 0;
+    let grandFarhan = 0;
+    let grandEnden = 0;
+    let grandPebrian = 0;
+
+    matrix.forEach(row => {
+
+        if (!row || row.length === 0) return;
+
+        let col0 = row[0]
+            ? row[0]
+                .toString()
+                .trim()
+                .replace(/^"|"$/g, '')
+            : "";
+
+        let colClean =
+            col0.toLowerCase();
+
+        if (
+            colClean === "" ||
+            colClean === "jenis barang" ||
+            colClean === "nama barang" ||
+            colClean === "total"
+        ) return;
+
+        if (col0.toUpperCase() === "VDK") {
+            isVdkActiveGroup = true;
         }
 
-        function parseNum(val) {
-            if (val === undefined || val === null || val === "-" || val === "") return null;
-            if (typeof val === 'number') return val;
+        let andi = parseNum(row[1]);
+        let farhan = parseNum(row[2]);
+        let enden = parseNum(row[3]);
+        let pebrian = parseNum(row[4]);
 
-            let clean = val.toString().trim().replace(/^"|"$/g, '');
-            if (clean === "0") return 0;
-            if (clean.toLowerCase() === "total" || clean === "-") return null;
-            
-            clean = clean.replace(/\./g, '').replace(/,/g, '');
-            let parsed = parseInt(clean);
-            return isNaN(parsed) ? null : parsed;
+        if (
+            andi === null &&
+            farhan === null &&
+            enden === null &&
+            pebrian === null &&
+            col0.toUpperCase() !== "VDK"
+        ) return;
+
+        let totalBaris =
+            (andi || 0) +
+            (farhan || 0) +
+            (enden || 0) +
+            (pebrian || 0);
+
+        let itemObj = {
+            nama: col0,
+            andi,
+            farhan,
+            enden,
+            pebrian,
+            total: totalBaris
+        };
+
+        // TOTAL BAWAH
+        if (col0.toUpperCase() !== "VDK") {
+
+            grandAndi += (andi || 0);
+            grandFarhan += (farhan || 0);
+            grandEnden += (enden || 0);
+            grandPebrian += (pebrian || 0);
         }
 
-        function formatDisplay(num) {
-            if (num === null) return `<span class="zero-val">-</span>`;
-            if (num === 0) return `0`;
-            return num.toLocaleString('id-ID');
+        if (isVdkActiveGroup) {
+            dataVdk.push(itemObj);
+        } else {
+            dataSp.push(itemObj);
         }
 
-        function processAndRender(matrix) {
-            let html = "";
-            let dataSp = [];
-            let dataVdk = [];
-            let isVdkActiveGroup = false;
+    });
 
-            let grandAndi = 0, grandFarhan = 0, grandEnden = 0, grandPebrian = 0;
+    // DATA KOSONG
+    if (
+        dataSp.length === 0 &&
+        dataVdk.length === 0
+    ) {
 
-            matrix.forEach(row => {
-                if (!row || row.length === 0) return;
-                let col0 = row[0] ? row[0].toString().trim().replace(/^"|"$/g, '') : "";
+        document.getElementById(
+            'cso-stock-table'
+        ).innerHTML = `
+            <tr>
+                <td colspan="6"
+                    style="
+                        text-align:center;
+                        padding:30px;
+                        color:#ef4444;
+                        font-weight:bold;
+                    ">
+                    Format Excel Tidak Sesuai!
+                    <br>
 
-                let colClean = col0.toLowerCase();
-                if (colClean === "" || colClean === "jenis barang" || colClean === "nama barang" || colClean === "total") return;
+                    <span style="
+                        font-weight:normal;
+                        font-size:11px;
+                        color:#64748b;
+                    ">
+                        Pastikan sheet Excel benar.
+                    </span>
+                </td>
+            </tr>
+        `;
 
-                if (col0.toUpperCase() === "VDK") {
-                    isVdkActiveGroup = true;
-                }
+        return;
+    }
 
-                let andi = parseNum(row[1]);
-                let farhan = parseNum(row[2]);
-                let enden = parseNum(row[3]);
-                let pebrian = parseNum(row[4]);
+    // BUAT BARIS
+    const makeRowHtml = (item) => {
 
-                if (andi === null && farhan === null && enden === null && pebrian === null && col0.toUpperCase() !== "VDK") return;
+        return `
+            <tr>
 
-                let totalBaris = (andi || 0) + (farhan || 0) + (enden || 0) + (pebrian || 0);
-                let itemObj = { nama: col0, andi, farhan, enden, pebrian, total: totalBaris };
+                <td class="item-name-col">
+                    ${item.nama}
+                </td>
 
-                // Angka VDK tidak ikut dijumlahkan ke grand total bawah
-                if (col0.toUpperCase() !== "VDK") {
-                    grandAndi += (andi || 0);
-                    grandFarhan += (farhan || 0);
-                    grandEnden += (enden || 0);
-                    grandPebrian += (pebrian || 0);
-                }
+                <td class="data-user-col">
+                    ${formatDisplay(item.andi)}
+                </td>
 
-                if (isVdkActiveGroup) {
-                    dataVdk.push(itemObj);
-                } else {
-                    dataSp.push(itemObj);
-                }
-            });
+                <td class="data-user-col">
+                    ${formatDisplay(item.farhan)}
+                </td>
 
-            if(dataSp.length === 0 && dataVdk.length === 0) {
-                document.getElementById('cso-stock-table').innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#ef4444; font-weight:bold;">Format Excel Tidak Sesuai!<br><span style="font-weight:normal; font-size:11px; color:#64748b;">Pastikan susunan kolom sheet sudah benar.</span></td></tr>';
-                return;
-            }
+                <td class="data-user-col">
+                    ${formatDisplay(item.enden)}
+                </td>
 
-            const makeRowHtml = (item) => {
-                return `<tr>
-                    <td class="item-name-col">${item.nama}</td>
-                    <td class="data-user-col">${formatDisplay(item.andi)}</td>
-                    <td class="data-user-col">${formatDisplay(item.farhan)}</td>
-                    <td class="data-user-col">${formatDisplay(item.enden)}</td>
-                    <td class="data-user-col">${formatDisplay(item.pebrian)}</td>
-                    <td>${formatDisplay(item.total)}</td>
-                </tr>`;
-            };
+                <td class="data-user-col">
+                    ${formatDisplay(item.pebrian)}
+                </td>
 
-            dataSp.forEach(item => html += makeRowHtml(item));
+                <td>
+                    ${formatDisplay(item.total)}
+                </td>
 
-            if (dataVdk.length > 0) {
-                html += `<tr class="empty-row"><td colspan="6"></td></tr>`;
-                dataVdk.forEach(item => html += makeRowHtml(item));
-            }
+            </tr>
+        `;
+    };
 
-            let grandTotalSemua = grandAndi + grandFarhan + grandEnden + grandPebrian;
-            
-            html += `<tr class="total-row">
-                <td class="item-name-col">TOTAL</td>
-                <td class="data-user-col">${grandAndi.toLocaleString('id-ID')}</td>
-                <td class="data-user-col">${grandFarhan.toLocaleString('id-ID')}</td>
-                <td class="data-user-col">${grandEnden.toLocaleString('id-ID')}</td>
-                <td class="data-user-col">${grandPebrian.toLocaleString('id-ID')}</td>
-                <td>${grandTotalSemua.toLocaleString('id-ID')}</td>
-            </tr>`;
+    // DATA SP
+    dataSp.forEach(item => {
+        html += makeRowHtml(item);
+    });
 
-            document.getElementById('cso-stock-table').innerHTML = html;
-        }
+    // DATA VDK
+    if (dataVdk.length > 0) {
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const today = new Date().toLocaleDateString('id-ID', options);
-            document.getElementById('current-date').innerText = today;
+        html += `
+            <tr class="empty-row">
+                <td colspan="6"></td>
+            </tr>
+        `;
 
-            fetchExcelData();
-            
-            const menuBtn = document.getElementById('menu-btn');
-            const navDropdown = document.getElementById('nav-dropdown');
-            const triggerPenjualan = document.getElementById('trigger-penjualan');
-            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
-
-            menuBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                menuBtn.classList.toggle('active');
-                navDropdown.classList.toggle('open');
-            });
-
-            triggerPenjualan.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                triggerPenjualan.classList.toggle('active-trigger');
-                
-                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
-                    submenuPenjualan.style.maxHeight = "0px";
-                } else {
-                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
-                }
-            });
-
-            document.addEventListener('click', () => {
-                if(navDropdown.classList.contains('open')) {
-                    menuBtn.classList.remove('active');
-                    navDropdown.classList.remove('open');
-                    triggerPenjualan.classList.remove('active-trigger');
-                    submenuPenjualan.style.maxHeight = "0px";
-                }
-            });
+        dataVdk.forEach(item => {
+            html += makeRowHtml(item);
         });
-    </script>
-<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
+    }
+
+    // GRAND TOTAL
+    let grandTotalSemua =
+        grandAndi +
+        grandFarhan +
+        grandEnden +
+        grandPebrian;
+
+    html += `
+        <tr class="total-row">
+
+            <td class="item-name-col">
+                TOTAL
+            </td>
+
+            <td class="data-user-col">
+                ${grandAndi.toLocaleString('id-ID')}
+            </td>
+
+            <td class="data-user-col">
+                ${grandFarhan.toLocaleString('id-ID')}
+            </td>
+
+            <td class="data-user-col">
+                ${grandEnden.toLocaleString('id-ID')}
+            </td>
+
+            <td class="data-user-col">
+                ${grandPebrian.toLocaleString('id-ID')}
+            </td>
+
+            <td>
+                ${grandTotalSemua.toLocaleString('id-ID')}
+            </td>
+
+        </tr>
+    `;
+
+    document.getElementById(
+        'cso-stock-table'
+    ).innerHTML = html;
+}
+
+// ===============================
+// LOAD HALAMAN
+// ===============================
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        fetchExcelData();
+
+        // AUTO REFRESH 30 DETIK
+        setInterval(() => {
+            fetchExcelData();
+        }, 30000);
+
+    }
+);
+
+</script>
+<script src="global-ui.js"></script>
+</body>
 </html>
 
 

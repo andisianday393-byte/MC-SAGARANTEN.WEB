@@ -331,12 +331,15 @@
 <body>
 
 <!-- BAGIAN ATAS DI-FREEZE / STICKY DI SINI -->
-<div class="header-wrapper">
-    <div class="app-header">
-        <h1>MC-SAGARANTEN</h1>
-        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+<div class="sticky-container">
+    <div class="header-wrapper">
+        <div class="app-header">
+            <h1>MC-SAGARANTEN</h1>
+            <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+        </div>
     </div>
 </div>
+
 <div class="summary-wrapper">
     <div class="saldo-card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
@@ -536,10 +539,12 @@
     </a>
 
     <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
-        <span>Notif</span>
-    </a>
+    <a href="notif.html" class="bottom-item notif-container" id="notif-link">
+    <div>🔔</div>
+    <span class="notif-badge" id="notif-badge">!</span>
+    <span>Notif</span>
+</a>
+
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -551,6 +556,7 @@
 
 <!-- Library Pembaca file Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="global-notif.js"></script>
 
 <script> 
 function formatRupiah(number) {
@@ -714,6 +720,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+async function loadSemua() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        
+        // 1. Hitung Total SALMO (Contoh)
+        const wsSalmo = workbook.Sheets['penjualan-salmo'];
+        const dataSalmo = XLSX.utils.sheet_to_json(wsSalmo);
+        let totalSekarang = 0;
+        dataSalmo.forEach(row => totalSekarang += ambilAngka(row['Amount']));
+        
+        // --- LETAKKAN KODE DI SINI ---
+        // Fungsi ini akan mengecek apakah totalSekarang berbeda dengan yang di localStorage
+        cekPerubahanData('last_total_salmo', totalSekarang, "Data Penjualan Salmo telah diperbarui.");
+        // -----------------------------
+        
+        // 2. Update UI seperti biasa
+        updateSaldoSalmo();
+        updateTotalSPVoucher();
+        updateTotalPaket();
+        updateTotalHifi();
+        
+    } catch(e) {
+        console.error("Gagal update:", e);
+    }
+}
 
 </script>
 </body>

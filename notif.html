@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi - MC-SAGARANTEN</title>
+    <link rel="stylesheet" href="global-ui.css">
+    <style>
+        .content-wrapper { padding: 0 10px; }
+        .notif-card { background: #fff; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border-color); overflow: hidden; }
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: #f8fafc; }
+        
+        .notif-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+        
+        .notif-content .title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+        .notif-content .desc { font-size: 11px; color: #64748b; line-height: 1.4; }
+        .notif-content .time { font-size: 9px; color: #94a3b8; margin-top: 5px; font-weight: 600; text-transform: uppercase; }
+        
+        .empty-state { text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="header-wrapper">
+    <div class="back-container" onclick="goBack()">
+        <div class="back-button"></div>
+    </div>
+    <div class="app-header">
+        <h1>Notifikasi</h1>
+        <p>Pembaruan sistem dan data terbaru</p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="notif-card" id="notif-list">
+        <div class="notif-item">
+            <div class="notif-icon">📊</div>
+            <div class="notif-content">
+                <div class="title">Data Penjualan Diperbarui</div>
+                <div class="desc">Rekapitulasi penjualan terbaru telah berhasil disinkronisasi ke server.</div>
+                <div class="time">10 Menit yang lalu</div>
+            </div>
+        </div>
+
+        <div class="notif-item">
+            <div class="notif-icon">📦</div>
+            <div class="notif-content">
+                <div class="title">Stok Barang Baru</div>
+                <div class="desc">Terdapat pembaruan data pada modul Stok Gudang untuk area Sagaranten.</div>
+                <div class="time">1 Jam yang lalu</div>
+            </div>
+        </div>
+        
+        </div>
+</div>
+
+<script src="global-ui.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('notif-list');
+        const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+
+        if (logs.length === 0) {
+            list.innerHTML = '<div class="empty-state">Tidak ada notifikasi baru</div>';
+        } else {
+            list.innerHTML = logs.map(log => `
+                <div class="notif-item">
+                    <div class="notif-icon">🔔</div>
+                    <div class="notif-content">
+                        <div class="title">Pembaruan Sistem</div>
+                        <div class="desc">${log.pesan}</div>
+                        <div class="time">${log.waktu}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Reset status notifikasi saat halaman dibuka
+        localStorage.removeItem('has_new_notif');
+        const badge = document.getElementById('notif-badge');
+        if(badge) badge.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>

@@ -3,77 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekapitulasi Amount CSO</title>
+    <title>SUMMARY SALDO MOBO DSE</title>
+    <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; color: #334155; background-color: #f1f5f9; padding-bottom: 40px; }
-        .back-button {
-    position: absolute;
-    top: 8px;
-    left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    padding-left: 12px;
-}
-
-        /* HEADER & MENU */
-        .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 20px 16px; text-align: center; position: relative; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .header h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
-        
-        .date-badge {
-            display: inline-block;
-            background-color: rgba(255, 255, 255, 0.15);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #f1f5f9;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 8px;
-        }
-
-        .menu-toggle { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; z-index: 100; }
-        .menu-toggle span { display: block; height: 2.5px; width: 100%; background-color: #ffffff; border-radius: 3px; transition: all 0.3s ease; }
-        .menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); } 
-        /* Mengubah warna teks dan memberikan sedikit ketebalan pada menu aktif */
-.menu-aktif {
-    color: #0284c7 !important; /* Warna biru cerah */
-    font-weight: 800 !important;
-}
-
-        
-        /* NAV MENU DROPDOWN */
-        .nav-menu { position: absolute; top: 100%; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; z-index: 99; border-bottom: 3px solid #0284c7; }
-        .nav-menu.open { max-height: 100vh; }
-        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
-        .nav-menu ul li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; color: #334155; text-decoration: none; font-size: 13.5px; font-weight: 600; border-bottom: 1px solid #f1f5f9; }
-        
-        .nav-submenu-container { max-height: 0; overflow: hidden; background-color: #f8fafc; transition: max-height 0.3s ease-out; }
-        .nav-submenu-container a { display: block !important; padding: 12px 20px 12px 35px !important; font-size: 13px !important; color: #475569 !important; border-left: 4px solid #0d9488; border-bottom: 1px solid #f1f5f9; }
 
         /* CONTAINER TABEL */
-        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 10px}
+        
         table { width: 100%; border-collapse: collapse; }
         th { background-color: #1e293b; color: #ffffff; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
         td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
@@ -102,37 +43,22 @@
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>REKAP SALMO DSE</h1>
-        <div class="date-badge" id="reportDate">Memuat tanggal...</div>
-        <a href="#" class="back-button" id="back-btn">
-    ← Kembali
-</a>
-        
-        <button class="menu-toggle" id="menu-btn"><span></span><span></span><span></span></button>
-
-        <nav class="nav-menu" id="nav-dropdown">
-            <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="stok-gudang.html">Stok Gudang</a></li>
-                <li><a href="stok-barang-dse.html">Stok Akhir CSO</a></li>
-                <li><a href="form-permintaan.html">Form Permintaan</a></li>
-                <li id="trigger-penjualan">
-                    <a href="#" onclick="return false;">Laporan Penjualan ➔</a>
-                </li>
-                <div class="nav-submenu-container" id="submenu-penjualan">
-                    <a href="penjualan-salmo.html" id="nav-penjualan-salmo">🐟 Penjualan SALMO</a>
-                    <a href="penjualan-reguler3.html">🛒 Penjualan Reguler</a>
-                    <a href="penjualan-paket-tm2.html">📞 Penjualan Paket TM</a>
-                    <a href="penjualan-direct-selling.html">🚶 Penjualan Direct Selling</a>
-                    <a href="penjualan-hifi.html">🌐 Penjualan Hifi</a>
-                </div>
-            </ul>
-        </nav>
+<div class="sticky-container">
+    <div class="header-wrapper">
+        <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+</div>
+        <div class="app-header">
+        <h1>SUMMARY SALDO MOBO DSE</h1>
+        <p>Rekapitulasi saldo mobo dan Ranking DSE</p>
+          </div>
+       </div>
     </div>
 
     <div class="container">
+      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-bottom: 5px; font-weight: 500;">
+        Update Data: Memuat...
+    </div>
         <table>
             <thead>
                 <tr><th>Peringkat & Nama</th><th class="text-right">Amount</th></tr>
@@ -149,16 +75,34 @@
 <div class="chart-container">
     <canvas id="salmoChart"></canvas>
 </div>
-    <script>
-      document.getElementById('back-btn').addEventListener('click', function(e) {
-    e.preventDefault();
+<footer class="bottom-nav">
 
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = 'index.html';
-    }
-});
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="#" class="bottom-item">
+        <div>🔔</div>
+        <span>Notif</span>
+    </a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+    <script>
     // Konfigurasi file
     const EXCEL_FILE_URL = 'index-data.xlsx';
     const TARGET_SHEET_NAME = "penjualan-salmo";
@@ -277,12 +221,6 @@ function createChart(labels, data) {
         submenuPenjualan.style.maxHeight = (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") ? "0px" : submenuPenjualan.scrollHeight + "px";
     });
 
-    function setDate() {
-        const date = new Date();
-        date.setDate(date.getDate() - 1);
-        document.getElementById('reportDate').textContent = `Data Per: ${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
-    }
-    setDate(); 
     // Menandai menu aktif berdasarkan URL halaman
 function setActiveMenu() {
     const path = window.location.pathname;
@@ -303,7 +241,7 @@ function setActiveMenu() {
 setActiveMenu();
 
 </script>
-
-<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
+<script src="global-ui.js"></script>
+</body>
 </html>
 

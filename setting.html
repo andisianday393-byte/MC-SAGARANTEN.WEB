@@ -6,21 +6,11 @@
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e293b">
     <title>Setting - MC-SAGARANTEN</title>
+    <link rel="stylesheet" href="global-ui.css">
     <style>
-
-        :root {
-            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --bg-color: #f1f5f9;
-            --border-color: #e2e8f0;
-        }
-        *{ box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif; }
-        body{ background:var(--bg-color); min-height:100vh; padding-bottom:30px; }
-        
-        .app-header{ background:var(--header-gradient); color:#fff; padding:35px 20px 30px; text-align:center; margin-bottom:20px; }
-        .back-button { position: absolute; top: 8px; left: 10px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; border-radius: 10px; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); }
         
         .content-wrapper { padding: 0 10px; }
-        .setting-card { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
+        .setting-card { background: #fff; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
         .setting-item {
     display: flex;
     justify-content: space-between;
@@ -63,11 +53,14 @@
 </head>
 <body>
 
-<a href="index.html" class="back-button">← Kembali</a>
-
-<div class="app-header">
+<div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+    </div>
+        <div class="app-header">
     <h1>Pengaturan</h1>
     <p>Konfigurasi sistem portal</p>
+  </div>
 </div>
 
 <div class="content-wrapper">
@@ -177,5 +170,6 @@ btnInstall.addEventListener('click', async () => {
     }
 });
 </script>
-
+<script src="global-ui.js"></script>
+</body>
 </html>

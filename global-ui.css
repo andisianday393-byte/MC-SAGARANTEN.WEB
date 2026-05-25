@@ -40,86 +40,127 @@ body{
             display:flex;
             flex-direction:column;
             padding-bottom:70px;
+            margin:0;
+            overflow-x:hidden;
 }
 
 /* =========================================
    FREEZE HEADER
 ========================================= */
-
-/* Container khusus untuk mengunci elemen bagian atas */
-        .sticky-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg-color);
-            padding-bottom: 10px; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-        }
-
-/* =========================================
-   HEADER LAYOUT
-========================================= */
-
-/* Warna gradasi tipis dengan batas bawah garis kuning emas elegan */
-        .app-header {
-            background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
-            color: #fff;
-            padding: 15px 20px; 
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
-            
-            margin-bottom: -2px;
-            border-bottom: 3px solid #eab308; 
-        }
-
-        /* Ukuran font judul disusutkan */
-        .app-header h1 {
-            font-size: 16px; 
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        /* Ukuran sub-judul disesuaikan */
-        .app-header p {
-            font-size: 10px; 
-            opacity: .75;
-        }
-        /* 1. Header tetap menempel di atas */
-.header-wrapper {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* Reset dasar */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
-.main-content {
-    padding-top: 10px; 
+/* Container pembungkus (ini yang akan menempel) */
+.sticky-container{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    width:100%;
+
+    background:#111827;
+
+    /* membantu performa */
+    will-change:transform;
+
+    /* cegah bug sticky android */
+    transform:translateZ(0);
+}
+
+/* HEADER WRAPPER */
+.header-wrapper{
+    position:relative;
+    width:100%;
+    min-height:70px;
+    max-height:70px;
+    height:70px;
+
+    background:linear-gradient(
+        135deg,
+        #1e293b 0%,
+        #111827 100%
+    );
+
+    border-bottom:3px solid #eab308;
+    box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);
+
+    overflow:hidden;
+    backdrop-filter: blur(10px);
+}
+
+/* HEADER */
+.app-header{
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    color:#fff;
+
+    padding:0 20px;
+    text-align:center;
+}
+
+/* JUDUL */
+.app-header h1{
+    font-size:16px;
+    line-height:1.2;
+    font-weight:700;
+    letter-spacing:.5px;
+
+    margin:0;
+}
+
+/* SUBTITLE */
+.app-header p{
+    font-size:10px;
+    line-height:1.2;
+
+    opacity:.75;
+    margin-top:2px;
+}
+
+/* CONTENT */
+.main-content{
+    padding-top:10px;
 }
 /* =========================================
    BACK BUTTON
 ========================================= */
 
-.back-button{
-    width:16px;
-    height:16px;
-
-    border-left:4px solid white;
-    border-bottom:4px solid white;
-
-    border-radius:2px;
-
-    transform:rotate(45deg);
-
-    cursor:pointer;
-
-    transition:.2s;
+/* Container agar tombol lebih mudah diklik (area klik lebih luas) */
+.back-container {
+    position: absolute; 
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    padding: 10px; /* Memberi area klik yang luas */
+    cursor: pointer;
+    z-index: 1001; /* Pastikan di atas layer lain */
 }
 
-/* EFEK TEKAN */
-.back-button:active{
-    opacity:.6;
-
-    transform:rotate(45deg) scale(.92);
+/* Tombol Back */
+.back-button {
+    width: 14px;
+    height: 14px;
+    border-left: 3px solid white;
+    border-bottom: 3px solid white;
+    border-radius: 2px;
+    transform: rotate(45deg);
+    transition: 0.2s;
 }
+
+/* Efek saat tombol ditekan */
+.back-container:active .back-button {
+    opacity: 0.6;
+    transform: rotate(45deg) scale(0.9);
+}
+
 
 /* =========================================
    MENU TOGGLE
@@ -370,5 +411,20 @@ body{
     padding: 1px 4px;
     border-radius: 10px;
     font-weight: bold;
+}
+/* Badge Notifikasi */
+.notif-container {
+    position: relative;
+}
+.notif-badge {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    background: #ef4444;
+    color: white;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 10px;
+    display: none; /* Disembunyikan secara default */
 }
 

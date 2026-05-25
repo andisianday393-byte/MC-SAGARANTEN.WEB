@@ -4,23 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Info Log - MC-SAGARANTEN</title>
-    <!-- Kita gunakan style yang sama -->
+    <link rel="stylesheet" href="global-ui.css">
     <style>
-        /* Impor style dasar dari index agar senada */
-        :root {
-            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --bg-color: #f1f5f9;
-            --text-main: #334155;
-            --border-color: #e2e8f0;
-        }
-        *{ box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif; }
-        body{ background:var(--bg-color); min-height:100vh; padding-bottom:30px; }
-        
-        .app-header{ background:var(--header-gradient); color:#fff; padding:35px 20px 30px; text-align:center; margin-bottom:20px; }
-        .back-button { position: absolute; top: 8px; left: 10px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; border-radius: 10px; font-size: 10px; border: 1px solid rgba(255,255,255,0.2); }
         
         .content-wrapper { padding: 0 10px; }
-        .card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card { background: #fff; border-radius: 8px; padding: 15px; margin-top: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .card-title { font-size: 14px; font-weight: 700; color: #1e3a8a; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -30,12 +18,14 @@
     </style>
 </head>
 <body>
-
-<a href="index.html" class="back-button">← Kembali</a>
-
-<div class="app-header">
+    <div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+    </div>
+        <div class="app-header">
     <h1>Info Log Aktivitas</h1>
     <p>Monitoring akses dan pengunduhan data</p>
+    </div>
 </div>
 
 <div class="content-wrapper">
@@ -76,7 +66,8 @@
         </table>
     </div>
 </div>
-
-<link rel="stylesheet" href="android-back.css"> <script src="android-back.js"></script> </body>
+</script> 
+<script src="global-ui.js"></script>
+</body>
 </html>
 

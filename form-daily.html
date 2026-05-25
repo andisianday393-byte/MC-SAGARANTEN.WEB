@@ -5,91 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Report - DSE MC Sagaranten</title>
     <link rel="stylesheet" href="global-ui.css">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body {
-            background: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .report-container {
-            width: 100%;            /* Paksa lebar 100% */
-            min-height: 100vh;      /* Paksa tinggi minimal 1 layar */
-            background: #fff;
-            margin: 0;              /* Hapus margin */
-            padding: 20px;
-            border-radius: 0;       /* Hapus radius agar full */
-            box-shadow: none;       /* Hapus shadow agar menyatu dengan layar */
-            box-sizing: border-box;
-        }
-
-        /* Opsional: Agar inputan tidak terlalu lebar di layar besar */
-        @media (min-width: 600px) {
-            .report-container {
-                max-width: 500px;
-                margin: auto;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            }
-        }
-        h2 { text-align: center; color: #d32f2f; margin-bottom: 5px; }
-        .header-info { text-align: center; font-weight: bold; margin-bottom: 20px; color: #555; }
-        .section-title {
-            background: #d32f2f; color: white; padding: 6px 12px; margin-top: 25px;
-            font-size: 14px; font-weight: bold; border-radius: 4px; text-transform: uppercase;
-        }
-        .field-group {
-            margin: 8px 0; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #eee; padding-bottom: 5px;
-        }
-        .value select {
-    border: none;
-    text-align: right;
-    background: #f9f9f9;
-    font-family: inherit;
-    font-size: 14px;
-    width: 140px;
-    padding: 4px 8px;
-    border-radius: 4px;
+    *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-.value select:focus {
-    outline: 2px solid #ffcdd2;
-    background: #fff;
+body{
+    font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background:#f1f5f9;
+    color:#334155;
+    min-height:100vh;
+    padding-bottom:100px;
 }
-        .label { font-weight: 600; color: #333; font-size: 13px; }
-        .value { display: flex; align-items: center; }
-        .value input {
-            border: none; text-align: right; background: #f9f9f9; font-family: inherit;
-            font-size: 14px; width: 140px; padding: 4px 8px; border-radius: 4px;
-        }
-        .value input:focus { outline: 2px solid #ffcdd2; background: #fff; }
-        .total-highlight { background: #fff9c4 !important; font-weight: bold; color: #d32f2f; }
-        .note { font-size: 11px; font-style: italic; color: #666; margin-top: 15px; padding: 8px; background: #fef9e7; border-radius: 4px; }
-        .btn-container { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .btn { padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-excel { background: #1D6F42; color: white; }
-        .btn-print { background: #1976d2; color: white; }
-        .btn-reset { background: #757575; color: white; }
-        .btn:hover { opacity: 0.9; }
-        
-        @media print { .btn-container { display: none; } }
-    </style>
+
+/* CONTAINER */
+.report-container{
+    width:calc(100% - 24px);
+    max-width:650px;
+    margin:10px auto;
+    padding:10px;
+}
+
+/* CARD */
+.report-container{
+    background:#fff;
+    border-radius:8px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 4px 6px -1px rgba(0,0,0,.05);
+    margin-top:16px;
+}
+
+/* SECTION */
+.section-title{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:700;
+    font-size:11px;
+    text-transform:uppercase;
+    padding:7px 10px;
+    border-bottom:2px solid #cbd5e1;
+    margin:14px 0 8px;
+    letter-spacing:.5px;
+    border-radius:4px;
+    margin-top: 2px;
+}
+
+/* FIELD */
+.field-group{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.label{
+    font-size:12px;
+    font-weight:600;
+    color:#475569;
+    flex:1;
+}
+
+.value{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+/* INPUT */
+.value input,
+.value select{
+    width:130px;
+    padding:8px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    background:#f8fafc;
+    color:#334155;
+    font-size:13px;
+    text-align:right;
+    transition:.2s;
+}
+
+.value input:focus,
+.value select:focus{
+    outline:none;
+    border-color:#0284c7;
+    background:#fff;
+    box-shadow:0 0 0 2px rgba(2,132,199,.15);
+}
+
+/* AUTO TOTAL */
+.total-highlight{
+    background:#e0f2fe !important;
+    color:#0284c7 !important;
+    border-color:#bae6fd !important;
+    font-weight:700;
+}
+
+/* NOTE */
+.note{
+    font-size:11px;
+    background:#f8fafc;
+    padding:10px;
+    border-radius:6px;
+    margin-top:12px;
+    color:#64748b;
+    border:1px solid #e2e8f0;
+}
+
+/* BUTTON */
+.btn-container{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn{
+    border:none;
+    border-radius:6px;
+    padding:14px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.btn:active{
+    transform:scale(.98);
+}
+
+.btn-excel{
+    background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);
+    color:#fff;
+}
+
+.btn-print{
+    background:linear-gradient(135deg,#0284c7 0%,#0369a1 100%);
+    color:#fff;
+}
+
+.btn-reset{
+    background:linear-gradient(135deg,#64748b 0%,#475569 100%);
+    color:#fff;
+}
+
+/* MOBILE */
+@media(max-width:480px){
+
+    .field-group{
+        align-items:flex-start;
+    }
+
+    .value input,
+    .value select{
+        width:120px;
+    }
+
+    .app-header h1{
+        font-size:15px;
+    }
+}
+
+@media print{
+    .btn-container,
+    .bottom-nav{
+        display:none;
+    }
+}
+</style>
+
 </head>
 <body>
-<div class="header-wrapper">
-    <div class="app-header">
-        <h1>MC-SAGARANTEN</h1>
-        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+<div class="sticky-container">
+    <div class="header-wrapper">
+        <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+</div>
+        <div class="app-header">
+            <h1>DAILY REPORT DSE</h1>  
+            <p>Penginputan laporan harian hasil di lapangan</p>
+        </div>
     </div>
 </div>
+
 <div class="report-container">
-    <h2>Daily Report - DSE MC</h2>
-    <div class="header-info">Sagaranten</div>
-    
-    <div class="field-group">
+
+    <div class="section-title">INFO SALES</div>
+
+   <div class="field-group">
         <span class="label">Tgl:</span>
         <span class="value" id="currentDate" style="font-weight: bold;"></span>
     </div>
@@ -170,6 +280,36 @@
         <button class="btn btn-reset" onclick="window.location.reload()">🔄 Reset Form</button>
     </div>
 </div>
+<!-- =========================================
+     BOTTOM NAVIGATION
+========================================= -->
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="#" class="bottom-item">
+        <div>🔔</div>
+        <span>Notif</span>
+    </a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
 <script>
 
 // ==========================
@@ -693,7 +833,7 @@ if(reportContainer){
 }
 
 </script>
-
+<script src="global-ui.js"></script>
 </body>
 </html>
 
