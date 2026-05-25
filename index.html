@@ -422,13 +422,13 @@
     overflow: hidden;
     transition: max-height 0.4s ease-out;
     background: #f8fafc;     /* Latar laci sedikit berbeda agar terlihat seperti kartu */
-    margin: 0 2px 2px 2px;
+    margin: 0 5px 5px 5px;
     border-radius: 0 0 8px 8px;
 }
 
 .laci-content.open {
     max-height: 55px;       /* Sesuaikan tinggi agar pas */
-    border: 1px solid #e2e8f0;
+    border: 0px solid #e2e8f0;
     border-top: none;
 }
 
@@ -786,6 +786,7 @@ async function updateSaldoSalmo() {
             grandTotal += ambilAngka(row['Amount']);
         });
         document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
+        
     } catch(error) {
         console.log(error);
         document.getElementById('grand-total').innerText = 'Error';
@@ -1145,7 +1146,7 @@ document.getElementById('btn-refresh').addEventListener('click', function() {
     icon.classList.add('refresh-spin');
     
     // Kirim log aktivitas (opsional)
-    kirimLog('Manual Refresh Halaman');
+    kirimLog('Manual Refresh Halaman');  tambahNotif(     'Dashboard berhasil direfresh' );
     
     // Beri jeda sedikit agar user melihat animasi, lalu reload
     setTimeout(() => {
@@ -1165,7 +1166,71 @@ document.getElementById('btn-refresh').addEventListener('click', function() {
     kirimLog('Manual Refresh Halaman');
     setTimeout(() => { location.reload(); }, 800);
 });
+/* =========================
+   SISTEM NOTIFIKASI
+========================= */
 
+function tambahNotif(pesan){
+
+    // Ambil notif lama
+    let logs =
+        JSON.parse(
+            localStorage.getItem('notif_logs') || '[]'
+        );
+/* Hapus notif lebih dari 1 hari */
+logs = logs.filter(log => {
+
+    const umur =
+        Date.now() - (log.timestamp || 0);
+
+    return umur < 86400000;
+
+});
+    // Tambah notif baru di paling atas
+    logs.unshift({
+    pesan: pesan,
+    waktu: new Date().toLocaleString('id-ID'),
+    timestamp: Date.now()
+});
+
+    // Batasi maksimal 20 notif
+    logs = logs.slice(0,20);
+
+    // Simpan kembali
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+    // Tandai ada notif baru
+    localStorage.setItem(
+        'has_new_notif',
+        'true'
+    );
+
+    tampilkanBadgeNotif();
+}
+
+/* =========================
+   BADGE NOTIF
+========================= */
+
+function tampilkanBadgeNotif(){
+
+    const badge =
+        document.getElementById('notif-badge');
+
+    if(!badge) return;
+
+    const hasNotif =
+        localStorage.getItem('has_new_notif');
+
+    badge.style.display =
+        hasNotif ? 'flex' : 'none';
+}
+
+/* Jalankan saat halaman dibuka */
+tampilkanBadgeNotif();
 </script>
 
 </body>

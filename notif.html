@@ -29,6 +29,29 @@
         .notif-content .time { font-size: 9px; color: #94a3b8; margin-top: 5px; font-weight: 600; text-transform: uppercase; }
         
         .empty-state { text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 12px; }
+        
+        .hapus-btn{
+    position:absolute;
+
+    right:15px; /* geser kiri/kanan */
+    top:89px;   /* geser atas/bawah */
+
+    border:none;
+    background:#fee2e2;
+
+    color:#dc2626;
+
+    width:20px;
+    height:20px;
+
+    border-radius:50%;
+
+    font-size:10px;
+    font-weight:bold;
+
+    cursor:pointer;
+    
+}
     </style>
 </head>
 <body>
@@ -68,6 +91,22 @@
 
 <script src="global-ui.js"></script>
 <script>
+  function hapusNotif(index){
+
+    let logs =
+        JSON.parse(
+            localStorage.getItem('notif_logs') || '[]'
+        );
+
+    logs.splice(index,1);
+
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+    location.reload();
+}
     document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('notif-list');
         const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
@@ -75,16 +114,32 @@
         if (logs.length === 0) {
             list.innerHTML = '<div class="empty-state">Tidak ada notifikasi baru</div>';
         } else {
-            list.innerHTML = logs.map(log => `
-                <div class="notif-item">
-                    <div class="notif-icon">🔔</div>
-                    <div class="notif-content">
-                        <div class="title">Pembaruan Sistem</div>
-                        <div class="desc">${log.pesan}</div>
-                        <div class="time">${log.waktu}</div>
-                    </div>
-                </div>
-            `).join('');
+            list.innerHTML = logs.map((log,index) => `
+    <div class="notif-item">
+
+        <div class="notif-icon">🔔</div>
+
+        <div class="notif-content">
+            <div class="title">Pembaruan Sistem</div>
+
+            <div class="desc">
+                ${log.pesan}
+            </div>
+
+            <div class="time">
+                ${log.waktu}
+            </div>
+        </div>
+
+        <button
+            class="hapus-btn"
+            onclick="hapusNotif(${index})"
+        >
+            ✕
+        </button>
+
+    </div>
+`).join('');
         }
 
         // Reset status notifikasi saat halaman dibuka
