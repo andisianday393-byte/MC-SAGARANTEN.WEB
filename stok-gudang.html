@@ -75,65 +75,177 @@
 
 </footer>
     <script>
-        const excelFileUrl = "index-data.xlsx"; 
-        const TARGET_SHEET_NAME = "stok-gudang";
 
-        async function fetchExcelData() {
-            try {
-                // Menambahkan timestamp agar data selalu baru (tidak cache)
-                const response = await fetch(excelFileUrl + "?t=" + new Date().getTime());
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+const excelFileUrl = "index-data.xlsx";
+const TARGET_SHEET_NAME = "stok-gudang";
 
-                const sheet = workbook.Sheets[TARGET_SHEET_NAME];
-                if (!sheet) throw new Error("Sheet tidak ditemukan");
+async function fetchExcelData() {
 
-                const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                renderTable(matrix);
-            } catch (error) {
-                document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" class="loading-text">⚠️ Gagal memuat data.</td></tr>`;
-            }
+    try {
+
+        // AMBIL FILE EXCEL TERBARU
+        const response = await fetch(
+            excelFileUrl + "?t=" + new Date().getTime()
+        );
+
+        // AMBIL LAST MODIFIED
+        const lastModified =
+            response.headers.get("Last-Modified");
+
+        // BACA FILE EXCEL
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(
+                new Uint8Array(arrayBuffer),
+                { type: 'array' }
+            );
+
+        const sheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        if (!sheet)
+            throw new Error("Sheet tidak ditemukan");
+
+        const matrix =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {
+                    header: 1,
+                    defval: ""
+                }
+            );
+
+        // TAMPILKAN TABEL
+        renderTable(matrix);
+
+        // TAMPILKAN TANGGAL UPDATE FILE
+        if (lastModified) {
+
+            const updateDate =
+                new Date(lastModified);
+
+            const options = {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+
+            document.getElementById(
+                'updateTime'
+            ).textContent =
+                "Update Data: " +
+                updateDate.toLocaleString(
+                    'id-ID',
+                    options
+                );
         }
 
-        function renderTable(matrix) {
-            const tbody = document.getElementById('stok-data-table');
-            let html = "", tSegel = 0, tSellIn = 0;
+    } catch (error) {
 
-            matrix.forEach((row, i) => {
-                if (i < 2 || !row[0]) return; 
-                let segel = parseInt(row[1]) || 0;
-                let sellIn = parseInt(row[2]) || 0;
-                let total = segel + sellIn;
-                
-                tSegel += segel; tSellIn += sellIn;
-                html += `<tr><td class="item-name-col">${row[0]}</td><td>${segel.toLocaleString()}</td><td>${sellIn.toLocaleString()}</td><td>${total.toLocaleString()}</td></tr>`;
-            });
+        document.getElementById(
+            'stok-data-table'
+        ).innerHTML =
+            `<tr>
+                <td colspan="4"
+                    class="loading-text">
+                    ⚠️ Gagal memuat data.
+                </td>
+            </tr>`;
 
-            html += `<tr class="total-row"><td class="item-name-col">TOTAL</td><td>${tSegel.toLocaleString()}</td><td>${tSellIn.toLocaleString()}</td><td>${(tSegel+tSellIn).toLocaleString()}</td></tr>`;
-            tbody.innerHTML = html;
-        }
+        document.getElementById(
+            'updateTime'
+        ).textContent =
+            "Update Data: Gagal memuat";
+    }
+}
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchExcelData();
-        });
-        async function fetchExcelData() {
-            try {
-                const response = await fetch(excelFileUrl + "?t=" + new Date().getTime());
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+function renderTable(matrix) {
 
-                const sheet = workbook.Sheets[TARGET_SHEET_NAME];
-                if (!sheet) throw new Error("Sheet tidak ditemukan");
+    const tbody =
+        document.getElementById(
+            'stok-data-table'
+        );
 
-                const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                renderTable(matrix);
-                
-            } catch (error) {
-                document.getElementById('stok-data-table').innerHTML = `<tr><td colspan="4" class="loading-text">⚠️ Gagal memuat data.</td></tr>`;
-                document.getElementById('updateTime').textContent = "Update Data: Gagal memuat";
-            }
-        }
-    </script>
+    let html = "";
+    let tSegel = 0;
+    let tSellIn = 0;
+
+    matrix.forEach((row, i) => {
+
+        if (i < 2 || !row[0]) return;
+
+        let segel =
+            parseInt(row[1]) || 0;
+
+        let sellIn =
+            parseInt(row[2]) || 0;
+
+        let total =
+            segel + sellIn;
+
+        tSegel += segel;
+        tSellIn += sellIn;
+
+        html += `
+            <tr>
+
+                <td class="item-name-col">
+                    ${row[0]}
+                </td>
+
+                <td>
+                    ${segel.toLocaleString()}
+                </td>
+
+                <td>
+                    ${sellIn.toLocaleString()}
+                </td>
+
+                <td>
+                    ${total.toLocaleString()}
+                </td>
+
+            </tr>
+        `;
+    });
+
+    html += `
+        <tr class="total-row">
+
+            <td class="item-name-col">
+                TOTAL
+            </td>
+
+            <td>
+                ${tSegel.toLocaleString()}
+            </td>
+
+            <td>
+                ${tSellIn.toLocaleString()}
+            </td>
+
+            <td>
+                ${(tSegel + tSellIn).toLocaleString()}
+            </td>
+
+        </tr>
+    `;
+
+    tbody.innerHTML = html;
+}
+
+// LOAD HALAMAN
+document.addEventListener(
+    'DOMContentLoaded',
+    fetchExcelData
+);
+
+</script>
     <script src="global-ui.js"></script>
 </body>
 </html>
