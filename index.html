@@ -642,14 +642,9 @@
 
 </div>
 <script> 
-/* =========================
-   GOOGLE LOG SYSTEM
-========================= */
-
 const WEB_APP_URL =
-'https://script.google.com/macros/s/AKfycbzXGvM9v5msz4KhByHYOwhgWg7l09gOWg47ej-brZ_7repA33wQRei6kqXL35HPM_-V/exec';
+'https://script.google.com/macros/s/AKfycbzaIBtkYJ0ajTpb1_8Bo8FLkP5IFmfF7TzwtjY2bHNEOohuIlTxwmS4etIVeGKoCqpJ/exec';
 
-/* KIRIM LOG */
 async function kirimLog(
     aktivitas,
     halaman = window.location.pathname
@@ -657,24 +652,29 @@ async function kirimLog(
 
     try{
 
-        await fetch(WEB_APP_URL,{
+        const response =
+            await fetch(WEB_APP_URL, {
 
-            method:'POST',
+                method:'POST',
 
-            body:JSON.stringify({
+                headers:{
+                    'Content-Type':'text/plain;charset=utf-8'
+                },
 
-                aktivitas:
-                    aktivitas,
+                body:JSON.stringify({
 
-                halaman:
-                    halaman,
+                    aktivitas: aktivitas,
+                    halaman: halaman,
+                    device: navigator.userAgent
 
-                device:
-                    navigator.userAgent
+                })
 
-            })
+            });
 
-        });
+        const result =
+            await response.text();
+
+        console.log('HASIL LOG:', result);
 
     }catch(err){
 
@@ -863,7 +863,7 @@ async function loadSemua() {
         
         // --- LETAKKAN KODE DI SINI ---
         // Fungsi ini akan mengecek apakah totalSekarang berbeda dengan yang di localStorage
-        cekPerubahanData('last_total_salmo', totalSekarang, "Data Penjualan Salmo telah diperbarui.");
+        
         // -----------------------------
         
         // 2. Update UI seperti biasa
