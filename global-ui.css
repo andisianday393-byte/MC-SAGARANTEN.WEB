@@ -401,32 +401,34 @@ body{
     margin-bottom: 2px;
 }
 
-.badge {
-    position: absolute;
-    top: 50px;
-    right: 12px; /* Posisi badge disesuaikan */
-    background: #e11d48;
-    color: white;
-    font-size: 5px;
-    padding: 1px 4px;
-    border-radius: 10px;
-    font-weight: bold;
-}
 .notif-container{
     position:relative;
+
+    width:24px;
+    height:24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.bell-icon{
+    font-size:22px;
+    line-height:1;
 }
 
 .notif-badge{
     position:absolute;
-    top:5px;
-    right: 35px;
 
-    min-width:12px;
-    height:12px;
+    top:-4px;
+    right:-6px;
 
-    padding:0 4px;
+    min-width:14px;
+    height:14px;
 
-    border-radius:20px;
+    padding:0 3px;
+
+    border-radius:50%;
 
     background:red;
     color:white;
@@ -434,26 +436,10 @@ body{
     font-size:9px;
     font-weight:bold;
 
-    display:none;
-
+    display:flex;
     align-items:center;
     justify-content:center;
 
-    animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-    0%{
-        transform:scale(1);
-        opacity:1;
-    }
-    50%{
-        transform:scale(1.15);
-        opacity:.7;
-    }
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
+    z-index:10;
 }
 
