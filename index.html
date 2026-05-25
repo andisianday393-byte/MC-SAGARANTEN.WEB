@@ -255,42 +255,6 @@
 
 .penjualan-link.active .nav-arrow {transform: rotate(90deg); color: var(--accent-penjualan);}
 
-
-        .footer-sys-links {
-            margin-bottom: 14px;
-        }
-
-        .footer-sys-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            margin: 0 8px;
-            font-weight: 600;
-            border-bottom: 1px dashed #475569;
-            padding-bottom: 1px;
-        }
-
-        .footer-sys-links a:hover {
-            color: #cbd5e1;
-            border-bottom-color: #cbd5e1;
-        }
-
-        .footer-copyright {
-            font-size: 10px;
-            color: #64748b;
-            border-top: 1px solid #334155;
-            padding-top: 12px;
-            letter-spacing: 0.3px;
-        }
-
-        .support-custom-icon {
-    width: 14px;      /* Mengatur lebar ikon */
-    height: 14px;     /* Mengatur tinggi ikon */
-    object-fit: contain;
-    display: inline-block;
-    vertical-align: middle;
-    margin-top: -2px; /* Menyelaraskan posisi tengah dengan teks */
-}
-
 /* Bagian menu didalam penjualan*/
 .submenu-img{
     width:30px;
@@ -324,7 +288,109 @@
 #btn-form, #btn-penjualan {
     cursor: pointer;
 }
+/* =========================
+   SEARCH OVERLAY
+========================= */
 
+.search-overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(15,23,42,.55);
+
+    backdrop-filter:blur(5px);
+
+    z-index:999999;
+
+    display:none;
+
+    align-items:flex-start;
+    justify-content:center;
+
+    padding:80px 14px 20px;
+}
+
+.search-overlay.active{
+    display:flex;
+}
+
+.search-box{
+    width:100%;
+    max-width:500px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.18);
+}
+
+#searchInput{
+    width:100%;
+
+    border:none;
+    outline:none;
+
+    padding:16px;
+
+    font-size:15px;
+    font-weight:600;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+#searchResults{
+    max-height:60vh;
+    overflow-y:auto;
+}
+
+.search-item{
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    text-decoration:none;
+
+    color:#0f172a;
+
+    border-bottom:1px solid #f1f5f9;
+}
+
+.search-item:active{
+    background:#f8fafc;
+}
+
+.search-icon{
+    font-size:20px;
+}
+
+.search-text{
+    flex:1;
+}
+
+.search-title{
+    font-size:13px;
+    font-weight:700;
+}
+
+.search-desc{
+    font-size:11px;
+    color:#64748b;
+    margin-top:2px;
+}
+
+.empty-search{
+    padding:20px;
+    text-align:center;
+    font-size:12px;
+    color:#94a3b8;
+}
     </style>
 </head>
 
@@ -373,15 +439,18 @@
 
     <!-- Tombol Aksi Cepat -->
     <div class="quick-action-grid">
-        <a href="download-data.html" class="action-btn">
+        <a
+   href="download-data.html"
+   class="action-btn"
+   id="btn-download">
             <div class="action-icon">📥</div>
             <div class="action-label">Download File</div>
         </a>
 
-        <a href="cari-data.html" class="action-btn">
+        <div class="action-btn" id="openSearch">
             <div class="action-icon">🔍</div>
             <div class="action-label">Cari</div>
-        </a>
+        </div>
         
         <a href="info-log.html" class="action-btn">
             <div class="action-icon">📜</div>
@@ -557,8 +626,66 @@
 <!-- Library Pembaca file Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="global-notif.js"></script>
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
 
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari menu..."
+            autocomplete="off"
+        >
+
+        <div id="searchResults"></div>
+    </div>
+
+</div>
 <script> 
+/* =========================
+   GOOGLE LOG SYSTEM
+========================= */
+
+const WEB_APP_URL =
+'https://script.google.com/macros/s/AKfycbzXGvM9v5msz4KhByHYOwhgWg7l09gOWg47ej-brZ_7repA33wQRei6kqXL35HPM_-V/exec';
+
+/* KIRIM LOG */
+async function kirimLog(
+    aktivitas,
+    halaman = window.location.pathname
+){
+
+    try{
+
+        await fetch(WEB_APP_URL,{
+
+            method:'POST',
+
+            body:JSON.stringify({
+
+                aktivitas:
+                    aktivitas,
+
+                halaman:
+                    halaman,
+
+                device:
+                    navigator.userAgent
+
+            })
+
+        });
+
+    }catch(err){
+
+        console.log(
+            'Gagal kirim log',
+            err
+        );
+
+    }
+
+}
 function formatRupiah(number) {
     return "Rp " + Number(number).toLocaleString('id-ID');
 }
@@ -680,7 +807,9 @@ function updateClock() {
 
 setInterval(updateClock, 1000);
 updateClock();
-
+kirimLog(
+    'Membuka Home Portal'
+);
 function loadSemua() {
     updateSaldoSalmo();
     updateTotalSPVoucher();
@@ -747,7 +876,200 @@ async function loadSemua() {
         console.error("Gagal update:", e);
     }
 }
+/* =========================
+   SEARCH MENU
+========================= */
+
+const openSearchBtn =
+    document.getElementById('openSearch');
+
+const searchOverlay =
+    document.getElementById('searchOverlay');
+
+const searchInput =
+    document.getElementById('searchInput');
+
+const searchResults =
+    document.getElementById('searchResults');
+
+/* AMBIL SEMUA MENU */
+function ambilSemuaMenu(){
+
+    const menus = [];
+menus.push({
+    title: 'Download File',
+    desc: 'Unduh data excel dan backup',
+    href: 'download-data.html',
+    icon: '📥'
+});
+    // MENU UTAMA + SUBMENU
+    document
+    .querySelectorAll(
+        '.nav-item[href], .submenu-item[href]'
+    )
+    .forEach(item => {
+
+        menus.push({
+            title:
+                item.querySelector(
+                    '.nav-title, .submenu-title'
+                )?.innerText || '',
+
+            desc:
+                item.querySelector(
+                    '.nav-desc'
+                )?.innerText || '',
+
+            href:
+                item.getAttribute('href'),
+
+            icon:
+                item.querySelector(
+                    '.nav-icon, .submenu-icon'
+                )?.innerText || '📄'
+        });
+
+    });
+
+    // QUICK ACTION BUTTON
+    document
+    .querySelectorAll('.action-btn[href]')
+    .forEach(item => {
+
+        menus.push({
+            title:
+                item.querySelector(
+                    '.action-label'
+                )?.innerText || '',
+
+            desc:
+                'Menu Aksi Cepat',
+
+            href:
+                item.getAttribute('href'),
+
+            icon:
+                item.querySelector(
+                    '.action-icon'
+                )?.innerText || '⚡'
+        });
+
+    });
+
+    return menus;
+}
+
+const allMenus = ambilSemuaMenu();
+
+/* BUKA SEARCH */
+openSearchBtn.addEventListener(
+    'click',
+    () => {
+
+        searchOverlay.classList.add('active');
+
+        searchInput.value = '';
+
+        tampilkanHasil('');
+
+        setTimeout(() => {
+            searchInput.focus();
+        },100);
+
+    }
+);
+
+/* TUTUP SEARCH */
+searchOverlay.addEventListener(
+    'click',
+    (e) => {
+
+        if(e.target === searchOverlay){
+            searchOverlay.classList.remove('active');
+        }
+
+    }
+);
+
+/* SEARCH REALTIME */
+searchInput.addEventListener(
+    'input',
+    function(){
+
+        tampilkanHasil(this.value);
+
+    }
+);
+
+/* TAMPILKAN HASIL */
+function tampilkanHasil(keyword){
+
+    keyword = keyword.toLowerCase();
+
+    const hasil =
+        allMenus.filter(menu => {
+
+            return (
+                menu.title.toLowerCase().includes(keyword)
+                ||
+                menu.desc.toLowerCase().includes(keyword)
+            );
+
+        });
+
+    if(hasil.length === 0){
+
+        searchResults.innerHTML = `
+            <div class="empty-search">
+                Menu tidak ditemukan
+            </div>
+        `;
+
+        return;
+    }
+
+    searchResults.innerHTML =
+        hasil.map(menu => `
+            <a href="${menu.href}" class="search-item">
+
+                <div class="search-icon">
+                    ${menu.icon}
+                </div>
+
+                <div class="search-text">
+
+                    <div class="search-title">
+                        ${menu.title}
+                    </div>
+
+                    <div class="search-desc">
+                        ${menu.desc}
+                    </div>
+
+                </div>
+
+            </a>
+        `).join('');
+
+}
+/* =========================
+   LOG DOWNLOAD
+========================= */
+
+document
+.getElementById('btn-download')
+.addEventListener(
+    'click',
+    function(){
+
+        kirimLog(
+            'Melakukan Download File'
+        );
+
+    }
+);
 
 </script>
+
 </body>
 </html>
