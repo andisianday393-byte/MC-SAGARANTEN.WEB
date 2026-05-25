@@ -130,14 +130,21 @@
 }
 
 /* Container 4 kolom seimbang */
-        .quick-action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 6px; 
-            padding: 0 10px;
-            margin-bottom: 10px;
-            
-        }
+        /* Ubah bagian ini di dalam CSS Anda */
+.quick-action-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Mengubah dari 4 ke 5 kolom */
+    gap: 6px; 
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+.refresh-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
 
         /* Tombol aksi cepat */
         .action-btn {
@@ -391,6 +398,67 @@
     font-size:12px;
     color:#94a3b8;
 }
+.laci-trigger {
+    background: transparent; /* Latar belakang transparan */
+    color: #1e3a8a;          /* Warna teks biru */
+    padding: 8px 20px;
+    margin: 5px 13px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 800;        /* Dibuat lebih tebal agar kontras */
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: 0.3s;
+    margin-top: -2px;
+    border: 0px solid #e2e8f0; /* Tambahkan garis tipis agar terlihat rapi */
+}
+
+.laci-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    background: #f8fafc;     /* Latar laci sedikit berbeda agar terlihat seperti kartu */
+    margin: 0 2px 2px 2px;
+    border-radius: 0 0 8px 8px;
+}
+
+.laci-content.open {
+    max-height: 55px;       /* Sesuaikan tinggi agar pas */
+    border: 1px solid #e2e8f0;
+    border-top: none;
+}
+
+.laci-arrow { 
+    transition: 0.3s; 
+    color: #1e3a8a;          /* Panah berwarna biru senada */
+    font-weight: bold;
+}
+.laci-trigger.open .laci-arrow { transform: rotate(180deg); }
+/* Posisi relatif agar kita bisa menempatkan garis di atasnya */
+.laci-content .quick-action-grid {
+    position: relative;
+    padding: 12px 10px !important;
+    background: #ffffff;
+}
+
+/* Membuat garis dengan panjang yang bisa diatur */
+.laci-content .quick-action-grid::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;            /* Mulai dari tengah */
+    transform: translateX(-50%); /* Geser ke kiri setengah lebar garis agar benar-benar di tengah */
+    width: 93%;           /* ATUR PANJANG GARIS DI SINI (Contoh: 90%, 200px, dsb) */
+    height: 1px;          /* Ketebalan garis */
+    background-color: #1e3a8a; /* Warna garis */
+}
+
+
+
     </style>
 </head>
 
@@ -437,26 +505,31 @@
         </div>
     </div>
 
-    <!-- Tombol Aksi Cepat -->
-    <div class="quick-action-grid">
-        <a
-   href="download-data.html"
-   class="action-btn"
-   id="btn-download">
-            <div class="action-icon">📥</div>
-            <div class="action-label">Download File</div>
-        </a>
+ <!-- Pintu Laci -->
+<div class="laci-trigger" id="laciTrigger">
+    <span>Menu Aksi Cepat</span>
+    <span class="laci-arrow">▼</span>
+</div>
 
+<!-- Container Aksi (Laci) -->
+<div class="laci-content" id="laciContent">
+    <div class="quick-action-grid" style="padding: 10px;">
+        <a href="download-data.html" class="action-btn" id="btn-download">
+            <div class="action-icon">📥</div>
+            <div class="action-label">File</div>
+        </a>
         <div class="action-btn" id="openSearch">
             <div class="action-icon">🔍</div>
             <div class="action-label">Cari</div>
         </div>
-        
         <a href="info-log.html" class="action-btn">
             <div class="action-icon">📜</div>
-            <div class="action-label">Info Log</div>
+            <div class="action-label">Log</div>
         </a>
-        
+        <div class="action-btn" id="btn-refresh">
+            <div class="refresh-circle"><div class="action-icon" id="refresh-icon">🔄</div></div>
+            <div class="action-label">Refresh</div>
+        </div>
         <a href="setting.html" class="action-btn">
             <div class="action-icon">⚙️</div>
             <div class="action-label">Setting</div>
@@ -464,6 +537,7 @@
     </div>
 </div>
 </div>
+
 <!-- AKHIR DARI AREA STICKY -->
 
 <!-- BAGIAN NAVIGASI YANG BISA DI-SCROLL -->
@@ -1064,6 +1138,33 @@ document
 
     }
 );
+document.getElementById('btn-refresh').addEventListener('click', function() {
+    const icon = document.getElementById('refresh-icon');
+    
+    // Tambahkan animasi putar
+    icon.classList.add('refresh-spin');
+    
+    // Kirim log aktivitas (opsional)
+    kirimLog('Manual Refresh Halaman');
+    
+    // Beri jeda sedikit agar user melihat animasi, lalu reload
+    setTimeout(() => {
+        location.reload();
+    }, 500); 
+});
+document.getElementById('laciTrigger').addEventListener('click', function() {
+    const content = document.getElementById('laciContent');
+    this.classList.toggle('open');
+    content.classList.toggle('open');
+});
+
+// Fungsionalitas Refresh (yang tadi)
+document.getElementById('btn-refresh').addEventListener('click', function() {
+    const icon = document.getElementById('refresh-icon');
+    icon.classList.add('refresh-spin');
+    kirimLog('Manual Refresh Halaman');
+    setTimeout(() => { location.reload(); }, 800);
+});
 
 </script>
 
