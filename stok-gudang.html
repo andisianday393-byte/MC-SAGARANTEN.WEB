@@ -83,31 +83,39 @@ async function fetchExcelData() {
 
     try {
 
-        // AMBIL FILE EXCEL TERBARU
+        // AMBIL FILE TERBARU
         const response = await fetch(
-            excelFileUrl + "?t=" + new Date().getTime()
+            excelFileUrl + "?t=" + Date.now()
         );
 
-        // AMBIL LAST MODIFIED
-        const lastModified =
-            response.headers.get("Last-Modified");
+        if (!response.ok) {
+            throw new Error("File gagal dibaca");
+        }
 
-        // BACA FILE EXCEL
+        // AMBIL DATA FILE
         const arrayBuffer =
             await response.arrayBuffer();
 
+        // BACA EXCEL
         const workbook =
             XLSX.read(
-                new Uint8Array(arrayBuffer),
-                { type: 'array' }
+                arrayBuffer,
+                { type: "array" }
             );
 
+        // AMBIL SHEET
         const sheet =
-            workbook.Sheets[TARGET_SHEET_NAME];
+            workbook.Sheets[
+                TARGET_SHEET_NAME
+            ];
 
-        if (!sheet)
-            throw new Error("Sheet tidak ditemukan");
+        if (!sheet) {
+            throw new Error(
+                "Sheet tidak ditemukan"
+            );
+        }
 
+        // UBAH KE JSON
         const matrix =
             XLSX.utils.sheet_to_json(
                 sheet,
@@ -120,45 +128,89 @@ async function fetchExcelData() {
         // TAMPILKAN TABEL
         renderTable(matrix);
 
-        // TAMPILKAN TANGGAL UPDATE FILE
-        if (lastModified) {
+        // =========================
+        // TANGGAL UPDATE FILE EXCEL
+        // =========================
 
-            const updateDate =
-                new Date(lastModified);
+        let updateDate = null;
 
-            const options = {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
+        // AMBIL DARI PROPERTIES EXCEL
+        if (
+            workbook.Props &&
+            workbook.Props.ModifiedDate
+        ) {
+
+            updateDate =
+                new Date(
+                    workbook.Props.ModifiedDate
+                );
+        }
+
+        // FALLBACK LAST MODIFIED SERVER
+        if (
+            !updateDate ||
+            isNaN(updateDate)
+        ) {
+
+            const lastModified =
+                response.headers.get(
+                    "Last-Modified"
+                );
+
+            if (lastModified) {
+                updateDate =
+                    new Date(lastModified);
+            }
+        }
+
+        // TAMPILKAN TANGGAL
+        if (
+            updateDate &&
+            !isNaN(updateDate)
+        ) {
 
             document.getElementById(
-                'updateTime'
+                "updateTime"
             ).textContent =
                 "Update Data: " +
                 updateDate.toLocaleString(
-                    'id-ID',
-                    options
+                    "id-ID",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
                 );
+        }
+        else {
+
+            document.getElementById(
+                "updateTime"
+            ).textContent =
+                "Update Data: Tidak diketahui";
         }
 
     } catch (error) {
 
-        document.getElementById(
-            'stok-data-table'
-        ).innerHTML =
-            `<tr>
-                <td colspan="4"
-                    class="loading-text">
-                    ⚠️ Gagal memuat data.
-                </td>
-            </tr>`;
+        console.error(error);
 
         document.getElementById(
-            'updateTime'
+            "stock-data-table"
+        ).innerHTML =
+            `
+            <tr>
+                <td colspan="6"
+                    class="loading-text">
+                    ⚠️ Gagal memuat data Excel
+                </td>
+            </tr>
+            `;
+
+        document.getElementById(
+            "updateTime"
         ).textContent =
             "Update Data: Gagal memuat";
     }

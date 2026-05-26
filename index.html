@@ -452,7 +452,8 @@
     top: 0;
     left: 50%;            /* Mulai dari tengah */
     transform: translateX(-50%); /* Geser ke kiri setengah lebar garis agar benar-benar di tengah */
-    width: 93%;           /* ATUR PANJANG GARIS DI SINI (Contoh: 90%, 200px, dsb) */
+    width: 320px%;     
+    max-width: 93%;/* ATUR PANJANG GARIS DI SINI (Contoh: 90%, 200px, dsb) */
     height: 1px;          /* Ketebalan garis */
     background-color: #1e3a8a; /* Warna garis */
 }
@@ -683,19 +684,12 @@
 
     <!-- NOTIF -->
     <a href="notif.html" class="bottom-item" id="notif-link">
-
     <div class="notif-container">
         <span class="bell-icon">🔔</span>
-
-        <span class="notif-badge" id="notif-badge">
-            !
-        </span>
+        <span class="notif-badge" id="notif-badge">!</span>
     </div>
-
     <span>Notif</span>
-
 </a>
-
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -707,7 +701,8 @@
 
 <!-- Library Pembaca file Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="global-notif.js"></script>
+<script src="global-ui.js"></script>
+<script src="notif.js"></script>
 <!-- SEARCH OVERLAY -->
 <div class="search-overlay" id="searchOverlay">
 
@@ -725,7 +720,7 @@
 </div>
 <script> 
 const WEB_APP_URL =
-'https://script.google.com/macros/s/AKfycbzaIBtkYJ0ajTpb1_8Bo8FLkP5IFmfF7TzwtjY2bHNEOohuIlTxwmS4etIVeGKoCqpJ/exec';
+'https://script.google.com/macros/s/AKfycbyRFemxVivBCbScqY77yX68CtZxZ7uy1l4YUqgYDS6qz8sH5YTKI5Tk7BBXp7ZqHS3J/exec';
 
 async function kirimLog(
     aktivitas,
@@ -1147,20 +1142,6 @@ document
 
     }
 );
-document.getElementById('btn-refresh').addEventListener('click', function() {
-    const icon = document.getElementById('refresh-icon');
-    
-    // Tambahkan animasi putar
-    icon.classList.add('refresh-spin');
-    
-    // Kirim log aktivitas (opsional)
-    kirimLog('Manual Refresh Halaman');  tambahNotif(     'Dashboard berhasil direfresh' );
-    
-    // Beri jeda sedikit agar user melihat animasi, lalu reload
-    setTimeout(() => {
-        location.reload();
-    }, 500); 
-});
 document.getElementById('laciTrigger').addEventListener('click', function() {
     const content = document.getElementById('laciContent');
     this.classList.toggle('open');
@@ -1180,65 +1161,34 @@ document.getElementById('btn-refresh').addEventListener('click', function() {
 
 function tambahNotif(pesan){
 
-    // Ambil notif lama
     let logs =
-        JSON.parse(
-            localStorage.getItem('notif_logs') || '[]'
-        );
-/* Hapus notif lebih dari 1 hari */
-logs = logs.filter(log => {
+        JSON.parse(localStorage.getItem('notif_logs') || '[]');
 
-    const umur =
-        Date.now() - (log.timestamp || 0);
+    // Hapus notif lebih dari 1 hari
+    logs = logs.filter(log => {
+        const umur = Date.now() - (log.timestamp || 0);
+        return umur < 86400000;
+    });
 
-    return umur < 86400000;
-
-});
-    // Tambah notif baru di paling atas
+    // Tambah notif baru
     logs.unshift({
-    pesan: pesan,
-    waktu: new Date().toLocaleString('id-ID'),
-    timestamp: Date.now()
-});
+        pesan: pesan,
+        waktu: new Date().toLocaleString('id-ID'),
+        timestamp: Date.now(),
+        read: false
+    });
 
-    // Batasi maksimal 20 notif
+    // Batasi 20 notif
     logs = logs.slice(0,20);
 
-    // Simpan kembali
-    localStorage.setItem(
-        'notif_logs',
-        JSON.stringify(logs)
-    );
+    localStorage.setItem('notif_logs', JSON.stringify(logs)); if (typeof updateBadge === 'function') {     updateBadge(); }
 
-    // Tandai ada notif baru
-    localStorage.setItem(
-        'has_new_notif',
-        'true'
-    );
+    localStorage.setItem('has_new_notif', 'true');
 
-    tampilkanBadgeNotif();
+    // INI FIX UTAMA
+    updateBadge();
 }
 
-/* =========================
-   BADGE NOTIF
-========================= */
-
-function tampilkanBadgeNotif(){
-
-    const badge =
-        document.getElementById('notif-badge');
-
-    if(!badge) return;
-
-    const hasNotif =
-        localStorage.getItem('has_new_notif');
-
-    badge.style.display =
-        hasNotif ? 'flex' : 'none';
-}
-
-/* Jalankan saat halaman dibuka */
-tampilkanBadgeNotif();
 </script>
 
 </body>

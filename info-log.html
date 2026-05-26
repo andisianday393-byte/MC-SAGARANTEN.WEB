@@ -34,13 +34,14 @@
         <div class="card-title">📊 Statistik Global</div>
         <div style="display: flex; gap: 20px;">
             <div>
-                <div style="font-size: 10px; color: #64748b;">Total Pengunjung</div>
-                <div style="font-size: 18px; font-weight: bold;">128</div>
-            </div>
-            <div>
-                <div style="font-size: 10px; color: #64748b;">Total Download</div>
-                <div style="font-size: 18px; font-weight: bold;">45</div>
-            </div>
+    <div style="font-size: 10px; color: #64748b;">Total Pengunjung</div>
+    <div id="totalVisitor" style="font-size: 18px; font-weight: bold;">0</div>
+</div>
+
+<div>
+    <div style="font-size: 10px; color: #64748b;">Total Download</div>
+    <div id="totalDownload" style="font-size: 18px; font-weight: bold;">0</div>
+</div>
         </div>
     </div>
 
@@ -48,26 +49,54 @@
     <div class="card">
         <div class="card-title">📜 Riwayat Terakhir</div>
         <table>
-            <thead>
-                <tr><th>Waktu</th><th>User</th><th>Aksi</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>21/05 11:45</td>
-                    <td>Admin_01</td>
-                    <td><span style="color:#10b981;">Download Excel</span></td>
-                </tr>
-                <tr>
-                    <td>21/05 10:20</td>
-                    <td>User_Lapangan</td>
-                    <td>Akses Portal</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <thead>
+        <tr>
+            <th>Waktu</th>
+            <th>User</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="logBody">
+    </tbody>
+</table>
 </div>
-</script> 
+</div>
 <script src="global-ui.js"></script>
+<table border="1" id="logTable"></table>
+
+<script>
+async function loadLog() {
+    try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyUT3r7IVH8NJMjOJxS6nykthmdSEdwnUmSUq7ExAE2yHfw4HH48UZQNSBKGNNZUnOZ/exec");
+        const data = await response.json();
+
+        // Mengisi Statistik Global
+        document.getElementById("totalVisitor").innerText = data.stats.totalVisitor;
+        document.getElementById("totalDownload").innerText = data.stats.totalDownload;
+
+        // Mengisi Tabel Log
+        const body = document.getElementById("logBody");
+        let html = "";
+        data.logs.forEach(row => {
+            html += `
+                <tr>
+                    <td>${row.Waktu || '-'}</td>
+                    <td>${row.Aktivitas || '-'}</td>
+                    <td>${row.Halaman || '-'}</td>
+                </tr>
+            `;
+        });
+        body.innerHTML = html;
+
+    } catch (err) {
+        console.log("ERROR:", err);
+    }
+}
+
+
+loadLog();
+
+</script>
 </body>
 </html>
 

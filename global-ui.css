@@ -401,34 +401,40 @@ body{
     margin-bottom: 2px;
 }
 
-.notif-container{
-    position:relative;
+/* Container harus memiliki posisi relative agar badge bisa menempel padanya */
+.notif-container {
+    position: relative;
+    display: inline-flex; /* Agar container mengikuti ukuran icon */
+    align-items: center;
+    justify-content: center;
 }
 
-.bell-icon{
-    position:relative;
-    font-size:20px;
+/* Badge harus absolut dan posisinya diatur dari kanan atas */
+.notif-badge {
+    position: absolute;
+    top: -4px;        /* Sesuaikan posisi vertikal */
+    right: -6px;      /* Sesuaikan posisi horizontal */
+    
+    background: #ef4444; /* Warna merah yang lebih modern */
+    color: white;
+    
+    width: 14px;      /* Ukuran tetap agar konsisten */
+    height: 14px;
+    
+    border-radius: 50%;
+    
+    font-size: 8px;   /* Font kecil agar angka/tanda ! pas di tengah */
+    font-weight: bold;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Menghilangkan border jika ada */
+    border: none;
+    
+    /* Mencegah teks terpilih */
+    pointer-events: none;
 }
 
-.notif-badge{
-    position:absolute;
-
-    top:-1px;
-    right:-2px;
-
-    background:red;
-    color:white;
-
-    width:16px;
-    height:16px;
-
-    border-radius:50%;
-
-    font-size:10px;
-    font-weight:bold;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
 

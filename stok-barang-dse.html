@@ -279,108 +279,135 @@ const TARGET_SHEET_NAME = "stok-barang-dse";
 // ===============================
 // AMBIL DATA EXCEL
 // ===============================
-
 async function fetchExcelData() {
 
     try {
 
-        const response = await fetch(excelFileUrl);
+        // CACHE BUSTER
+        const fileUrl =
+            excelFileUrl + "?v=" + Date.now();
+
+        // FETCH FILE
+        const response =
+            await fetch(fileUrl);
 
         if (!response.ok) {
-            throw new Error("Gagal mengunduh file Excel.");
+            throw new Error("File Excel gagal diambil");
         }
 
-        const arrayBuffer = await response.arrayBuffer();
+        // LAST MODIFIED DARI SERVER
+        const lastModified =
+            response.headers.get("Last-Modified");
 
-        const workbook = XLSX.read(
-            new Uint8Array(arrayBuffer),
-            { type: 'array' }
-        );
+        // AMBIL DATA FILE
+        const arrayBuffer =
+            await response.arrayBuffer();
 
-        // CEK SHEET
-        if (!workbook.SheetNames.includes(TARGET_SHEET_NAME)) {
+        // BACA EXCEL
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type: "array"
+            });
+
+        // AMBIL SHEET
+        const sheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        if (!sheet) {
             throw new Error(
-                `Sheet '${TARGET_SHEET_NAME}' tidak ditemukan`
+                "Sheet '" +
+                TARGET_SHEET_NAME +
+                "' tidak ditemukan"
             );
         }
 
-        const worksheet =
-            workbook.Sheets[TARGET_SHEET_NAME];
-
+        // UBAH KE MATRIX
         const matrix =
             XLSX.utils.sheet_to_json(
-                worksheet,
+                sheet,
                 {
                     header: 1,
                     defval: ""
                 }
             );
 
+        // RENDER TABEL
         processAndRender(matrix);
 
-        // UPDATE JAM
-        const now = new Date();
+        // ==========================
+        // TAMPILKAN WAKTU UPDATE
+        // ==========================
+        let updateText = "Update Data: Tidak diketahui";
 
-const updateEl =
-    document.getElementById("updateTime");
+        // PRIORITAS 1
+        // LAST MODIFIED SERVER
+        if (lastModified) {
 
-if(updateEl){
+            const updateDate =
+                new Date(lastModified);
 
-    updateEl.textContent =
-        'Update Data: ' +
+            updateText =
+                "Update Data: " +
+                updateDate.toLocaleString(
+                    "id-ID",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+        }
 
-        now.toLocaleDateString(
-            'id-ID',
-            {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }
-        )
+        // PRIORITAS 2
+        // PROPERTIES FILE EXCEL
+        else if (workbook.Props?.ModifiedDate) {
 
-        +
+            const excelDate =
+                new Date(
+                    workbook.Props.ModifiedDate
+                );
 
-        ' • ' +
+            updateText =
+                "Update Data: " +
+                excelDate.toLocaleString(
+                    "id-ID",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+        }
 
-        now.toLocaleTimeString(
-            'id-ID',
-            {
-                hour: '2-digit',
-                minute: '2-digit'
-            }
-        );
-}
+        document.getElementById(
+            "updateTime"
+        ).textContent = updateText;
 
     } catch (error) {
 
         console.error(error);
 
         document.getElementById(
-            'cso-stock-table'
+            "cso-stock-table"
         ).innerHTML = `
             <tr>
                 <td colspan="6"
-                    style="
-                        color:#ef4444;
-                        text-align:center;
-                        padding:20px;
-                        font-weight:bold;
-                    ">
-                    ⚠️ Gagal memuat data Excel.
-                    <br>
-
-                    <span style="
-                        font-size:11px;
-                        font-weight:normal;
-                        color:#64748b;
-                    ">
-                        Pesan Masalah:
-                        ${error.message}
-                    </span>
+                    class="loading-text">
+                    ⚠️ Gagal memuat data Excel
                 </td>
             </tr>
         `;
+
+        document.getElementById(
+            "updateTime"
+        ).textContent =
+            "Update Data: Gagal memuat";
     }
 }
 

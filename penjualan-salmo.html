@@ -107,55 +107,234 @@
     const EXCEL_FILE_URL = 'index-data.xlsx';
     const TARGET_SHEET_NAME = "penjualan-salmo";
 
-        async function updateDataFromExcel() {
-        try {
-            const response = await fetch(EXCEL_FILE_URL);
-            const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+async function updateDataFromExcel() {
 
-            const worksheet = workbook.Sheets[TARGET_SHEET_NAME];
-            const data = XLSX.utils.sheet_to_json(worksheet);
+    try {
 
-            // 1. FILTER: Hapus baris yang namanya "Grand Total" dari data agar tidak ganda
-            const dataCSO = data.filter(row => row['Nama cso'] !== "Grand Total");
+        // AMBIL FILE TERBARU
+        const response = await fetch(
+            EXCEL_FILE_URL + "?t=" + Date.now()
+        );
 
-            // 2. Urutkan berdasarkan Amount
-            dataCSO.sort((a, b) => b.Amount - a.Amount);
-
-            const tbody = document.querySelector('tbody');
-            tbody.innerHTML = ''; 
-
-            let totalCalculation = 0;
-            const chartLabels = [];
-const chartData = [];
-            
-            // 3. Tampilkan data CSO
-            dataCSO.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                const rankClass = index < 3 ? `r${index + 1}` : '';
-                const rankDisplay = index < 3 ? `<span class="rank-badge ${rankClass}">${index + 1}</span>` : `<span class="rank-badge">${index + 1}</span>`;
-                
-                tr.innerHTML = `
-                    <td>${rankDisplay} ${row['Nama cso']}</td>
-                    <td class="text-right">${parseInt(row.Amount).toLocaleString('id-ID')}</td>
-                `;
-                tbody.appendChild(tr);
-                totalCalculation += parseInt(row.Amount);
-                chartLabels.push(row['Nama cso']);
-chartData.push(parseInt(row.Amount));
-            });
-
-            // 4. Buat baris "Grand Total" (Sekarang hanya muncul satu kali)
-            const footer = document.createElement('tr');
-            footer.className = 'grand-total';
-            footer.innerHTML = `<td>Grand Total</td><td class="text-right" id="grand-total">${totalCalculation.toLocaleString('id-ID')}</td>`;
-            tbody.appendChild(footer);
-            createChart(chartLabels, chartData);
-
-        } catch (error) {
-            console.error("Gagal memuat data Excel:", error);
+        if (!response.ok) {
+            throw new Error("File Excel gagal dibaca");
         }
+
+        // AMBIL ARRAY BUFFER
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        // BACA EXCEL
+        const workbook =
+            XLSX.read(
+                arrayBuffer,
+                { type: 'array' }
+            );
+
+        // =========================
+        // TANGGAL UPDATE FILE
+        // =========================
+
+        let updateDate = null;
+
+        // PRIORITAS 1:
+        // DARI PROPERTIES EXCEL
+        if (
+            workbook.Props &&
+            workbook.Props.ModifiedDate
+        ) {
+
+            updateDate =
+                new Date(
+                    workbook.Props.ModifiedDate
+                );
+        }
+
+        // PRIORITAS 2:
+        // DARI SERVER
+        if (
+            !updateDate ||
+            isNaN(updateDate)
+        ) {
+
+            const lastModified =
+                response.headers.get(
+                    "Last-Modified"
+                );
+
+            if (lastModified) {
+
+                updateDate =
+                    new Date(lastModified);
+            }
+        }
+
+        // TAMPILKAN TANGGAL
+        if (
+            updateDate &&
+            !isNaN(updateDate)
+        ) {
+
+            document.getElementById(
+                "updateTime"
+            ).textContent =
+                "Update Data: " +
+                updateDate.toLocaleString(
+                    "id-ID",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+        }
+
+        // =========================
+        // AMBIL SHEET
+        // =========================
+
+        const worksheet =
+            workbook.Sheets[
+                TARGET_SHEET_NAME
+            ];
+
+        if (!worksheet) {
+            throw new Error(
+                "Sheet tidak ditemukan"
+            );
+        }
+
+        // CONVERT JSON
+        const data =
+            XLSX.utils.sheet_to_json(
+                worksheet
+            );
+
+        // FILTER GRAND TOTAL
+        const dataCSO =
+            data.filter(
+                row =>
+                    row['Nama cso']
+                    !== "Grand Total"
+            );
+
+        // SORT DESC
+        dataCSO.sort(
+            (a, b) =>
+                b.Amount - a.Amount
+        );
+
+        const tbody =
+            document.querySelector(
+                'tbody'
+            );
+
+        tbody.innerHTML = '';
+
+        let totalCalculation = 0;
+
+        const chartLabels = [];
+        const chartData = [];
+
+        // LOOP DATA
+        dataCSO.forEach(
+            (row, index) => {
+
+                const tr =
+                    document.createElement(
+                        'tr'
+                    );
+
+                const rankClass =
+                    index < 3
+                    ? `r${index + 1}`
+                    : '';
+
+                const rankDisplay =
+                    index < 3
+                    ? `
+                    <span class="
+                        rank-badge
+                        ${rankClass}
+                    ">
+                        ${index + 1}
+                    </span>
+                    `
+                    : `
+                    <span class="
+                        rank-badge
+                    ">
+                        ${index + 1}
+                    </span>
+                    `;
+
+                const amount =
+                    parseInt(
+                        row.Amount
+                    ) || 0;
+
+                tr.innerHTML = `
+                    <td>
+                        ${rankDisplay}
+                        ${row['Nama cso']}
+                    </td>
+
+                    <td class="text-right">
+                        ${amount.toLocaleString('id-ID')}
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+
+                totalCalculation += amount;
+
+                chartLabels.push(
+                    row['Nama cso']
+                );
+
+                chartData.push(amount);
+            }
+        );
+
+        // GRAND TOTAL
+        const footer =
+            document.createElement('tr');
+
+        footer.className =
+            'grand-total';
+
+        footer.innerHTML = `
+            <td>Grand Total</td>
+
+            <td class="text-right">
+                ${totalCalculation.toLocaleString('id-ID')}
+            </td>
+        `;
+
+        tbody.appendChild(footer);
+
+        // CHART
+        createChart(
+            chartLabels,
+            chartData
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat data Excel:",
+            error
+        );
+
+        document.getElementById(
+            "updateTime"
+        ).textContent =
+            "Update Data: Gagal memuat";
     }
+}
 let salmoChart;
 
 function createChart(labels, data) {
@@ -204,22 +383,6 @@ function createChart(labels, data) {
 
     // Jalankan fungsi
     updateDataFromExcel();
-
-    // Fungsi Menu (sama seperti sebelumnya)
-    const menuBtn = document.getElementById('menu-btn');
-    const navDropdown = document.getElementById('nav-dropdown');
-    const triggerPenjualan = document.getElementById('trigger-penjualan');
-    const submenuPenjualan = document.getElementById('submenu-penjualan');
-
-    menuBtn.addEventListener('click', () => {
-        menuBtn.classList.toggle('active');
-        navDropdown.classList.toggle('open');
-    });
-
-    triggerPenjualan.addEventListener('click', (e) => {
-        e.preventDefault();
-        submenuPenjualan.style.maxHeight = (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") ? "0px" : submenuPenjualan.scrollHeight + "px";
-    });
 
     // Menandai menu aktif berdasarkan URL halaman
 function setActiveMenu() {

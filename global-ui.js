@@ -11,19 +11,34 @@ function goBack(){
     }
 
 }
-        
-const now = new Date();
+window.addEventListener('storage', (event) => {
+    if (event.key === 'notif_logs') {
+        updateBadge();
+    }
+});
+// Hapus semua fungsi lama, ganti dengan ini:
+function updateBadge() {
+    const notifBadge = document.getElementById('notif-badge');
+    if (!notifBadge) return;
 
-document.getElementById('updateTime').textContent =
-    'Update Data: ' +
-    now.toLocaleDateString('id-ID', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }) +
-    ' • ' +
-    now.toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+    const unreadCount = logs.filter(log => log.read !== true).length;
+
+    if (unreadCount > 0) {
+        notifBadge.style.display = 'flex';
+        notifBadge.textContent = unreadCount;
+    } else {
+        notifBadge.style.display = 'none';
+        notifBadge.textContent = '';
+    }
+}
+
+// Event listener ini WAJIB ada agar saat notif.html berubah, index.html otomatis update
+window.addEventListener('storage', (event) => {
+    if (event.key === 'notif_logs') {
+        updateBadge();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', updateBadge);
+
