@@ -91,12 +91,13 @@
             <div style="color: #6366f1;">Edit</div>
         </div>
 
-        <div class="setting-item">
-            <div>
-                <div class="setting-label">Bersihkan Cache Data</div>
-                <div class="setting-desc">Menghapus data sementara untuk refresh</div>
-            </div>
-        </div>
+<div class="setting-item" id="clear-cache" style="cursor: pointer;">
+    <div>
+        <div class="setting-label">Bersihkan Cache Data</div>
+        <div class="setting-desc">Menghapus data sementara untuk refresh</div>
+    </div>
+</div>
+
     </div>
 
     <div style="text-align: center; font-size: 10px; color: #94a3b8;">
@@ -169,6 +170,54 @@ btnInstall.addEventListener('click', async () => {
         btnInstall.style.opacity = '1';
     }
 });
+document.getElementById('clear-cache').addEventListener('click', () => {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        // Mengirim pesan ke service worker
+        navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
+        alert('Cache berhasil dibersihkan! Aplikasi akan dimuat ulang.');
+        
+        // Opsional: Reload halaman
+        setTimeout(() => { window.location.reload(); }, 500);
+    } else {
+        alert('Service Worker tidak aktif.');
+    }
+});
+// Fungsi untuk mengecek apakah PWA sudah terinstall/berjalan sebagai standalone
+function checkAppInstalled() {
+    // Jika window.matchMedia mengembalikan true untuk display-mode: standalone
+    // Berarti aplikasi sudah terinstall dan dijalankan dari homescreen
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        btnInstall.innerText = 'Terinstall';
+        btnInstall.style.background = '#64748b';
+        btnInstall.style.cursor = 'default';
+        btnInstall.disabled = true;
+        return true;
+    }
+    return false;
+}
+
+// 1. Cek saat halaman dimuat
+window.addEventListener('DOMContentLoaded', () => {
+    checkAppInstalled();
+});
+
+// 2. Tetap pertahankan event appinstalled untuk perubahan real-time tanpa refresh
+window.addEventListener('appinstalled', () => {
+    btnInstall.innerText = 'Terinstall';
+    btnInstall.style.background = '#64748b';
+    btnInstall.disabled = true;
+});
+
+// 3. Logika beforeinstallprompt tetap seperti semula
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Jika sudah terinstall, jangan tampilkan apa-apa
+    if (checkAppInstalled()) return;
+    
+    e.preventDefault();
+    deferredPrompt = e;
+    installSection.style.display = 'flex'; // Pastikan section terlihat
+});
+
 </script>
 <script src="global-ui.js"></script>
 </body>

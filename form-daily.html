@@ -6,6 +6,7 @@
     <title>Daily Report - DSE MC Sagaranten</title>
     <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="global-notif.js"></script>
     <style>
     *{
     box-sizing:border-box;
@@ -298,10 +299,23 @@ body{
     </a>
 
     <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
-        <span>Notif</span>
-    </a>
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -831,8 +845,13 @@ if(reportContainer){
     );
 
 }
-
+tambahNotif({
+    aktivitas: 'Form Daily berhasil dikirim',
+    halaman: 'daily-form.html',
+    detail: 'Laporan daily sukses dikirim'
+});
 </script>
+
 <script src="global-ui.js"></script>
 </body>
 </html>

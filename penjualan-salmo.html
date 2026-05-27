@@ -90,10 +90,23 @@
     </a>
 
     <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
-        <span>Notif</span>
-    </a>
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -123,7 +136,10 @@ async function updateDataFromExcel() {
         // AMBIL ARRAY BUFFER
         const arrayBuffer =
             await response.arrayBuffer();
-
+await cekUpdateExcel(
+    'penjualan-salmo',
+    arrayBuffer
+);
         // BACA EXCEL
         const workbook =
             XLSX.read(
@@ -384,26 +400,9 @@ function createChart(labels, data) {
     // Jalankan fungsi
     updateDataFromExcel();
 
-    // Menandai menu aktif berdasarkan URL halaman
-function setActiveMenu() {
-    const path = window.location.pathname;
-    const navLink = document.getElementById('nav-penjualan-salmo');
-    
-    // Jika URL mengandung "penjualan-salmo.html"
-    if (path.includes("penjualan-salmo.html")) {
-        // Menambahkan class baru yang mengubah warna teks
-        navLink.classList.add('menu-aktif');
-        
-        // Memastikan submenu terbuka otomatis
-        const submenuPenjualan = document.getElementById('submenu-penjualan');
-        submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
-    }
-}
-
-// Panggil fungsi setelah fungsi lain
-setActiveMenu();
-
+ 
 </script>
+<script src="global-notif.js"></script>
 <script src="global-ui.js"></script>
 </body>
 </html>

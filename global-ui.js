@@ -11,34 +11,118 @@ function goBack(){
     }
 
 }
-window.addEventListener('storage', (event) => {
-    if (event.key === 'notif_logs') {
-        updateBadge();
-    }
-});
-// Hapus semua fungsi lama, ganti dengan ini:
+
+// =========================
+// UPDATE BADGE
+// =========================
 function updateBadge() {
-    const notifBadge = document.getElementById('notif-badge');
+
+    const notifBadge =
+        document.getElementById(
+            'notif-badge'
+        );
+
     if (!notifBadge) return;
 
-    const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
-    const unreadCount = logs.filter(log => log.read !== true).length;
+    let logs =
+        JSON.parse(
+            localStorage.getItem(
+                'notif_logs'
+            ) || '[]'
+        );
 
-    if (unreadCount > 0) {
-        notifBadge.style.display = 'flex';
-        notifBadge.textContent = unreadCount;
+    // Hapus notif lebih dari 1 hari
+    logs = logs.filter(log => {
+
+        const umur =
+            Date.now() -
+            (log.timestamp || 0);
+
+        return umur < 86400000;
+
+    });
+
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+    const unread =
+        logs.filter(
+            log => !log.read
+        ).length;
+
+    if (unread > 0) {
+
+        notifBadge.style.display =
+            'flex';
+
+        notifBadge.textContent =
+            unread;
+
     } else {
-        notifBadge.style.display = 'none';
-        notifBadge.textContent = '';
+
+        notifBadge.style.display =
+            'none';
+
     }
+
 }
 
-// Event listener ini WAJIB ada agar saat notif.html berubah, index.html otomatis update
-window.addEventListener('storage', (event) => {
-    if (event.key === 'notif_logs') {
-        updateBadge();
+// =========================
+// TAMBAH NOTIF
+// =========================
+function tambahNotif(pesan) {
+
+    let logs =
+        JSON.parse(
+            localStorage.getItem(
+                'notif_logs'
+            ) || '[]'
+        );
+
+    logs.unshift({
+
+        pesan: pesan,
+
+        waktu:
+            new Date()
+            .toLocaleString('id-ID'),
+
+        timestamp: Date.now(),
+
+        read: false
+
+    });
+
+    // Maksimal 20 notif
+    logs = logs.slice(0, 20);
+
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+    updateBadge();
+
+}
+
+// =========================
+// AUTO UPDATE
+// =========================
+document.addEventListener(
+    'DOMContentLoaded',
+    updateBadge
+);
+
+// Update realtime antar halaman
+window.addEventListener(
+    'storage',
+    function(event){
+
+        if(event.key === 'notif_logs'){
+            updateBadge();
+        }
+
     }
-});
-
-document.addEventListener('DOMContentLoaded', updateBadge);
-
+);

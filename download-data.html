@@ -125,7 +125,7 @@
                 <span class="update-date" id="date-mobo">Memuat tanggal...</span>
             </div>
             <!-- Catatan: Ganti atribut href di bawah ini dengan link Google Drive Mobo Anda jika sudah ada -->
-            <a href="#" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1ck-f-HFlat8B59bXCAx4lr7F_nhYB5Tb/view?usp=drivesdk" class="btn-download">Download</a>
         </div>
 
         <div class="file-item">
@@ -211,48 +211,79 @@
 </div>
 
 <script>
-const apiURL = "https://script.google.com/macros/s/AKfycbysn0h3FuiscJp_0VhHakEDXc9ixFmzGzLfh_xWFSGh4o2CILNImg5BzvTBE54ihQonBQ/exec";
+const apiURL = "https://script.google.com/macros/s/AKfycbxizv9ot47hmJLDpQrl2ZMOxfYFplX0xNaqY78Dsi7uEjHCrOjzYYnoaJqedLO-7dpE/exec";
 
 fetch(apiURL)
-.then(response => {
-    console.log("STATUS:", response.status);
-    return response.text();
-})
-.then(text => {
-    console.log("RAW RESPONSE:");
-    console.log(text);
-
-    const data = JSON.parse(text);
-    console.log("JSON DATA:", data);
-
-    // Integrasi Tanggal Update untuk 'Report Mobo'
-    document.getElementById('date-mobo').innerText =
-        "Update: " + (data.mobo ?? "Tidak ada data");
-
-    document.getElementById('date-penjualan').innerText =
-        "Update: " + (data.penjualan ?? "Tidak ada data");
-
-    document.getElementById('date-stok_barang').innerText =
-        "Update: " + (data.stok_barang ?? "Tidak ada data");
-
-    document.getElementById('date-hifi').innerText =
-        "Update: " + (data.hifi ?? "Tidak ada data");
-
-    document.getElementById('date-mei_tm2').innerText =
-        "Update: " + (data.mei_tm2 ?? "Tidak ada data");
-
-    document.getElementById('date-target_10k').innerText =
-        "Update: " + (data.target_10k ?? "Tidak ada data");
-})
-.catch(error => {
+  .then(async response => {
+    const text = await response.text();
+    console.log("RAW:", text);
+    return JSON.parse(text);
+  })
+  .then(data => {
+    document.getElementById('date-mobo').innerText = "Update: " + (data.mobo || "Tidak ada data");
+    document.getElementById('date-penjualan').innerText = "Update: " + (data.penjualan || "Tidak ada data");
+    document.getElementById('date-stok_barang').innerText = "Update: " + (data.stok_barang || "Tidak ada data");
+    document.getElementById('date-hifi').innerText = "Update: " + (data.hifi || "Tidak ada data");
+    document.getElementById('date-mei_tm2').innerText = "Update: " + (data.mei_tm2 || "Tidak ada data");
+    document.getElementById('date-target_10k').innerText = "Update: " + (data.target_10k || "Tidak ada data");
+  })
+  .catch(error => {
     console.error("ERROR:", error);
-
     document.getElementById('date-mobo').innerText = "Gagal load";
     document.getElementById('date-penjualan').innerText = "Gagal load";
+    document.getElementById('date-stok_barang').innerText = "Gagal load";
+    document.getElementById('date-hifi').innerText = "Gagal load";
+    document.getElementById('date-mei_tm2').innerText = "Gagal load";
     document.getElementById('date-target_10k').innerText = "Gagal load";
-});
+  });
 </script>
 <script src="global-ui.js"></script>
+<script>
+
+// FUNCTION NOTIF
+function tambahNotif(pesan){
+
+    let logs =
+        JSON.parse(
+            localStorage.getItem('notif_logs') || '[]'
+        );
+
+    logs.unshift({
+        pesan: pesan,
+        waktu: new Date().toLocaleString('id-ID'),
+        timestamp: Date.now(),
+        read: false
+    });
+
+    logs = logs.slice(0,20);
+
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+}
+
+// CEK PARAMETER URL
+const params =
+    new URLSearchParams(window.location.search);
+
+if(params.get('download') === 'success'){
+
+    tambahNotif(
+        'File berhasil di download.'
+    );
+
+    // Hapus parameter URL agar tidak muncul terus
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+
+}
+
+</script>
 </body>
 </html>
 

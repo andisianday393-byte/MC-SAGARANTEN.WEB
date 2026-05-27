@@ -82,137 +82,124 @@
 </div>
 
 <div class="content-wrapper">
-    <div id="aksi-bar"      style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-        <label style="font-size: 11px; color: #64748b;">
-            <input type="checkbox" id="pilih-semua"> Pilih Semua
-        </label>
+    <div id="aksi-bar" style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-size: 11px; color: #64748b;">
+                <input type="checkbox" id="pilih-semua"> Pilih Semua
+            </label>
+            <!-- ✅ TAMBAHKAN INI: Teks samar di bawah checkbox -->
+            <span style="font-size: 9px; color: #94a3b8; margin-top: 3px; display: block;">
+                Tekan lama hapus pesan terpilih
+            </span>
+        </div>
         <button id="btn-hapus-terpilih" style="background:#fee2e2; border:none; color:#dc2626; padding:5px 10px; border-radius:5px; font-size:10px; font-weight:bold; cursor:pointer;">
             Hapus Terpilih
         </button>
     </div>
 
     <div class="notif-card" id="notif-list">
-        </div>
+    </div>
 </div>
 
 
-
-<script src="global-ui.js"></script>
 <script src="notif.js"></script>
+<script src="global-ui.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
     const list = document.getElementById('notif-list');
+    const aksiBar = document.getElementById('aksi-bar');
+    const pilihSemua = document.getElementById('pilih-semua');
+    const btnHapus = document.getElementById('btn-hapus-terpilih');
 
-    // Fungsi untuk ambil data TERBARU dari localStorage
-    function getLogs() {
-        return JSON.parse(localStorage.getItem('notif_logs') || '[]');
-    }
+    let modePilih = false; // mode pilih / hapus
 
-    // =========================
-    // RENDER NOTIF
-    // =========================
-
-    function renderNotif() {
-        const logs = getLogs(); // Selalu ambil data terbaru
-        const aksiBar = document.getElementById('aksi-bar');
-
-        const unreadCount =
-            logs.filter(log => !log.read).length;
-
-        localStorage.setItem(
-            'notif_badge',
-            unreadCount
-        );
-        updateBadge();
-
-    if (logs.length === 0) {
-
+    // Sembunyikan aksi bar kalau tidak ada notif
+    function updateUIState() {
+        const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+        if (logs.length === 0) {
             aksiBar.style.display = 'none';
-
-            list.innerHTML =
-                '<div class="empty-state">Tidak ada notifikasi</div>';
-
-            return;
+            pilihSemua.checked = false;
+            list.innerHTML = '<div class="empty-state">Tidak ada notifikasi</div>';
+        } else {
+            aksiBar.style.display = 'flex';
         }
-
-        aksiBar.style.display = 'flex';
-
-        list.innerHTML = logs.map((log, index) => `
-
-            <div class="notif-item ${!log.read ? 'unread' : 'read'}"
-                 data-index="${index}">
-
-                <input type="checkbox"
-                       class="notif-checkbox"
-                       value="${index}"
-                       style="margin-right:15px; margin-top:5px;">
-
-                <div class="notif-icon">
-                    ${!log.read ? '🔴' : '🔔'}
-                </div>
-
-                <div class="notif-content" style="flex:1;">
-                    <div class="title">Pembaruan Sistem</div>
-                    <div class="desc">${log.pesan}</div>
-                    <div class="time">${log.waktu}</div>
-                </div>
-
-            </div>
-
-        `).join('');
-
-        aktifkanLongPress();
-        aktifkanKlikNotif();
-        updateBadge();
     }
 
-    // =========================
-    // KLIK NOTIF
-    // =========================
+    // Switch ke mode pilih (tampilkan checkbox semua)
+    function masukModePilih() {
+        if (modePilih) return;
+        modePilih = true;
 
-// Ubah fungsi klik notif agar mengambil data terbaru sebelum dimodifikasi
-    function aktifkanKlikNotif() {
         document.querySelectorAll('.notif-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (e.target.classList.contains('notif-checkbox')) return;
-
-                let logs = getLogs(); // Ambil data terbaru
-                const index = parseInt(item.dataset.index);
-                logs[index].read = true;
-                
-                localStorage.setItem('notif_logs', JSON.stringify(logs));
-                renderNotif(); // Render ulang
-            });
+            item.classList.add('select-mode');
+            const checkbox = item.querySelector('.notif-checkbox');
+            // pastikan checkbox terlihat (bisa juga pakai CSS)
+            checkbox.style.display = 'block';
         });
     }
 
+    // Keluar dari mode pilih (sembunyikan checkbox)
+    function keluarModePilih() {
+        modePilih = false;
 
-    // =========================
-    // LONG PRESS
-    // =========================
+        document.querySelectorAll('.notif-item').forEach(item => {
+            item.classList.remove('select-mode');
+            const checkbox = item.querySelector('.notif-checkbox');
+            checkbox.checked = false;
+            checkbox.style.display = 'none';
+        });
+    }
 
+    // Klik normal (bukan checkbox) → baca notif
+    function aktifkanKlikNotif() {
+        document.querySelectorAll('.notif-item').forEach(item => {
+            item.removeEventListener('click', onClick);
+            item.addEventListener('click', onClick);
+        });
+    }
+
+    // Klik normal = baca
+    function onClick(e) {
+        // Kalau di mode pilih, jangan ubah read saat klik checkbox
+        if (e.target.classList.contains('notif-checkbox')) return;
+
+        // Jika tidak dalam mode pilih, klik = baca
+        if (!modePilih) {
+            const item = e.currentTarget;
+            const index = parseInt(item.dataset.index);
+
+            const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+            if (logs[index] && !logs[index].read) {
+                logs[index].read = true;
+                localStorage.setItem('notif_logs', JSON.stringify(logs));
+                window.dispatchEvent(new Event('storage')); // update badge
+                renderNotif(); // refresh tampilan
+            }
+        } else {
+            // Dalam mode pilih, klik = toggle checkbox saja
+            const checkbox = e.currentTarget.querySelector('.notif-checkbox');
+            const item = e.currentTarget;
+
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+                item.classList.add('select-mode');
+            } else {
+                item.classList.remove('select-mode');
+            }
+        }
+    }
+
+    // Long press di salah satu notif → masuk mode pilih
     function aktifkanLongPress() {
-
-        const items =
-            document.querySelectorAll('.notif-item');
-
+        const items = document.querySelectorAll('.notif-item');
         items.forEach(item => {
-
             let pressTimer;
 
             item.addEventListener('touchstart', () => {
-
                 pressTimer = setTimeout(() => {
-
-                    item.classList.add('select-mode');
-
-                    const checkbox =
-                        item.querySelector('.notif-checkbox');
-
-                    checkbox.checked = true;
-
+                    masukModePilih(); // tekan lama di satu notif → semua checkbox muncul
                 }, 500);
-
             });
 
             item.addEventListener('touchend', () => {
@@ -222,59 +209,87 @@ document.addEventListener('DOMContentLoaded', () => {
             item.addEventListener('touchmove', () => {
                 clearTimeout(pressTimer);
             });
-
         });
-
     }
 
-    // =========================
-    // PILIH SEMUA
-    // =========================
+    // Render tampilan
+    function renderNotif() {
+        const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
 
-    document.getElementById('pilih-semua')
-    .addEventListener('change', function() {
+        if (logs.length === 0) {
+            list.innerHTML = '<div class="empty-state">Tidak ada notifikasi</div>';
+            updateUIState();
+            return;
+        }
 
-        const checkboxes =
-            document.querySelectorAll('.notif-checkbox');
+        list.innerHTML = logs.map((log, index) => {
+            const isUnread = !log.read;
+            return `
+                <div class="notif-item ${isUnread ? 'unread' : 'read'}" data-index="${index}">
+                    <div class="notif-content">
+                        <div class="title">Pembaruan Sistem</div>
+                        <div class="desc">${log.pesan}</div>
+                        <div class="time">${log.waktu}</div>
+                    </div>
+                    <input type="checkbox" class="notif-checkbox" value="${index}" style="display: none;">
+                </div>
+            `;
+        }).join('');
+
+        updateUIState();
+        aktifkanKlikNotif();
+        aktifkanLongPress();
+        if (!modePilih) keluarModePilih(); // pastikan mode pilih direset jika ada masalah
+    }
+
+    // Pilih Semua
+pilihSemua.addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('.notif-checkbox');
+
+    if (this.checked) {
+        masukModePilih();
 
         checkboxes.forEach(cb => {
-
-            cb.checked = this.checked;
-
-            const item =
-                cb.closest('.notif-item');
-
-            if (this.checked) {
-                item.classList.add('select-mode');
-            } else {
-                item.classList.remove('select-mode');
-            }
-
+            cb.checked = true;
+            const item = cb.closest('.notif-item');
+            item.classList.add('select-mode');
+        });
+    } else {
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+            const item = cb.closest('.notif-item');
+            item.classList.remove('select-mode');
         });
 
-    });
+        keluarModePilih();
+    }
+});
 
-    // =========================
-    // HAPUS TERPILIH
-    // =========================
-
-// Di dalam file notif.html
-// Perbaikan Hapus Terpilih
-    document.getElementById('btn-hapus-terpilih').addEventListener('click', () => {
-        let logs = getLogs(); // Ambil data terbaru
+    // Hapus Terpilih
+    btnHapus.addEventListener('click', () => {
+        const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
         const checkboxes = document.querySelectorAll('.notif-checkbox:checked');
-        
-        if (checkboxes.length === 0) return alert('Pilih notifikasi');
 
-        const indexToDel = Array.from(checkboxes).map(cb => parseInt(cb.value));
-        indexToDel.sort((a, b) => b - a).forEach(index => logs.splice(index, 1));
+        if (checkboxes.length === 0) {
+            alert('Pilih dulu notifikasi yang mau dihapus');
+            return;
+        }
+
+        const indexToDel = Array.from(checkboxes)
+            .map(cb => parseInt(cb.value))
+            .sort((a, b) => b - a);
+
+        indexToDel.forEach(index => logs.splice(index, 1));
 
         localStorage.setItem('notif_logs', JSON.stringify(logs));
-        renderNotif();
+        window.dispatchEvent(new Event('storage')); // update badge
+        keluarModePilih(); // checkbox dan select-mode hilang kembali
+        renderNotif(); // refresh tampilan
     });
 
     renderNotif();
 });
+    
 </script>
 </body>
 </html>

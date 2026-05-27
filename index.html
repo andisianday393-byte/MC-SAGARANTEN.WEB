@@ -457,7 +457,42 @@
     height: 1px;          /* Ketebalan garis */
     background-color: #1e3a8a; /* Warna garis */
 }
+.toast-container {
+    position: fixed;
+    right: 16px;
+    bottom: 70px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
+.toast {
+    background: #1e293b;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: toastIn 0.25s ease forwards, toastOut 0.25s ease forwards 2.5s;
+}
+
+@keyframes toastIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toastOut {
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
 
 
     </style>
@@ -664,6 +699,7 @@
         </a>
     </div>
 </div>
+<div id="toast-container" class="toast-container"></div>
 
 <!-- =========================================
      BOTTOM NAVIGATION
@@ -692,17 +728,18 @@
 </a>
 
     <!-- PROFILE -->
-    <a href="#" class="bottom-item">
-        <div>👤</div>
-        <span>Profil</span>
-    </a>
+<a href="javascript:void(0)" class="bottom-item" id="openProfil">
+    <div>👤</div>
+    <span>Profil</span>
+</a>
+
 
 </footer>
 
 <!-- Library Pembaca file Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="global-ui.js"></script>
-<script src="notif.js"></script>
+
 <!-- SEARCH OVERLAY -->
 <div class="search-overlay" id="searchOverlay">
 
@@ -718,6 +755,21 @@
     </div>
 
 </div>
+<div class="search-overlay" id="profilOverlay">
+    <div class="search-box">
+        <div style="padding: 16px; border-bottom: 1px solid #e2e8f0; font-weight: bold; font-size: 14px;">
+            Registrasi Akun Baru
+        </div>
+        <div style="padding: 16px;">
+            <input type="text" id="username" placeholder="Nama Lengkap" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <input type="password" id="password" placeholder="Password" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <button id="btn-submit-akun" style="width:100%; padding:12px; background:#1e3a8a; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                BUAT AKUN
+            </button>
+        </div>
+    </div>
+</div>
+
 <script> 
 const WEB_APP_URL =
 'https://script.google.com/macros/s/AKfycbyRFemxVivBCbScqY77yX68CtZxZ7uy1l4YUqgYDS6qz8sH5YTKI5Tk7BBXp7ZqHS3J/exec';
@@ -773,27 +825,165 @@ function ambilAngka(value) {
 }
 
 const EXCEL_FILE_URL = 'index-data.xlsx';
+let lastGrandTotal = null;
 
 async function updateSaldoSalmo() {
+
     try {
-        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type:'array' });
-        const worksheet = workbook.Sheets['penjualan-salmo'];
+
+        const response =
+            await fetch(
+                EXCEL_FILE_URL + '?t=' + Date.now()
+            );
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        const worksheet =
+            workbook.Sheets['penjualan-salmo'];
+
         if (!worksheet) return;
-        const data = XLSX.utils.sheet_to_json(worksheet);
+
+        const data =
+            XLSX.utils.sheet_to_json(worksheet);
+
         let grandTotal = 0;
+
         data.forEach(row => {
-            const nama = String(row['Nama cso'] || '').trim().toUpperCase();
+
+            const nama =
+                String(
+                    row['Nama cso'] || ''
+                ).trim().toUpperCase();
+
             if (nama === 'GRAND TOTAL') return;
-            grandTotal += ambilAngka(row['Amount']);
+
+            grandTotal +=
+                ambilAngka(row['Amount']);
+
         });
-        document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
-        
+
+        // UPDATE TAMPILAN
+        document.getElementById(
+            'grand-total'
+        ).innerText =
+            formatRupiah(grandTotal);
+
+        // CEK PERUBAHAN DATA
+        if (
+            lastGrandTotal !== null &&
+            grandTotal !== lastGrandTotal
+        ) {
+
+            tambahNotif(
+                'Data penjualan SALMO berhasil diperbarui.'
+            );
+
+            updateBadge();
+
+            console.log(
+                'Perubahan data terdeteksi'
+            );
+
+        }
+
+        // SIMPAN TOTAL TERAKHIR
+        lastGrandTotal = grandTotal;
+
     } catch(error) {
+
         console.log(error);
-        document.getElementById('grand-total').innerText = 'Error';
+
+        document.getElementById(
+            'grand-total'
+        ).innerText = 'Error';
+
     }
+
+}
+async function updateSaldoSalmo() {
+
+    try {
+
+        const response =
+            await fetch(
+                EXCEL_FILE_URL + '?t=' + Date.now()
+            );
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        const worksheet =
+            workbook.Sheets['penjualan-salmo'];
+
+        if (!worksheet) return;
+
+        const data =
+            XLSX.utils.sheet_to_json(worksheet);
+
+        let grandTotal = 0;
+
+        data.forEach(row => {
+
+            const nama =
+                String(
+                    row['Nama cso'] || ''
+                ).trim().toUpperCase();
+
+            if (nama === 'GRAND TOTAL') return;
+
+            grandTotal +=
+                ambilAngka(row['Amount']);
+
+        });
+
+        // UPDATE TAMPILAN
+        document.getElementById(
+            'grand-total'
+        ).innerText =
+            formatRupiah(grandTotal);
+
+        // CEK PERUBAHAN DATA
+        if (
+            lastGrandTotal !== null &&
+            grandTotal !== lastGrandTotal
+        ) {
+
+            tambahNotif(
+                'Data penjualan SALMO berhasil diperbarui.'
+            );
+
+            updateBadge();
+
+            console.log(
+                'Perubahan data terdeteksi'
+            );
+
+        }
+
+        // SIMPAN TOTAL TERAKHIR
+        lastGrandTotal = grandTotal;
+
+    } catch(error) {
+
+        console.log(error);
+
+        document.getElementById(
+            'grand-total'
+        ).innerText = 'Error';
+
+    }
+
 }
 
 async function updateTotalSPVoucher() {
@@ -1149,22 +1339,30 @@ document.getElementById('laciTrigger').addEventListener('click', function() {
 });
 
 // Fungsionalitas Refresh (yang tadi)
-document.getElementById('btn-refresh').addEventListener('click', function() {
-    const icon = document.getElementById('refresh-icon');
-    icon.classList.add('refresh-spin');
-    kirimLog('Manual Refresh Halaman');
-    setTimeout(() => { location.reload(); }, 800);
-});
-/* =========================
-   SISTEM NOTIFIKASI
-========================= */
+function updateBadge() {
+    const notifBadge = document.getElementById('notif-badge');
+    if (!notifBadge) return;
 
+    const logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+    const unreadCount = logs.filter(log => log.read !== true).length;
+
+    if (unreadCount > 0) {
+        notifBadge.style.display = 'flex';
+        notifBadge.textContent = unreadCount;
+    } else {
+        notifBadge.style.display = 'none';
+        notifBadge.textContent = '';
+    }
+}
+
+// FUNGSI TAMBAH NOTIF (HANYA 1 VERSI 👇)
 function tambahNotif(pesan){
+    console.log('tambahNotif:', pesan);
 
-    let logs =
-        JSON.parse(localStorage.getItem('notif_logs') || '[]');
+    let logs = JSON.parse(localStorage.getItem('notif_logs') || '[]');
+    console.log('tambahNotif - sebelum tambah:', logs);
 
-    // Hapus notif lebih dari 1 hari
+    // Hapus notif > 1 hari
     logs = logs.filter(log => {
         const umur = Date.now() - (log.timestamp || 0);
         return umur < 86400000;
@@ -1179,15 +1377,118 @@ function tambahNotif(pesan){
     });
 
     // Batasi 20 notif
-    logs = logs.slice(0,20);
+    logs = logs.slice(0, 20);
 
-    localStorage.setItem('notif_logs', JSON.stringify(logs)); if (typeof updateBadge === 'function') {     updateBadge(); }
+    localStorage.setItem('notif_logs', JSON.stringify(logs));
+    console.log('tambahNotif - setelah setItem:', logs, JSON.parse(localStorage.getItem('notif_logs')));
 
-    localStorage.setItem('has_new_notif', 'true');
-
-    // INI FIX UTAMA
-    updateBadge();
+    if (typeof updateBadge === 'function') {
+        updateBadge();
+    }
 }
+
+// -- STORAGE EVENT: update badge saat ada perubahan --
+window.addEventListener('storage', (event) => {
+    if (event.key === 'notif_logs') {
+        updateBadge();
+    }
+});
+
+// JANGAN KIRIM DUA KALI DOMContentLoaded
+// Cukup satu kali, di bagian bawah:
+document.addEventListener('DOMContentLoaded', updateBadge);
+
+// 1. TOMBOL REFRESH
+// 1. TOMBOL REFRESH
+// 1. TOMBOL REFRESH
+document.getElementById('btn-refresh')
+.addEventListener('click', function(){
+
+    const icon =
+        document.getElementById('refresh-icon');
+
+    // CEK DULU ADA ATAU TIDAK
+    if(icon){
+        icon.classList.add('refresh-spin');
+    }
+
+    kirimLog('Manual Refresh Halaman');
+
+    // DELAY DULU BARU MUNCUL NOTIF
+    setTimeout(() => {
+
+        tambahNotif(
+            "Halaman sedang direfresh..."
+        );
+
+        updateBadge();
+
+    }, 2500);
+
+    // RELOAD SETELAH NOTIF
+    setTimeout(() => {
+
+        location.reload();
+
+    }, 2500);
+
+});
+
+// 2. TOMBOL DOWNLOAD
+document.getElementById('btn-download').addEventListener('click', function(e){
+
+    e.preventDefault();
+
+    kirimLog('Melakukan Download File');
+
+    // Notif proses
+    tambahNotif("Membuka halaman download file...");
+
+    // Pindah halaman sambil kirim status
+    window.location.href =
+        'download-data.html?download=success';
+
+});
+function showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a.submenu-item, a.kpi-link, a.md-link').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            showToast('Program akan segera hadir');
+        });
+    });
+});
+const openProfilBtn = document.getElementById('openProfil');
+const profilOverlay = document.getElementById('profilOverlay');
+
+// Buka Overlay
+openProfilBtn.addEventListener('click', () => {
+    profilOverlay.classList.add('active');
+});
+
+// Tutup Overlay saat klik di luar area box
+profilOverlay.addEventListener('click', (e) => {
+    if(e.target === profilOverlay){
+        profilOverlay.classList.remove('active');
+    }
+});
+
+// Aksi Submit (Contoh)
+document.getElementById('btn-submit-akun').addEventListener('click', () => {
+    showToast('Fitur registrasi sedang dalam pengembangan');
+    profilOverlay.classList.remove('active');
+});
 
 </script>
 

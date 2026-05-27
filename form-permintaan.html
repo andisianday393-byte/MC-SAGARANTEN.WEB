@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Permintaan Barang - Monitor CSV Real-time</title>
     <link rel="stylesheet" href="global-ui.css">
+    <script src="global-notif.js"></script>
     <style>
 
         /* DASHBOARD CONTAINER - FULL SCREEN TANPA KARTU */
@@ -312,10 +313,23 @@
     </a>
 
     <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
-        <span>Notif</span>
-    </a>
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -327,36 +341,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // JS NAVIGASI MENU RESPONSIVE (ANTI TUMPANG TINDIH)
-            const menuBtn = document.getElementById('menu-btn');
-            const navDropdown = document.getElementById('nav-dropdown');
-            const triggerPenjualan = document.getElementById('trigger-penjualan');
-            const submenuPenjualan = document.getElementById('dropdown-submenu-penjualan');
-
-            menuBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                menuBtn.classList.toggle('active');
-                navDropdown.classList.toggle('open');
-            });
-
-            triggerPenjualan.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                triggerPenjualan.classList.toggle('active-trigger');
-                
-                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
-                    submenuPenjualan.style.maxHeight = "0px";
-                } else {
-                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
-                }
-            });
-
-            document.addEventListener('click', () => {
-                if(navDropdown.classList.contains('open')) {
-                    menuBtn.classList.remove('active');
-                    navDropdown.classList.remove('open');
-                    triggerPenjualan.classList.remove('active-trigger');
-                    submenuPenjualan.style.maxHeight = "0px";
-                }
-            });
+           
+            document.addEventListener
 
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('tanggal').value = today;
@@ -418,7 +404,14 @@
             const waLink = `https://api.whatsapp.com/send?phone=${noAdmin}&text=${encodedMessage}`;
             window.open(waLink, '_blank');
         }
+        tambahNotif({
+    aktivitas: 'Form Permintaan berhasil dikirim',
+    halaman: 'form-permintaan.html',
+    detail: 'Data permintaan stok berhasil disimpan'
+});
     </script>
+    
+    <script src="global-ui.js"></script>
 </body>
 </html>
 

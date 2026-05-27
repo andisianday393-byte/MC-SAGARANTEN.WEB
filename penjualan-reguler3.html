@@ -7,71 +7,118 @@
     <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        
+        .container,
+.dashboard-container,
+.selector-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 14px;
+}
         /* CONTAINER LAYAR */
-        .selector-container {
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            padding: 0 15px;
-        }
-        .selector-card {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        .form-group:last-child { margin-bottom: 0; }
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-        .form-control-select {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e293b;
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-control-select:focus {
-            border-color: #0284c7;
-        }
-        .dse-name-display {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0284c7;
-            background: #f0f9ff;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px dashed #bae6fd;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .summary-mode {
-            color: #16a34a !important;
-            background: #f0fdf4 !important;
-            border-color: #bbf7d0 !important;
-        }
+        .selector-container { 
+    max-width: 95%; /* Melebar di semua perangkat */
+    margin: 0 auto 18px auto; 
+    padding: 0 10px; 
+}
+        /* =========================
+   SELECTOR MODERN SLIM
+========================= */
 
-        .dashboard-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
+.selector-card {
+    background: rgba(255,255,255,0.96);
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    backdrop-filter: blur(8px);
+}
+
+.form-group {
+    margin-bottom: 8px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    padding-left: 2px;
+}
+
+.form-control-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1.5px solid #dbeafe;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-control-select:focus {
+    border-color: #0284c7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2,132,199,0.10);
+}
+
+.dse-name-display {
+    min-height: 42px;
+    padding: 0 12px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f0f9ff, #f8fafc);
+    border: 1px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0369a1;
+    line-height: 1.3;
+}
+
+.summary-mode {
+    color: #15803d !important;
+    background: linear-gradient(135deg, #f0fdf4, #f8fafc) !important;
+    border-color: #bbf7d0 !important;
+}
+/* Desktop Layout */
+@media (min-width: 768px) {
+
+    .selector-card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+}
+
+        .dashboard-container { 
+    max-width: 95%; /* Melebar di semua perangkat */
+    margin: 0 auto; 
+    padding: 0 10px; 
+}
+/* Tambahkan ini agar di desktop tetap rapi tapi tidak terlalu lebar */
+@media (max-width: 480px) {
+    .header-wrapper { padding: 15px; }
+    .section-card { margin-bottom: 12px; }
+    th, td { padding: 10px 8px; } /* Padding lebih kecil untuk HP */
+}
 
         .section-card {
             background: #ffffff;
@@ -92,25 +139,35 @@
             letter-spacing: 0.5px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    min-width: 100%; /* Ubah dari 420px ke 100% agar mengikuti lebar layar */
+}
 
-        th, td {
-            padding: 10px 14px;
-            font-size: 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
 
-        th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #cbd5e1;
-        }
+/* UKURAN TEKS TABEL SERAGAM */
+
+th, td {
+    padding: 10px 12px;
+    font-size: 11px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+td {
+    font-weight: 600;
+    color: #334155;
+}
 
         .rank-col {
             text-align: center;
@@ -156,12 +213,13 @@
             border-bottom: 1px solid #ca8a04;
         }
         
-        .sub-id-text {
-            display: block;
-            font-size: 10px;
-            color: #64748b;
-            font-weight: normal;
-        }
+.sub-id-text {
+    display: block;
+    font-size: 9px;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 2px;
+}
 
         .accordion-detail {
             background: #ffffff;
@@ -204,6 +262,108 @@
             border-bottom: 1px solid #e2e8f0;
             letter-spacing: 0.5px;
         }
+        /* =========================
+   RESPONSIVE LAYOUT
+========================= */
+
+/* HP Portrait */
+@media (max-width: 767px) {
+
+    .dashboard-container,
+    .selector-container,
+    .container {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+
+    .section-card,
+    .selector-card,
+    .chart-container {
+        border-radius: 12px;
+    }
+
+    th, td {
+        padding: 10px 8px;
+        font-size: 11px;
+    }
+
+    .section-title {
+        font-size: 12px;
+    }
+}
+
+/* HP Landscape & Tablet */
+@media (min-width: 768px) {
+
+    .dashboard-container,
+    .selector-container,
+    .container {
+        max-width: 95%;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .selector-card {
+        padding: 20px;
+    }
+}
+
+/* Laptop/Desktop */
+@media (min-width: 1200px) {
+
+    .dashboard-container,
+    .selector-container,
+    .container {
+        max-width: 1400px;
+    }
+
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    #productSummaryAccordion {
+        grid-column: span 2;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 15px;
+    }
+
+    .selector-card {
+        padding: 24px;
+    }
+}
+/* HP */
+@media (max-width: 767px) {
+
+    th, td {
+        font-size: 10px;
+        padding: 9px 7px;
+    }
+
+    .sub-id-text {
+        font-size: 8px;
+    }
+}
     </style>
 </head>
 <body>
@@ -243,8 +403,6 @@
     height: 320px !important;
 }
     </style>
-</head>
-<body>
 <div class="sticky-container">
     <div class="header-wrapper">
         <div class="back-container" onclick="goBack()">
@@ -320,10 +478,23 @@
     </a>
 
     <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
-        <span>Notif</span>
-    </a>
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
 
     <!-- PROFILE -->
     <a href="#" class="bottom-item">
@@ -333,274 +504,545 @@
 
 </footer>
     <script>
-        const EXCEL_FILE_URL = 'index-data.xlsx'; 
-		const TARGET_SHEET_NAME = "penjualan-reguler";
-        
-        let dseMapping = {}; // Menyimpan hubungan ID -> Nama (Misal: "1" -> "Andi")
-        let dseIds = [];     // Menyimpan daftar ID murni: [1, 2, 3, 4, 8]
-        let itemPrices = {};
-        let dbSales = {};
+const EXCEL_FILE_URL = 'index-data.xlsx';
+const TARGET_SHEET_NAME = "penjualan-reguler";
 
-        // Pengurutan sesuai dengan penulisan tepat di file Excel Anda
-        const orderSP = ["SP ZERO", "SP 3GB INJEK", "SP 3GB ORI", "SP 9GB"];
-        const orderVoucher = [
-            "VDK", "Voucher 3GB 14HR", "Voucher 2,5GB", "Freedom Internet  3 GB", 
-            "Voucher 3.5GB 5HR", "Voucher 5GB 5HR", "Voucher 7GB 7HR", "Fi 6GB", 
-            "Fi 1.5GB/1D", "Fi 3GB/1D", "Fi 3GB/3D", "Fi 5GB/2D", "Fi 5GB/3D"
-        ];
+let dseMapping = {};
+let dseIds = [];
+let itemPrices = {};
+let dbSales = {};
 
-        async function loadExcelData() {
-            try {
-                const response = await fetch(EXCEL_FILE_URL);
-                if (!response.ok) throw new Error('File penjualan-reguler.xlsx tidak ditemukan.');
-                
-                const buffer = await response.arrayBuffer();
-                const dataArray = new Uint8Array(buffer);
-                const workbook = XLSX.read(dataArray, { type: 'array' });
-                
-                // KODE BARU YANG HARUS DIGANTI:
-const worksheet = workbook.Sheets["penjualan-reguler"]; // Ganti dengan nama sheet yang tepat
-if (!worksheet) {
-    throw new Error('Sheet "penjualan-reguler" tidak ditemukan dalam file Excel.');
+const orderSP = [
+    "SP ZERO",
+    "SP 3GB INJEK",
+    "SP 3GB ORI",
+    "SP 9GB"
+];
+
+const orderVoucher = [
+    "VDK",
+    "Voucher 3GB 14HR",
+    "Voucher 2,5GB",
+    "Freedom Internet  3 GB",
+    "Voucher 3.5GB 5HR",
+    "Voucher 5GB 5HR",
+    "Voucher 7GB 7HR",
+    "Fi 6GB",
+    "Fi 1.5GB/1D",
+    "Fi 3GB/1D",
+    "Fi 3GB/3D",
+    "Fi 5GB/2D",
+    "Fi 5GB/3D"
+];
+
+function formatRupiah(number) {
+    if (!number || number === 0) return "-";
+    return Number(number).toLocaleString('id-ID');
 }
-                const rawRows = XLSX.utils.sheet_to_json(worksheet, {
-    header: 1,
-    defval: 0,
-    raw: true
-});
-                
-                if(rawRows.length < 2) throw new Error('Format baris data Excel tidak mencukupi.');
 
-                // 1. Baris Indeks 0 = ID Sales (1, 2, 3, 4, 8)
-                //    Baris Indeks 1 = Nama Sales (Andi, Parhan, Enden, Pebrian, Spv)
-                const idRow = rawRows[0];
-                const nameRow = rawRows[1];
-                
-                dseIds = [];
-                dseMapping = { "SUMMARY": "SUMMARY (TOTAL GABUNGAN ALL DSE)" };
+function formatPcs(pcs) {
+    if (!pcs || pcs === 0) {
+        return `<span class="empty-cell">-</span>`;
+    }
+    return Number(pcs).toLocaleString('id-ID');
+}
 
-                for(let col = 1; col <= 4; col++) {
-                    let idVal = String(idRow[col]).trim();
-                    let nameVal = String(nameRow[col]).trim();
-                    
-                    if(idVal && nameVal) {
-                        dseIds.push(idVal);
-                        dseMapping[idVal] = nameVal;
-                        dbSales[idVal] = { sp: {}, voucher: {} };
-                    }
+async function loadExcelData() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${EXCEL_FILE_URL}?v=${Date.now()}`
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                'File Excel tidak ditemukan'
+            );
+        }
+
+        const buffer =
+            await response.arrayBuffer();
+await cekUpdateExcel(
+    'penjualan-reguler',
+    buffer
+);
+        const workbook =
+            XLSX.read(buffer, {
+                type: 'array'
+            });
+
+        const worksheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        if (!worksheet) {
+            throw new Error(
+                `Sheet ${TARGET_SHEET_NAME} tidak ditemukan`
+            );
+        }
+
+        const rawRows =
+            XLSX.utils.sheet_to_json(
+                worksheet,
+                {
+                    header: 1,
+                    defval: 0,
+                    raw: true
                 }
+            );
 
-                // 2. Looping data produk & harga dari baris indeks ke-2 ke bawah
-                for(let i = 2; i < rawRows.length; i++) {
-    const row = rawRows[i];
-    if(!row || row.length === 0) continue;
-
-    let rawItemName = String(row[0] || "").trim();
-
-    // Skip baris kosong
-    if(!rawItemName) continue;
-
-    // Harga ada di kolom G = index 6
-    let price = parseFloat(row[6]) || 0;
-
-    itemPrices[rawItemName] = price;
-
-    dseIds.forEach((id, idx) => {
-
-        // Data DSE ada di kolom B-E
-        let pcsValue = parseInt(row[idx + 1]) || 0;
-
-        if (rawItemName.toUpperCase().startsWith("SP")) {
-            dbSales[id].sp[rawItemName] = pcsValue;
-        } else {
-            dbSales[id].voucher[rawItemName] = pcsValue;
-        }
-    });
+        if (rawRows.length < 2) {
+    throw new Error(
+        'Format Excel tidak valid'
+    );
 }
 
-                initDseSelector();
-            } catch (error) {
-                console.error("Gagal memuat file Excel:", error);
-                document.getElementById('dseName').textContent = `⚠️ Error: ${error.message}`;
+// ==========================
+// LAST UPDATE FILE EXCEL
+// ==========================
+
+// ==========================
+// LAST UPDATE FILE EXCEL
+// ==========================
+
+// ==========================
+// LAST UPDATE FILE EXCEL
+// ==========================
+
+let updateDate = null;
+
+// PRIORITAS 1
+// Ambil tanggal save terakhir dari file Excel
+if (
+    workbook.Props &&
+    workbook.Props.ModifiedDate
+) {
+
+    updateDate =
+        new Date(
+            workbook.Props.ModifiedDate
+        );
+}
+
+// PRIORITAS 2
+// Fallback Last-Modified server
+if (
+    !updateDate ||
+    isNaN(updateDate)
+) {
+
+    const lastModified =
+        response.headers.get(
+            'Last-Modified'
+        );
+
+    if (lastModified) {
+
+        updateDate =
+            new Date(lastModified);
+    }
+}
+
+// TAMPILKAN
+if (
+    updateDate &&
+    !isNaN(updateDate)
+) {
+
+    document.getElementById(
+        'updateTime'
+    ).textContent =
+        'Update Data: ' +
+        updateDate.toLocaleString(
+            'id-ID',
+            {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }
+        );
+
+} else {
+
+    document.getElementById(
+        'updateTime'
+    ).textContent =
+        'Update Data: Tidak diketahui';
+}
+
+        const idRow = rawRows[0];
+        const nameRow = rawRows[1];
+
+        dseIds = [];
+
+        dseMapping = {
+            SUMMARY:
+                "SUMMARY (TOTAL GABUNGAN)"
+        };
+
+        dbSales = {};
+        itemPrices = {};
+
+        // ======================
+        // DETEKSI KOLOM HARGA
+        // ======================
+
+        let priceColumnIndex = -1;
+
+        for (
+            let col = 1;
+            col < idRow.length;
+            col++
+        ) {
+
+            const header =
+                String(idRow[col] || '')
+                .trim()
+                .toLowerCase();
+
+            if (
+                header.includes('harga') ||
+                header.includes('price')
+            ) {
+
+                priceColumnIndex = col;
+
+                continue;
+            }
+
+            const idVal =
+                String(idRow[col] || '').trim();
+
+            const nameVal =
+                String(nameRow[col] || '').trim();
+
+            if (idVal && nameVal) {
+
+                dseIds.push(idVal);
+
+                dseMapping[idVal] =
+                    nameVal;
+
+                dbSales[idVal] = {
+                    sp: {},
+                    voucher: {}
+                };
             }
         }
 
-        function formatRupiah(number) { return number === 0 ? "-" : number.toLocaleString('id-ID'); }
-        function formatPcs(pcs) { return pcs === 0 ? `<span class="empty-cell">-</span>` : pcs.toLocaleString('id-ID'); }
+        console.log(
+            'PRICE COLUMN:',
+            priceColumnIndex
+        );
 
-        function initDseSelector() {
-            const selectEl = document.getElementById('dseSelect');
-            selectEl.innerHTML = "";
-            
-            // Opsi Ringkasan Utama
-            let optSummary = document.createElement('option');
-            optSummary.value = "SUMMARY";
-            optSummary.textContent = "SUMMARY (TOTAL GABUNGAN)";
-            selectEl.appendChild(optSummary);
+        console.log(
+            'DSE IDS:',
+            dseIds
+        );
 
-            // Tampilkan opsi berdasarkan ID Angka murni dari excel
-            dseIds.forEach(id => {
-                let opt = document.createElement('option');
-                opt.value = id; 
-                opt.textContent = `ID: ${id} - ${dseMapping[id]}`;
-                selectEl.appendChild(opt);
-            });
+        // ======================
+        // BACA DATA PRODUK
+        // ======================
 
-            selectEl.addEventListener('change', (e) => updateDashboard(e.target.value));
-            updateDashboard("SUMMARY");
-        }
+        for (
+            let i = 2;
+            i < rawRows.length;
+            i++
+        ) {
 
-        function getSortedPerformance(type) {
-            let list = [];
-            dseIds.forEach(id => {
-                let pcs = 0, amount = 0;
-                Object.keys(dbSales[id][type]).forEach(item => {
-                    let itemPcs = dbSales[id][type][item] || 0;
-                    pcs += itemPcs; 
-                    amount += itemPcs * (itemPrices[item] || 0);
-                });
-                list.push({ id: id, nama: dseMapping[id], pcs: pcs, amount: amount });
-            });
-            return list.sort((a, b) => b.amount - a.amount);
-        }
+            const row = rawRows[i];
 
-        function getProductSummaryCustomOrder(type) {
-            let productMap = {};
-            dseIds.forEach(id => {
-                Object.keys(dbSales[id][type]).forEach(itemName => {
-                    let pcs = dbSales[id][type][itemName] || 0;
-                    if (pcs > 0) {
-                        if (!productMap[itemName]) productMap[itemName] = { name: itemName, pcs: 0, amount: 0 };
-                        productMap[itemName].pcs += pcs;
-                        productMap[itemName].amount += pcs * (itemPrices[itemName] || 0);
-                    }
-                });
-            });
-            const currentOrderList = (type === 'sp') ? orderSP : orderVoucher;
-            return Object.values(productMap).sort((a, b) => {
-                let idxA = currentOrderList.findIndex(item => a.name.trim().toLowerCase() === item.trim().toLowerCase());
-                let idxB = currentOrderList.findIndex(item => b.name.trim().toLowerCase() === item.trim().toLowerCase());
-                return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
-            });
-        }
+            if (!row || row.length === 0)
+                continue;
 
-        function getExcelRankClass(index, totalItems) {
-            if (totalItems <= 1) return 'excel-rank-1';
-            let ratio = index / (totalItems - 1);
-            return ratio <= 0.25 ? 'excel-rank-1' : ratio <= 0.50 ? 'excel-rank-2' : ratio <= 0.75 ? 'excel-rank-3' : 'excel-rank-4';
-        }
+            const rawItemName =
+                String(row[0] || '').trim();
 
-        function updateDashboard(dseId) {
-            const nameDisplay = document.getElementById('dseName');
-            const spTitle = document.getElementById('spSectionTitle');
-            const voucherTitle = document.getElementById('voucherSectionTitle');
-            const spHeaderRow = document.getElementById('spHeaderRow');
-            const voucherHeaderRow = document.getElementById('voucherHeaderRow');
-            const spBody = document.getElementById('spTableBody');
-            const voucherBody = document.getElementById('voucherTableBody');
-            const accordionSection = document.getElementById('productSummaryAccordion');
+            if (!rawItemName)
+                continue;
 
-            spBody.innerHTML = ""; voucherBody.innerHTML = "";
+            let price = 0;
 
-            if (dseId === "SUMMARY") {
-                nameDisplay.textContent = `📊 Semua DSE (Ranking Kinerja Ruang Gabungan)`;
-                nameDisplay.classList.add('summary-mode');
-                accordionSection.style.display = "block";
-                spTitle.textContent = "Ranking Performa SP Per DSE";
-                voucherTitle.textContent = "Ranking Performa Voucher Per DSE";
-                
-                spHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
-                voucherHeaderRow.innerHTML = `<th class="rank-col">Rank</th><th>Nama DSE</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
+            if (priceColumnIndex !== -1) {
 
-                const sortedSp = getSortedPerformance('sp');
-                let gSpPcs = 0, gSpAmt = 0;
-                sortedSp.forEach((dse, index) => {
-                    gSpPcs += dse.pcs; gSpAmt += dse.amount;
-                    spBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedSp.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">ID: ${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
-                });
-                spBody.innerHTML += `<tr class="total-row"><td colspan="2" class="item-name-col">TOTAL GABUNGAN SP</td><td class="number-col">${formatPcs(gSpPcs)}</td><td class="amount-col">${formatRupiah(gSpAmt)}</td></tr>`;
-
-                const sortedVch = getSortedPerformance('voucher');
-                let gVchPcs = 0, gVchAmt = 0;
-                sortedVch.forEach((dse, index) => {
-                    gVchPcs += dse.pcs; gVchAmt += dse.amount;
-                    voucherBody.innerHTML += `<tr class="${getExcelRankClass(index, sortedVch.length)}"><td class="rank-col">#${index+1}</td><td class="item-name-col">${dse.nama} <span class="sub-id-text">ID: ${dse.id}</span></td><td class="number-col" style="color:inherit;">${formatPcs(dse.pcs)}</td><td class="amount-col" style="color:inherit;">${formatRupiah(dse.amount)}</td></tr>`;
-                });
-                voucherBody.innerHTML += `<tr class="total-row"><td colspan="2" class="item-name-col">TOTAL GABUNGAN VOUCHER</td><td class="number-col">${formatPcs(gVchPcs)}</td><td class="amount-col">${formatRupiah(gVchAmt)}</td></tr>`;
-
-                // Render Bagian Detail Akumulasi
-                const summarySpList = getProductSummaryCustomOrder('sp');
-                let totalSummarySpPcs = 0; let totalSummarySpAmt = 0;
-                let htmlSp = summarySpList.map(p => {
-                    totalSummarySpPcs += p.pcs; totalSummarySpAmt += p.amount;
-                    return `<tr><td class="item-name-col">${p.name}</td><td class="number-col">${formatPcs(p.pcs)}</td><td class="amount-col">${formatRupiah(p.amount)}</td></tr>`;
-                }).join('');
-                htmlSp += `<tr class="total-row"><td class="item-name-col">TOTAL AKUMULASI SP</td><td class="number-col">${formatPcs(totalSummarySpPcs)}</td><td class="amount-col">${formatRupiah(totalSummarySpAmt)}</td></tr>`;
-                document.getElementById('summarySpProductBody').innerHTML = htmlSp;
-
-                const summaryVchList = getProductSummaryCustomOrder('voucher');
-                let totalSummaryVchPcs = 0; let totalSummaryVchAmt = 0;
-                let htmlVch = summaryVchList.map(p => {
-                    totalSummaryVchPcs += p.pcs; totalSummaryVchAmt += p.amount;
-                    return `<tr><td class="item-name-col">${p.name}</td><td class="number-col">${formatPcs(p.pcs)}</td><td class="amount-col">${formatRupiah(p.amount)}</td></tr>`;
-                }).join('');
-                htmlVch += `<tr class="total-row"><td class="item-name-col">TOTAL AKUMULASI VOUCHER</td><td class="number-col">${formatPcs(totalSummaryVchPcs)}</td><td class="amount-col">${formatRupiah(totalSummaryVchAmt)}</td></tr>`;
-                document.getElementById('summaryVchProductBody').innerHTML = htmlVch;
-
-            } else {
-                nameDisplay.textContent = `👤 ID: ${dseId} - ${dseMapping[dseId]}`;
-                nameDisplay.classList.remove('summary-mode');
-                accordionSection.style.display = "none";
-                spTitle.textContent = "Penjualan SP";
-                voucherTitle.textContent = "Penjualan Voucher";
-                
-                spHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
-                voucherHeaderRow.innerHTML = `<th>Nama Barang</th><th style="text-align: right;">Pcs</th><th style="text-align: right;">Amount Rp.</th>`;
-
-                let tSpPcs = 0, tSpAmt = 0;
-                orderSP.forEach(item => {
-                    let pcs = dbSales[dseId].sp[item] || 0;
-                    let amt = pcs * (itemPrices[item] || 0);
-                    tSpPcs += pcs; tSpAmt += amt;
-                    spBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
-                });
-                spBody.innerHTML += `<tr class="total-row"><td class="item-name-col">TOTAL SP</td><td class="number-col">${formatPcs(tSpPcs)}</td><td class="amount-col">${formatRupiah(tSpAmt)}</td></tr>`;
-
-                let tVchPcs = 0, tVchAmt = 0;
-                orderVoucher.forEach(item => {
-                    let pcs = dbSales[dseId].voucher[item] || 0;
-                    let amt = pcs * (itemPrices[item] || 0);
-                    tVchPcs += pcs; tVchAmt += amt;
-                    voucherBody.innerHTML += `<tr><td class="item-name-col">${item}</td><td class="number-col">${formatPcs(pcs)}</td><td class="amount-col">${formatRupiah(amt)}</td></tr>`;
-                });
-                voucherBody.innerHTML += `<tr class="total-row"><td class="item-name-col">TOTAL VOUCHER</td><td class="number-col">${formatPcs(tVchPcs)}</td><td class="amount-col">${formatRupiah(tVchAmt)}</td></tr>`;
+                price =
+                    Number(
+                        row[priceColumnIndex]
+                    ) || 0;
             }
-        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-             loadExcelData();
-            
-            triggerPenjualan.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                triggerPenjualan.classList.toggle('active-trigger');
-                
-                if (submenuPenjualan.style.maxHeight && submenuPenjualan.style.maxHeight !== "0px") {
-                    submenuPenjualan.style.maxHeight = "0px";
+            itemPrices[rawItemName] =
+                price;
+
+            dseIds.forEach((id, idx) => {
+
+                const pcsValue =
+                    Number(
+                        row[idx + 1]
+                    ) || 0;
+
+                if (
+                    rawItemName
+                    .toUpperCase()
+                    .startsWith("SP")
+                ) {
+
+                    dbSales[id]
+                    .sp[rawItemName] =
+                        pcsValue;
+
                 } else {
-                    submenuPenjualan.style.maxHeight = submenuPenjualan.scrollHeight + "px";
-                }
-            });
 
-            document.addEventListener('click', () => {
-                if(navDropdown.classList.contains('open')) {
-                    menuBtn.classList.remove('active');
-                    navDropdown.classList.remove('open');
-                    triggerPenjualan.classList.remove('active-trigger');
-                    submenuPenjualan.style.maxHeight = "0px";
+                    dbSales[id]
+                    .voucher[rawItemName] =
+                        pcsValue;
                 }
             });
+        }
+
+        console.log({
+            dseIds,
+            dseMapping,
+            itemPrices,
+            dbSales
         });
-    </script>
+
+        initDseSelector();
+        console.log("INIT SELECTOR CALLED");
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            'dseName'
+        ).textContent =
+            '⚠️ ' + error.message;
+    }
+}
+
+function initDseSelector() {
+
+    const selectEl =
+        document.getElementById(
+            'dseSelect'
+        );
+
+    selectEl.innerHTML = '';
+
+    const optSummary =
+        document.createElement('option');
+
+    optSummary.value = 'SUMMARY';
+
+    optSummary.textContent =
+        'SUMMARY (TOTAL GABUNGAN)';
+
+    selectEl.appendChild(optSummary);
+
+    dseIds.forEach(id => {
+
+        const opt =
+            document.createElement('option');
+
+        opt.value = id;
+
+        opt.textContent =
+            `ID: ${id} - ${dseMapping[id]}`;
+
+        selectEl.appendChild(opt);
+    });
+
+    selectEl.addEventListener(
+        'change',
+        (e) => {
+            updateDashboard(
+                e.target.value
+            );
+        }
+    );
+
+    updateDashboard('SUMMARY');
+}
+
+function getSortedPerformance(type) {
+
+    let list = [];
+
+    dseIds.forEach(id => {
+
+        let pcs = 0;
+        let amount = 0;
+
+        Object.keys(
+            dbSales[id][type]
+        ).forEach(item => {
+
+            const itemPcs =
+                dbSales[id][type][item] || 0;
+
+            pcs += itemPcs;
+
+            amount +=
+                itemPcs *
+                (itemPrices[item] || 0);
+        });
+
+        list.push({
+            id,
+            nama: dseMapping[id],
+            pcs,
+            amount
+        });
+    });
+
+    return list.sort(
+        (a, b) => b.amount - a.amount
+    );
+}
+
+function updateDashboard(dseId) {
+
+    const spBody =
+        document.getElementById(
+            'spTableBody'
+        );
+
+    const voucherBody =
+        document.getElementById(
+            'voucherTableBody'
+        );
+
+    const nameDisplay =
+        document.getElementById(
+            'dseName'
+        );
+
+    spBody.innerHTML = '';
+    voucherBody.innerHTML = '';
+
+    if (dseId === 'SUMMARY') {
+
+        nameDisplay.textContent =
+            '📊 Semua DSE';
+
+        const sortedSp =
+            getSortedPerformance('sp');
+
+        sortedSp.forEach((dse, index) => {
+
+            spBody.innerHTML += `
+                <tr>
+                    <td>#${index + 1}</td>
+                    <td>
+                        ${dse.nama}
+                        <span class="sub-id-text">
+                            ID: ${dse.id}
+                        </span>
+                    </td>
+                    <td class="number-col">
+                        ${formatPcs(dse.pcs)}
+                    </td>
+                    <td class="amount-col">
+                        ${formatRupiah(dse.amount)}
+                    </td>
+                </tr>
+            `;
+        });
+
+        const sortedVoucher =
+            getSortedPerformance('voucher');
+
+        sortedVoucher.forEach((dse, index) => {
+
+            voucherBody.innerHTML += `
+                <tr>
+                    <td>#${index + 1}</td>
+                    <td>
+                        ${dse.nama}
+                        <span class="sub-id-text">
+                            ID: ${dse.id}
+                        </span>
+                    </td>
+                    <td class="number-col">
+                        ${formatPcs(dse.pcs)}
+                    </td>
+                    <td class="amount-col">
+                        ${formatRupiah(dse.amount)}
+                    </td>
+                </tr>
+            `;
+        });
+console.log("UPDATE DASHBOARD:", dseId);
+    } else {
+
+        nameDisplay.textContent =
+            `👤 ${dseMapping[dseId]}`;
+
+        orderSP.forEach(item => {
+
+            const pcs =
+                dbSales[dseId].sp[item] || 0;
+
+            const amt =
+                pcs *
+                (itemPrices[item] || 0);
+
+            spBody.innerHTML += `
+                <tr>
+                    <td>${item}</td>
+                    <td class="number-col">
+                        ${formatPcs(pcs)}
+                    </td>
+                    <td class="amount-col">
+                        ${formatRupiah(amt)}
+                    </td>
+                </tr>
+            `;
+        });
+
+        orderVoucher.forEach(item => {
+
+            const pcs =
+                dbSales[dseId]
+                .voucher[item] || 0;
+
+            const amt =
+                pcs *
+                (itemPrices[item] || 0);
+
+            voucherBody.innerHTML += `
+                <tr>
+                    <td>${item}</td>
+                    <td class="number-col">
+                        ${formatPcs(pcs)}
+                    </td>
+                    <td class="amount-col">
+                        ${formatRupiah(amt)}
+                    </td>
+                </tr>
+            `;
+        });
+    }
+}
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+        loadExcelData();
+    }
+);
+function normalize(str) {
+    return String(str)
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+</script>
+<script src="global-notif.js"></script>
     <script src="global-ui.js"></script>
 </body>
 </html>
