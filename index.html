@@ -1462,7 +1462,7 @@ function showToast(message) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('a.submenu-item, a.kpi-link, a.md-link').forEach(link => {
+    document.querySelectorAll('a.kpi-link, a.md-link').forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             showToast('Program akan segera hadir');
