@@ -1466,26 +1466,7 @@ document.getElementById('btn-download').addEventListener('click', function(e){
         'download-data.html?download=success';
 
 });
-function showToast(message) {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    container.appendChild(toast);
 
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('a.kpi-link, a.md-link').forEach(link => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            showToast('Program akan segera hadir');
-        });
-    });
-});
 const openProfilBtn = document.getElementById('openProfil');
 const profilOverlay = document.getElementById('profilOverlay');
 
