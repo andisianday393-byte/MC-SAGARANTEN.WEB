@@ -213,11 +213,63 @@
 .slide-content p {
     margin-bottom: 8px;
 }
+/* =========================
+   MODE TAMPILAN HP DI LAPTOP
+========================= */
+
+body{
+    background:#e2e8f0;
+}
+
+/* PEMBUNGKUS UTAMA */
+.mobile-wrapper{
+    max-width:430px;
+    min-height:100vh;
+    margin:0 auto;
+    background:#fff;
+    position:relative;
+    box-shadow:0 0 25px rgba(0,0,0,.12);
+    overflow:hidden;
+}
+
+/* STICKY HEADER AGAR IKUT LEBAR HP */
+.sticky-container{
+    max-width:430px;
+    margin:0 auto;
+}
+
+/* BOTTOM NAV AGAR TIDAK FULL */
+.bottom-nav{
+    max-width:430px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* TABLET */
+@media (max-width:768px){
+
+    .mobile-wrapper,
+    .sticky-container,
+    .bottom-nav{
+        max-width:100%;
+        box-shadow:none;
+    }
+
+    body{
+        background:#fff;
+    }
+}
+.slide-video{
+    width:100%;
+    height:240px;
+    border:none;
+    background:#000;
+}
 
     </style>
 </head>
 <body>
-
+<div class="mobile-wrapper">
 <div class="sticky-container">
     <div class="header-wrapper">
         <div class="app-header">
@@ -357,10 +409,12 @@
 <!-- SLIDE 7 -->
 <div class="slide-item">
 
-    <video controls playsinline class="slide-video">
-        <source src="tutorial-biometrik.mp4" type="video/mp4">
-        Browser tidak mendukung video.
-    </video>
+<iframe 
+    class="slide-video"
+    src="https://drive.google.com/file/d/16ejLh0Vmr3SWPRqb23lR8_XUcC64ov68/preview"
+    allow="autoplay"
+    allowfullscreen>
+</iframe>
 
 <div class="slide-content">
     <h3>🔥 Tutorial Registrasi Biometrik</h3>
