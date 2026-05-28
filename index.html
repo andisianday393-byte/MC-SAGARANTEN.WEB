@@ -401,8 +401,8 @@
 .laci-trigger {
     background: transparent; /* Latar belakang transparan */
     color: #1e3a8a;          /* Warna teks biru */
-    padding: 8px 20px;
-    margin: 5px 13px;
+    padding: 1px 20px;
+    margin: 1px 13px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
@@ -543,9 +543,15 @@
 
  <!-- Pintu Laci -->
 <div class="laci-trigger" id="laciTrigger">
-    <span>Menu Aksi Cepat</span>
+    <div style="display: flex; flex-direction: column; width: 100%;">
+        <span>Menu Aksi Cepat</span>
+        <span style="font-size: 9px; color: #94a3b8; font-weight: normal; margin-top: 2px; text-transform: none;">
+            Klik di sini untuk melihat menu
+        </span>
+    </div>
     <span class="laci-arrow">▼</span>
 </div>
+
 
 <!-- Container Aksi (Laci) -->
 <div class="laci-content" id="laciContent">
@@ -663,22 +669,23 @@
         <div class="nav-icon">🎁</div>
         <div class="nav-details">
             <div class="nav-title" style="color:var(--accent-trade)">Trade Program</div>
-            <div class="nav-desc">Kelola program insentif dan promo mitra.</div>
+            <div class="nav-desc">Program Outlet dan Program Paket</div>
         </div>
         <div class="nav-arrow">➔</div>
     </div>
 
     <!-- Submenu Trade Program -->
-    <div class="submenu-container" id="submenu-trade">
-        <a href="https://andisianday393-byte.github.io/Program_Bonus_Melimpah_SP-3GB/" class="submenu-item">
-            <div class="submenu-icon">⚡</div>
-            <div class="submenu-title">Program SP 3GB</div>
-        </a>
-        <a href="program-berjalan.html" class="submenu-item">
-            <div class="submenu-icon">🔄</div>
-            <div class="submenu-title">Program Berjalan</div>
-        </a>
-    </div>
+<div class="submenu-container" id="submenu-trade">
+    <a href="program-outlet.html" class="submenu-item">
+        <div class="submenu-icon">🏪</div>
+        <div class="submenu-title">Program Outlet</div>
+    </a>
+    <a href="program-paket.html" class="submenu-item">
+        <div class="submenu-icon">📦</div>
+        <div class="submenu-title">Program Paket</div>
+    </a>
+</div>
+
 
         <a href="kpi-dse-data-outlet.html" class="nav-item kpi-link">
             <div class="nav-icon">📊</div>
@@ -1333,6 +1340,16 @@ document
     }
 );
 document.getElementById('laciTrigger').addEventListener('click', function() {
+    const hintText = this.querySelector('span[style*="font-size: 9px"]');
+    const content = document.getElementById('laciContent');
+    
+    if (content.classList.contains('open')) {
+        hintText.innerText = "Klik di sini untuk melihat menu";
+    } else {
+        hintText.innerText = "Klik di sini untuk menutup menu";
+    }
+});
+document.getElementById('laciTrigger').addEventListener('click', function() {
     const content = document.getElementById('laciContent');
     this.classList.toggle('open');
     content.classList.toggle('open');
@@ -1462,7 +1479,7 @@ function showToast(message) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('a.kpi-link, a.md-link').forEach(link => {
+    document.querySelectorAll('a.submenu-item, a.kpi-link, a.md-link').forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             showToast('Program akan segera hadir');
@@ -1489,6 +1506,7 @@ document.getElementById('btn-submit-akun').addEventListener('click', () => {
     showToast('Fitur registrasi sedang dalam pengembangan');
     profilOverlay.classList.remove('active');
 });
+// Tambahkan ini di bagian script laciTrigger
 
 </script>
 

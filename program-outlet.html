@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Outlet - MC-SAGARANTEN</title>
+    <link rel="stylesheet" href="global-ui.css">
+    <style>
+        /* Menggunakan style yang senada dengan index.html */
+        .content-body {
+            padding: 16px;
+            margin-top: -10px; /* Jarak agar tidak tertutup sticky header */
+            margin-bottom: 80px; /* Jarak agar tidak tertutup bottom nav */
+        }
+        .card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+            margin-bottom: 16px;
+        }
+        .page-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sticky-container">
+    <div class="header-wrapper">
+        <div class="app-header">
+            <h1>PROGRAM OUTLET</h1>
+            <p>Daftar Program Outlet Eksisting</p>
+        </div>
+    </div>
+</div>
+
+<div class="content-body">
+    <!-- Bagian Konten Gambar dan Teks -->
+<div class="card">
+    <h3 style="text-align: center; color: #1e3a8a; margin-bottom: 10px;">Tag & Go Makin Cuan</h3>
+    
+    <img src="img/tag-go.jpg" alt="Program Tag & Go" style="width: 100%; border-radius: 12px; margin-bottom: 15px;">
+    
+    <!-- Bagian yang bisa diklik -->
+    <div id="btn-detail" style="background: #f8fafc; padding: 15px; border-radius: 8px; cursor: pointer; text-align: center; border: 1px dashed #cbd5e1;">
+        <span style="font-weight: bold; color: #d97706;">Tampilkan Keterangan</span>
+    </div>
+
+    <!-- Konten Tersembunyi (akan muncul saat diklik) -->
+    <div id="detail-program" style="display: none; margin-top: 15px; padding: 10px; border-top: 1px solid #e2e8f0;">
+        <p><b>Jualan Perdana IM3 3Gb Makin Cuan!! 💸💰</b><br>
+        Keuntungan banyak buat pelanggan, cuan banyak buat outlet!</p>
+        <ul style="padding-left: 20px;">
+            <li>Free Telp <b>Ke Semua Operator</b> 50 menit!</li>
+            <li>Free Telp ke sesama im3 & Tri 5000 menit</li>
+            <li>Free langganan <b>VIDEO Lite</b> 30hr</li>
+            <li>Free langganan <b>VIU Premium</b> 30hr</li>
+            <li>Perlindungan <b>SATSPAM Plus (+)</b> 90hr</li>
+        </ul>
+        <p>>> <b>REGISTRASI BIOMETRIC</b> sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan <b>tidak sampai 2 menit!</b></p>
+        
+        <hr>
+        <p><b>Cuan Outlet</b></p>
+        <p><b>CASHBACK TAGGING</b><br>Cuan bs sampai 150rb/bulan<br>• Cashback Rp 3.000/hit<br>• Maksimal 50 hit/bln<br>• Pembayaran langsung Realtime</p>
+        <p><b>CASHBACK BIOMETRIC</b><br>Cuan maksimum 250rb/Bulan<br>• Per Hit : 5.000 rupiah<br>• Max 50 Hit/bulan<br>• Pembayaran H+2</p>
+    </div>
+
+<div style="margin-top: 20px; text-align: center;">
+    <button id="btn-share" 
+            style="background-color: #25d366; color: white; padding: 10px 20px; border-radius: 20px; border: none; text-decoration: none; font-weight: bold; font-size: 14px; cursor: pointer;">
+       ✈️ Share ke Grup Outlet
+    </button>
+</div>
+</div>
+
+<footer class="bottom-nav">
+    <a href="index.html" class="bottom-item">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+    <a href="notif.html" class="bottom-item">
+        <div class="notif-container">
+            <span class="bell-icon">🔔</span>
+        </div>
+        <span>Notif</span>
+    </a>
+    <a href="javascript:void(0)" class="bottom-item" id="openProfil">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+</footer>
+
+<script>
+    // Fungsionalitas sederhana untuk tombol profil (Copy dari index)
+    document.getElementById('openProfil').addEventListener('click', () => {
+        alert('Fitur Profil sedang dalam pengembangan.');
+    });
+        // Script untuk menampilkan/menyembunyikan detail
+    document.getElementById('btn-detail').addEventListener('click', function() {
+        const detail = document.getElementById('detail-program');
+        if (detail.style.display === 'none') {
+            detail.style.display = 'block';
+        } else {
+            detail.style.display = 'none';
+        }
+    });
+    document.getElementById('btn-share').addEventListener('click', function() {
+    const teksPesan = `Jualan Perdana IM3 3Gb Makin Cuan!! 💸💰
+Keuntungan banyak buat pelanggan, cuan banyak buat outlet!
+
+* Free Telp Ke Semua Operator 50 menit!
+* Free Telp ke sesama im3 & Tri 5000 menit
+* Free langganan VIDEO Lite 30hr
+* Free langganan VIU Premium 30hr
+* Perlindungan SATSPAM Plus (+) 90hr
+
+>> REGISTRASI BIOMETRIC sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan tidak sampai 2 menit!
+
+---
+*Cuan Outlet*
+
+*CASHBACK TAGGING*
+Cuan bs sampai 150rb/bulan
+• Cashback Rp 3.000/hit
+• Maksimal 50 hit/bln
+• Pembayaran langsung Realtime
+
+*CASHBACK BIOMETRIC*
+Cuan maksimum 250rb/Bulan
+• Per Hit : 5.000 rupiah
+• Max 50 Hit/bulan
+• Pembayaran H+2`;
+
+    // Encode teks agar bisa masuk ke URL
+    const waUrl = "https://wa.me/?text=" + encodeURIComponent(teksPesan);
+    
+    // Buka WhatsApp
+    window.open(waUrl, '_blank');
+});
+
+</script>
+
+</body>
+</html>
