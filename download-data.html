@@ -670,7 +670,59 @@ if(params.get('download') === 'success'){
     );
 
 }
+// RESET DOWNLOAD SETIAP HARI
+function resetDownloadHarian(){
 
+    const today =
+        new Date().toLocaleDateString('id-ID');
+
+    const lastReset =
+        localStorage.getItem(
+            'download_reset_date'
+        );
+
+    // JIKA HARI SUDAH BERGANTI
+    if(lastReset !== today){
+
+        const keys = [
+            'mobo',
+            'penjualan',
+            'stok_barang',
+            'hifi',
+            'mei_tm2',
+            'target_10k'
+        ];
+
+        // RESET SEMUA COUNTER
+        keys.forEach(key => {
+
+            localStorage.setItem(
+                'download_' + key,
+                0
+            );
+
+        });
+
+        // SIMPAN TANGGAL RESET
+        localStorage.setItem(
+            'download_reset_date',
+            today
+        );
+
+    }
+
+}
+// LOAD SAAT HALAMAN DIBUKA
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        resetDownloadHarian();
+
+        loadDownloadCount();
+
+    }
+);
 // LOAD TOTAL DOWNLOAD
 function loadDownloadCount(){
 
@@ -717,66 +769,121 @@ function handleDownload(event,key){
     btn.classList.add('loading');
 
     text.innerText =
-        'Mengunduh...';
+        'Membuka...';
 
-    // TOTAL DOWNLOAD
-    let total =
-        parseInt(
-            localStorage.getItem(
-                'download_' + key
-            ) || 0
+    // BUKA TAB DOWNLOAD
+    const win =
+        window.open(
+            btn.href,
+            '_blank'
         );
 
-    total++;
-
-    localStorage.setItem(
-        'download_' + key,
-        total
-    );
-
-    // UPDATE UI TOTAL
-    const countEl =
-        document.getElementById(
-            'count-' + key
-        );
-
-    if(countEl){
-        countEl.innerText =
-            'Download: ' + total + 'x';
-    }
-
-    // NOTIFIKASI
-    tambahNotif(
-        'File berhasil di download.'
-    );
-
-    // SUCCESS EFFECT
-    setTimeout(() => {
+    // JIKA POPUP DIBLOKIR
+    if(!win){
 
         btn.classList.remove(
             'loading'
         );
 
-        btn.classList.add(
-            'success'
-        );
-
         text.innerText =
-            'Berhasil';
+            'Gagal';
 
-    },1000);
+        setTimeout(() => {
 
-    // KEMBALIKAN NORMAL
+            text.innerText =
+                'Download';
+
+        },2000);
+
+        return;
+
+    }
+
+    // CEK USER MASIH MEMBUKA TAB
     setTimeout(() => {
 
-        btn.classList.remove(
-            'success'
-        );
+        // JIKA TAB TIDAK LANGSUNG DITUTUP
+        if(!win.closed){
 
-        text.innerText =
-            'Download';
+            // TOTAL DOWNLOAD
+            let total =
+                parseInt(
+                    localStorage.getItem(
+                        'download_' + key
+                    ) || 0
+                );
 
-    },2500);
+            total++;
+
+            localStorage.setItem(
+                'download_' + key,
+                total
+            );
+
+            // UPDATE UI
+            const countEl =
+                document.getElementById(
+                    'count-' + key
+                );
+
+            if(countEl){
+
+                countEl.innerText =
+                    'Download: ' + total + 'x';
+
+            }
+
+            // NOTIF
+            tambahNotif(
+                'File berhasil di download.'
+            );
+
+            // SUCCESS
+            btn.classList.remove(
+                'loading'
+            );
+
+            btn.classList.add(
+                'success'
+            );
+
+            text.innerText =
+                'Berhasil';
+
+            // RESET
+            setTimeout(() => {
+
+                btn.classList.remove(
+                    'success'
+                );
+
+                text.innerText =
+                    'Download';
+
+            },2500);
+
+        }
+
+        // USER MENUTUP TAB
+        else{
+
+            btn.classList.remove(
+                'loading'
+            );
+
+            text.innerText =
+                'Batal';
+
+            setTimeout(() => {
+
+                text.innerText =
+                    'Download';
+
+            },2000);
+
+        }
+
+    },60000);
 
 }
 
