@@ -89,6 +89,101 @@
             background: #cbd5e1;
             padding-left: 20px;
         }
+        
+/* LOADING DOWNLOAD */
+.btn-download{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-download svg{
+    width: 14px;
+    height: 14px;
+    transition: transform .3s ease;
+}
+
+.btn-download.loading{
+    opacity: .8;
+    pointer-events: none;
+}
+
+.btn-download.loading svg{
+    animation: spin .8s linear infinite;
+}
+
+.btn-download.success{
+    background: #16a34a !important;
+}
+
+@keyframes spin{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+/* JUMLAH DOWNLOAD */
+.download-count{
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+    display: block;
+}
+
+/* SKELETON LOADING */
+.skeleton{
+    position: relative;
+    overflow: hidden;
+    background: #e2e8f0 !important;
+    color: transparent !important;
+    min-width: 120px;
+    border-radius: 4px;
+}
+
+.skeleton::after{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-150px;
+    width:150px;
+    height:100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.5),
+        transparent
+    );
+    animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer{
+    100%{
+        left:100%;
+    }
+}
+
+/* STATUS WARNA */
+.update-date.today{
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.update-date.old{
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.update-date.medium{
+    background: #fef3c7;
+    color: #d97706;
+}
+
     </style>
 </head>
 <body>
@@ -122,10 +217,31 @@
             <div class="file-info">
                 <span class="file-name">Report Mobo</span>
                 <span class="file-desc">Laporan penjualan saldo mobo dse</span>
-                <span class="update-date" id="date-mobo">Memuat tanggal...</span>
+                <span class="update-date skeleton"
+      id="date-mobo">
+    Memuat...
+</span>
+                <span class="download-count" id="count-mobo">
+    Download: 0x
+</span>
             </div>
             <!-- Catatan: Ganti atribut href di bawah ini dengan link Google Drive Mobo Anda jika sudah ada -->
-            <a href="https://drive.google.com/file/d/1ck-f-HFlat8B59bXCAx4lr7F_nhYB5Tb/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/18YsWhevkO63aqyE_LQWl7ilx-Z51aGWG/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'mobo')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
 
         <div class="file-item">
@@ -139,9 +255,27 @@
             <div class="file-info">
                 <span class="file-name">Report Penjualan Fisik</span>
                 <span class="file-desc">Rekapitulasi Penjualan SP dan Voucher</span>
-                <span class="update-date" id="date-penjualan">Memuat tanggal...</span>
+                <span class="update-date skeleton" id="date-penjualan">Memuat tanggal...</span>
+                <span class="download-count" id="count-penjualan">
+    Download: 0x
+</span>
             </div>
-            <a href="https://drive.google.com/file/d/1srYgvUqQ77bC30SJEhyJ-YAudkE3IHx3/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1jdx-FM1GUmrr7JiKBJRB7LSGWtmf5Z9l/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'penjualan')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
 
         <div class="file-item">
@@ -155,9 +289,27 @@
             <div class="file-info">
                 <span class="file-name">Report Stock Barang</span>
                 <span class="file-desc">Laporan stok gudang</span>
-                <span class="update-date" id="date-stok_barang">Memuat tanggal...</span>
+                <span class="update-date skeleton" id="date-stok_barang">Memuat tanggal...</span>
+                <span class="download-count" id="count-stok_barang">
+    Download: 0x
+</span>
             </div>
-            <a href="https://drive.google.com/file/d/1epVKN_jz14q7bjFm1BBCTKkxxpIFDzMl/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1n_0p24OvSJkuVaPEGWfsmjinULTad2zf/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'stok_barang')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
 
         <div class="file-item">
@@ -171,9 +323,27 @@
             <div class="file-info">
                 <span class="file-name">Report Stock & Pembayaran Hifi</span>
                 <span class="file-desc">Monitor data Hifi</span>
-                <span class="update-date" id="date-hifi">Memuat tanggal...</span>
+                <span class="update-date skeleton" id="date-hifi">Memuat tanggal...</span>
+                <span class="download-count" id="count-hifi">
+    Download: 0x
+</span>
             </div>
-            <a href="https://drive.google.com/file/d/1b1byEwFMS88a-sh2y1TpSPk__YHA_jO4/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1nF03iA8YjA-e_gNpdj8-lA7MJSqvkTiw/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'hifi')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
 
         <div class="file-item">
@@ -187,9 +357,27 @@
             <div class="file-info">
                 <span class="file-name">Program Mei TM2</span>
                 <span class="file-desc">Data program paket TM</span>
-                <span class="update-date" id="date-mei_tm2">Memuat tanggal...</span>
+                <span class="update-date skeleton" id="date-mei_tm2">Memuat tanggal...</span>
+                <span class="download-count" id="count-mei_tm2">
+    Download: 0x
+</span>
             </div>
-            <a href="https://drive.google.com/file/d/12mjoovqN2Yq-aotzC6fRyPOyL1GSBu27/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/17_FoMwHaaA5g5PCm6U8a7Wm2-PaQ8U8y/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'mei_tm2')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
 
         <div class="file-item">
@@ -203,39 +391,239 @@
             <div class="file-info">
                 <span class="file-name">Program Target 10k</span>
                 <span class="file-desc">Data program sp 3gb direct selling</span>
-                <span class="update-date" id="date-target_10k">Memuat tanggal...</span>
+                <span class="update-date skeleton" id="date-target_10k">Memuat tanggal...</span>
+                <span class="download-count" id="count-target_10k">
+    Download: 0x
+</span>
             </div>
-            <a href="https://drive.google.com/file/d/1QRtlcHnGTTulKKV9iWQTaMND_D5-fhPB/view?usp=drivesdk" class="btn-download">Download</a>
+            <a href="https://drive.google.com/file/d/1GVMRlO24_Vg3D3K0hc0P32dsyhjVGaQp/view?usp=drivesdk"
+   class="btn-download"
+   target="_blank"
+   onclick="handleDownload(event,'target_10k')">
+
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V15M12 15L7 10M12 15L17 10M5 21H19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+    </svg>
+
+    <span class="btn-text">Download</span>
+
+</a>
         </div>
     </div>
 </div>
 
 <script>
-const apiURL = "https://script.google.com/macros/s/AKfycbxizv9ot47hmJLDpQrl2ZMOxfYFplX0xNaqY78Dsi7uEjHCrOjzYYnoaJqedLO-7dpE/exec";
 
-fetch(apiURL)
-  .then(async response => {
-    const text = await response.text();
-    console.log("RAW:", text);
-    return JSON.parse(text);
-  })
-  .then(data => {
-    document.getElementById('date-mobo').innerText = "Update: " + (data.mobo || "Tidak ada data");
-    document.getElementById('date-penjualan').innerText = "Update: " + (data.penjualan || "Tidak ada data");
-    document.getElementById('date-stok_barang').innerText = "Update: " + (data.stok_barang || "Tidak ada data");
-    document.getElementById('date-hifi').innerText = "Update: " + (data.hifi || "Tidak ada data");
-    document.getElementById('date-mei_tm2').innerText = "Update: " + (data.mei_tm2 || "Tidak ada data");
-    document.getElementById('date-target_10k').innerText = "Update: " + (data.target_10k || "Tidak ada data");
-  })
-  .catch(error => {
-    console.error("ERROR:", error);
-    document.getElementById('date-mobo').innerText = "Gagal load";
-    document.getElementById('date-penjualan').innerText = "Gagal load";
-    document.getElementById('date-stok_barang').innerText = "Gagal load";
-    document.getElementById('date-hifi').innerText = "Gagal load";
-    document.getElementById('date-mei_tm2').innerText = "Gagal load";
-    document.getElementById('date-target_10k').innerText = "Gagal load";
-  });
+const apiURL =
+"https://script.google.com/macros/s/AKfycbyBg_MssqR_2JAews-ayBbwMNfwwWg5Ygd_LosnxCMIxdR85Zz3m7zNZSp--YRyJDvNrw/exec";
+
+// FORMAT "5 MENIT LALU"
+function timeAgo(dateString){
+
+    const now =
+        new Date();
+
+    const past =
+        new Date(dateString);
+
+    const diff =
+        Math.floor(
+            (now - past) / 1000
+        );
+
+    if(diff < 60)
+        return diff + ' detik lalu';
+
+    if(diff < 3600)
+        return Math.floor(diff/60)
+            + ' menit lalu';
+
+    if(diff < 86400)
+        return Math.floor(diff/3600)
+            + ' jam lalu';
+
+    return Math.floor(diff/86400)
+        + ' hari lalu';
+
+}
+
+// SET STATUS WARNA
+function setDateStatus(el,dateString){
+
+    const now =
+        new Date();
+
+    const fileDate =
+        new Date(dateString);
+
+    const diffHour =
+        (now - fileDate)
+        / (1000*60*60);
+
+    el.classList.remove(
+        'today',
+        'medium',
+        'old'
+    );
+
+    // HIJAU
+    if(diffHour <= 24){
+
+        el.classList.add('today');
+
+    }
+
+    // KUNING
+    else if(diffHour <= 72){
+
+        el.classList.add('medium');
+
+    }
+
+    // MERAH
+    else{
+
+        el.classList.add('old');
+
+    }
+
+}
+
+// UPDATE UI
+function updateUI(data){
+
+    Object.keys(data).forEach(key => {
+
+        const el =
+            document.getElementById(
+                'date-' + key
+            );
+
+        if(!el) return;
+
+        el.classList.remove(
+            'skeleton'
+        );
+
+        if(data[key]){
+
+            const text =
+                timeAgo(data[key]);
+
+            el.innerText =
+                'Update: ' + text;
+
+            setDateStatus(
+                el,
+                data[key]
+            );
+
+        }else{
+
+            el.innerText =
+                'Tidak ada data';
+
+        }
+
+    });
+
+}
+
+// FETCH DATA
+async function loadUpdateDates(){
+
+    try{
+
+        // CACHE
+        const cache =
+            localStorage.getItem(
+                'file_update_cache'
+            );
+
+        const cacheTime =
+            localStorage.getItem(
+                'file_update_cache_time'
+            );
+
+        // PAKAI CACHE < 30 DETIK
+        if(
+            cache &&
+            cacheTime &&
+            (
+                Date.now()
+                - parseInt(cacheTime)
+            ) < 30000
+        ){
+
+            updateUI(
+                JSON.parse(cache)
+            );
+
+        }
+
+        // FETCH BARU
+        const response =
+            await fetch(
+                apiURL +
+                '?t=' + Date.now()
+            );
+
+        const data =
+            await response.json();
+
+        // SIMPAN CACHE
+        localStorage.setItem(
+            'file_update_cache',
+            JSON.stringify(data)
+        );
+
+        localStorage.setItem(
+            'file_update_cache_time',
+            Date.now()
+        );
+
+        updateUI(data);
+
+    }catch(err){
+
+        console.error(err);
+
+        document
+            .querySelectorAll(
+                '.update-date'
+            )
+            .forEach(el => {
+
+                el.classList.remove(
+                    'skeleton'
+                );
+
+                el.innerText =
+                    'Gagal load';
+
+                el.classList.add(
+                    'old'
+                );
+
+            });
+
+    }
+
+}
+
+// LOAD AWAL
+loadUpdateDates();
+
+// AUTO REFRESH 30 DETIK
+setInterval(
+    loadUpdateDates,
+    30000
+);
+
 </script>
 <script src="global-ui.js"></script>
 <script>
@@ -282,6 +670,121 @@ if(params.get('download') === 'success'){
     );
 
 }
+
+// LOAD TOTAL DOWNLOAD
+function loadDownloadCount(){
+
+    const keys = [
+        'mobo',
+        'penjualan',
+        'stok_barang',
+        'hifi',
+        'mei_tm2',
+        'target_10k'
+    ];
+
+    keys.forEach(key => {
+
+        const total =
+            localStorage.getItem(
+                'download_' + key
+            ) || 0;
+
+        const el =
+            document.getElementById(
+                'count-' + key
+            );
+
+        if(el){
+            el.innerText =
+                'Download: ' + total + 'x';
+        }
+
+    });
+
+}
+
+// HANDLE DOWNLOAD
+function handleDownload(event,key){
+
+    const btn =
+        event.currentTarget;
+
+    const text =
+        btn.querySelector('.btn-text');
+
+    // LOADING
+    btn.classList.add('loading');
+
+    text.innerText =
+        'Mengunduh...';
+
+    // TOTAL DOWNLOAD
+    let total =
+        parseInt(
+            localStorage.getItem(
+                'download_' + key
+            ) || 0
+        );
+
+    total++;
+
+    localStorage.setItem(
+        'download_' + key,
+        total
+    );
+
+    // UPDATE UI TOTAL
+    const countEl =
+        document.getElementById(
+            'count-' + key
+        );
+
+    if(countEl){
+        countEl.innerText =
+            'Download: ' + total + 'x';
+    }
+
+    // NOTIFIKASI
+    tambahNotif(
+        'File berhasil di download.'
+    );
+
+    // SUCCESS EFFECT
+    setTimeout(() => {
+
+        btn.classList.remove(
+            'loading'
+        );
+
+        btn.classList.add(
+            'success'
+        );
+
+        text.innerText =
+            'Berhasil';
+
+    },1000);
+
+    // KEMBALIKAN NORMAL
+    setTimeout(() => {
+
+        btn.classList.remove(
+            'success'
+        );
+
+        text.innerText =
+            'Download';
+
+    },2500);
+
+}
+
+// LOAD SAAT HALAMAN DIBUKA
+document.addEventListener(
+    'DOMContentLoaded',
+    loadDownloadCount
+);
 
 </script>
 </body>
