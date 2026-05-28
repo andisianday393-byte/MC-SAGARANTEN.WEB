@@ -7,7 +7,205 @@
     <link rel="stylesheet" href="global-ui.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        
+:root {
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-color: #f1f5f9;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-gudang: #0284c7;
+            --accent-form: #f59e0b;
+            --accent-dse: #6366f1;
+            --accent-penjualan: #10b981;
+            --accent-submenu: #94a3b8;
+            --accent-trade: #ec4899; 
+            --accent-kpi: #8b5cf6; 
+            --accent-md: #0d9488; /* Akses warna baru untuk Merchant Diser */
+        }
+
+/* =========================================
+   RESET
+========================================= */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+            background:var(--bg-color);
+            color:var(--text-main);
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            padding-bottom:70px;
+            margin:0;
+            overflow-x:hidden;
+}
+/* =========================================
+   STICKY HEADER FIX
+========================================= */
+
+.sticky-container{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    width:100%;
+    background:#fff;
+    box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+
+/* HEADER FULL */
+.header-wrapper{
+    position:relative;
+
+    width:100%;
+    height:70px;
+
+    background:linear-gradient(135deg,#1e293b 0%,#111827 100%);
+    border-bottom:3px solid #eab308;
+    box-shadow:0 4px 6px -1px rgba(0,0,0,.1);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+
+    /* HAPUS MAX WIDTH */
+    max-width:none;
+    margin:0;
+    padding:0 20px;
+}
+
+/* HEADER TEXT */
+.app-header{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+
+    text-align:center;
+    color:#fff;
+
+    width:max-content;
+    max-width:80%;
+}
+
+.app-header h1{
+    font-size:16px;
+    line-height:1.2;
+    font-weight:700;
+    letter-spacing:.5px;
+    margin:0;
+}
+
+.app-header p{
+    font-size:10px;
+    line-height:1.2;
+    opacity:.75;
+    margin-top:2px;
+}
+
+/* BACK BUTTON */
+.back-container{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+
+    padding:10px;
+    cursor:pointer;
+    z-index:2;
+}
+
+.back-button{
+    width:14px;
+    height:14px;
+
+    border-left:3px solid white;
+    border-bottom:3px solid white;
+
+    border-radius:2px;
+
+    transform:rotate(45deg);
+    transition:.2s;
+}
+
+.back-container:active .back-button{
+    opacity:.6;
+    transform:rotate(45deg) scale(.9);
+}
+
+/* =========================================
+   LANDSCAPE MODE FIX
+========================================= */
+
+@media screen and (orientation: landscape){
+
+    html,
+    body{
+        width:100%;
+        overflow-x:hidden;
+    }
+
+    .sticky-container{
+        width:100%;
+        left:0;
+        right:0;
+    }
+
+    .header-wrapper{
+        width:100%;
+        min-width:100%;
+        max-width:100%;
+
+        height:60px;
+        min-height:60px;
+
+        padding:0 16px;
+
+        border-radius:0;
+    }
+
+    .app-header{
+        width:100%;
+        max-width:100%;
+
+        left:50%;
+        transform:translateX(-50%);
+
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .app-header h1{
+        font-size:15px;
+        line-height:1.1;
+    }
+
+    /* SUBJUDUL TETAP MUNCUL */
+    .app-header p{
+        display:block;
+        font-size:9px;
+        margin-top:2px;
+        opacity:.75;
+        line-height:1;
+    }
+
+    .back-container{
+        left:10px;
+    }
+
+    .dashboard-container{
+        max-width:100%;
+        width:100%;
+        padding:0 10px;
+    }
+}
         .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
         
         .summary-grid { display: block; margin-bottom: 20px; }
@@ -75,6 +273,12 @@
             .filter-card { flex-direction: row; align-items: center; gap: 16px; }
             .filter-select { max-width: 300px; }
         }
+        .badge-status-danger { 
+    background-color: #fee2e2; 
+    color: #b91c1c; 
+    border: 1px solid #fecaca; 
+}
+
     </style>
 </head>
 <body>
@@ -355,116 +559,128 @@ if (
 }
 
         function renderHiFiDashboard(data) {
-            const tbody = document.getElementById('tableBody');
-            const hifiFilter = document.getElementById('hifiFilter');
-            tbody.innerHTML = '';
-            gudangDataMap = [];
+    const tbody = document.getElementById('tableBody');
+    const hifiFilter = document.getElementById('hifiFilter');
+    tbody.innerHTML = '';
+    gudangDataMap = [];
 
-            hifiFilter.innerHTML = '<option value="ALL">-- TAMPILKAN SEMUA DATA --</option>';
-            let listNamaFilter = new Set();
+    hifiFilter.innerHTML = '<option value="ALL">-- TAMPILKAN SEMUA DATA --</option>';
+    let listNamaFilter = new Set();
 
-            let totalStok = 0;
-            let dseSudahBayarCount = 0;
-            let sisaOnHandDSE = 0;
-            let segelGudangCount = 0;
-            let sisaTagihanNominal = 0;
-            let sisaTagihanQty = 0;
-            let nominalTerjualLunas = 0;
+    let totalStok = 0;
+    let dseSudahBayarCount = 0;
+    let sisaOnHandDSE = 0;
+    let segelGudangCount = 0;
+    let sisaTagihanNominal = 0;
+    let sisaTagihanQty = 0;
+    let nominalTerjualLunas = 0;
 
-            data.forEach(row => {
-                const no = row['No'];
-                const nama = (row['Nama'] || '').trim().toUpperCase();
-                if (!no || !nama) return;
+    data.forEach(row => {
+        const no = row['No'];
+        const nama = (row['Nama'] || '').trim().toUpperCase();
+        if (!no || !nama) return;
 
-                totalStok++;
-                if(nama !== 'GUDANG') listNamaFilter.add(nama);
+        totalStok++;
+        if(nama !== 'GUDANG') listNamaFilter.add(nama);
 
-                // Perbaikan Utama: Membungkus pembacaan kolom tanggal dengan fungsi parser khusus
-                const tglAmbil = parseExcelDate(row['Tgl Ambil']);
-                const tglBayar = parseExcelDate(row['Tgl Bayar']);
-                
-                const barang = row['Barang'] || '-';
-                const qty = parseInt(row['Jumlah']) || 0;
-                const noHifi = row['Nomor Hifi'] || '-';
-                const imei = row['IMEI Devices'] || '-';
-                const harga = parseInt(row['HARGA']) || 0;
+        const tglAmbil = parseExcelDate(row['Tgl Ambil']);
+        const tglBayar = parseExcelDate(row['Tgl Bayar']);
+        
+        const barang = row['Barang'] || '-';
+        const qty = parseInt(row['Jumlah']) || 0;
+        const noHifi = row['Nomor Hifi'] || '-';
+        const imei = row['IMEI Devices'] || '-';
+        const harga = parseInt(row['HARGA']) || 0;
 
-                let badgeClass = 'badge-segel';
-                let statusText = 'SEGEL';
+        // --- PERUBAHAN: MENGAMBIL KETERANGAN LANGSUNG DARI EXCEL ---
+        const rawKeterangan = (row['Keterangan'] || '').trim();
+        const statusText = rawKeterangan === '' ? '-' : rawKeterangan;
+        
+        // Tentukan style badge berdasarkan isi kolom Keterangan
+        let badgeClass = 'badge-status';
+        const ketLower = statusText.toLowerCase();
 
-                if (nama !== 'GUDANG') {
-                    const statusLunas = (tglBayar !== '-' && tglBayar !== '');
-                    if (statusLunas) {
-                        statusText = 'Terjual';
-                        badgeClass = 'badge-status badge-terjual-sukses';
-                        dseSudahBayarCount++;
-                        nominalTerjualLunas += harga;
-                    } else {
-                        statusText = 'On Hand DSE';
-                        badgeClass = 'badge-status badge-sold';
-                        sisaOnHandDSE++;
-                        sisaTagihanNominal += harga;
-                        sisaTagihanQty++;
-                    }
-                } else {
-                    segelGudangCount++;
-                    gudangDataMap.push({ noHifi, imei, qty });
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = 'row-item';
-                tr.setAttribute('data-nama', nama);
-                tr.innerHTML = `
-                    <td class="text-center" data-label="No">${no}</td>
-                    <td class="text-center" data-label="Tgl Ambil">${tglAmbil}</td>
-                    <td class="text-left" data-label="Nama" style="font-weight: 700; color: ${nama === 'GUDANG' ? '#64748b' : '#1e293b'};">${nama}</td>
-                    <td class="text-center" data-label="Barang">${barang}</td>
-                    <td class="qty-col" data-label="Jumlah">${qty}</td>
-                    <td class="text-center mono-col" data-label="Nomor HiFi">${noHifi}</td>
-                    <td class="text-center mono-col" data-label="IMEI Devices">${imei}</td>
-                    <td class="text-right currency-col" data-label="Harga">${harga ? formatRupiah(harga) : '<span class="empty-cell">-</span>'}</td>
-                    <td class="text-center" data-label="Tgl Bayar">${tglBayar === '-' || tglBayar === '' ? '<span class="empty-cell">-</span>' : tglBayar}</td>
-                    <td class="text-center" data-label="Keterangan"><span class="badge-status ${badgeClass}">${statusText}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            listNamaFilter.forEach(namaDse => {
-                const opt = document.createElement('option');
-                opt.value = namaDse;
-                opt.textContent = namaDse;
-                hifiFilter.appendChild(opt);
-            });
-            
-            const optGudang = document.createElement('option');
-            optGudang.value = 'GUDANG';
-            optGudang.textContent = 'GUDANG (STOK SEGEL)';
-            hifiFilter.appendChild(optGudang);
-
-            const totalTr = document.createElement('tr');
-            totalTr.className = 'total-row';
-            totalTr.id = 'defaultTotalRow';
-            totalTr.innerHTML = `
-                <td class="text-left" colspan="4" data-label="Kategori">TOTAL SISA TAGIHAN</td>
-                <td class="qty-col" id="bottomTotalQty" data-label="Total Unit">${sisaTagihanQty} Unit</td>
-                <td colspan="2" class="hide-mobile"></td>
-                <td class="text-right currency-col" id="bottomTotalNominal" data-label="Total Sisa">${formatRupiah(sisaTagihanNominal)}</td>
-                <td colspan="2" class="hide-mobile"></td>
-            `;
-            tbody.appendChild(totalTr);
-
-            document.getElementById('topTotalUnit').textContent = `${totalStok} Unit`;
-            document.getElementById('topTotalTerjual').textContent = `${dseSudahBayarCount} Unit`;
-            document.getElementById('topTotalSold').textContent = `${sisaOnHandDSE} Unit`;
-            document.getElementById('topTotalSegel').textContent = `${segelGudangCount} Unit`;
-            document.getElementById('topTotalOmset').textContent = formatRupiah(sisaTagihanNominal);
-            document.getElementById('topNominalTerjual').textContent = formatRupiah(nominalTerjualLunas);
-
-            document.getElementById('loadingMessage').style.display = 'none';
-            document.getElementById('hifiTable').style.display = 'table';
-
-            setupHifiFilterListener();
+        if (ketLower.includes('segel')) {
+            badgeClass += ' badge-segel';
+        } else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
+            badgeClass += ' badge-terjual-sukses';
+        } else if (ketLower.includes('reture')) {
+            badgeClass += ' badge-status-danger'; // Pastikan CSS ini ada
+        } else {
+            badgeClass += ' badge-sold'; // Default
         }
+
+        // --- LOGIKA PERHITUNGAN (Opsional, sesuaikan kriteria anda) ---
+        if (nama !== 'GUDANG') {
+            if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
+                dseSudahBayarCount++;
+                nominalTerjualLunas += harga;
+            } else {
+                sisaOnHandDSE++;
+                sisaTagihanNominal += harga;
+                sisaTagihanQty++;
+            }
+        } else {
+            segelGudangCount++;
+            gudangDataMap.push({ noHifi, imei, qty });
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'row-item';
+        tr.setAttribute('data-nama', nama);
+        tr.innerHTML = `
+            <td class="text-center" data-label="No">${no}</td>
+            <td class="text-center" data-label="Tgl Ambil">${tglAmbil}</td>
+            <td class="text-left" data-label="Nama" style="font-weight: 700; color: ${nama === 'GUDANG' ? '#64748b' : '#1e293b'};">${nama}</td>
+            <td class="text-center" data-label="Barang">${barang}</td>
+            <td class="qty-col" data-label="Jumlah">${qty}</td>
+            <td class="text-center mono-col" data-label="Nomor HiFi">${noHifi}</td>
+            <td class="text-center mono-col" data-label="IMEI Devices">${imei}</td>
+            <td class="text-right currency-col" data-label="Harga">${harga ? formatRupiah(harga) : '<span class="empty-cell">-</span>'}</td>
+            <td class="text-center" data-label="Tgl Bayar">${tglBayar === '-' || tglBayar === '' ? '<span class="empty-cell">-</span>' : tglBayar}</td>
+            <td class="text-center" data-label="Keterangan"><span class="${badgeClass}">${statusText}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // ... sisa kode (filter, total, dsb) tetap sama ...
+    listNamaFilter.forEach(namaDse => {
+        const opt = document.createElement('option');
+        opt.value = namaDse;
+        opt.textContent = namaDse;
+        hifiFilter.appendChild(opt);
+    });
+    
+    const optGudang = document.createElement('option');
+    optGudang.value = 'GUDANG';
+    optGudang.textContent = 'GUDANG (STOK SEGEL)';
+    hifiFilter.appendChild(optGudang);
+
+    const totalTr = document.createElement('tr');
+    totalTr.className = 'total-row';
+    totalTr.id = 'defaultTotalRow';
+    totalTr.innerHTML = `
+        <td class="text-left" colspan="4" data-label="Kategori">TOTAL SISA TAGIHAN</td>
+        <td class="qty-col" id="bottomTotalQty" data-label="Total Unit">${sisaTagihanQty} Unit</td>
+        <td colspan="2" class="hide-mobile"></td>
+        <td class="text-right currency-col" id="bottomTotalNominal" data-label="Total Sisa">${formatRupiah(sisaTagihanNominal)}</td>
+        <td colspan="2" class="hide-mobile"></td>
+    `;
+    tbody.appendChild(totalTr);
+
+    document.getElementById('topTotalUnit').textContent = `${totalStok} Unit`;
+    document.getElementById('topTotalTerjual').textContent = `${dseSudahBayarCount} Unit`;
+    document.getElementById('topTotalSold').textContent = `${sisaOnHandDSE} Unit`;
+    document.getElementById('topTotalSegel').textContent = `${segelGudangCount} Unit`;
+    document.getElementById('topTotalOmset').textContent = formatRupiah(sisaTagihanNominal);
+    document.getElementById('topNominalTerjual').textContent = formatRupiah(nominalTerjualLunas);
+
+    document.getElementById('loadingMessage').style.display = 'none';
+    document.getElementById('hifiTable').style.display = 'table';
+
+    setupHifiFilterListener();
+}
+
 
         function buildGudangSingleView() {
             const container = document.getElementById('gudangSingleView');
@@ -540,6 +756,22 @@ if (
     </script>
     <script src="global-notif.js"></script>
  <script src="global-ui.js"></script>
+ <script>
+function goBack() {
+
+    // Kembali ke halaman sebelumnya
+    if (window.history.length > 1) {
+
+        window.history.back();
+
+    } else {
+
+        // Jika tidak ada history
+        window.location.href = 'index.html';
+
+    }
+}
+</script>
  </body>
 </html>
 

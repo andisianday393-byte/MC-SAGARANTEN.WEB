@@ -26,6 +26,194 @@
             color: #1e3a8a;
             margin-bottom: 16px;
         }
+/* =========================
+   SLIDER PROGRAM
+========================= */
+
+.program-slider-card{
+    background:#fff;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:18px;
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+    border:1px solid #e2e8f0;
+}
+
+.slider-header h2{
+    font-size:18px;
+    color:#1e3a8a;
+    margin-bottom:4px;
+}
+
+.slider-header p{
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:14px;
+}
+
+/* AREA GESER */
+.slider-container{
+    display:flex;
+    overflow-x:auto;
+    gap:18px; /* JARAK ANTAR SLIDE */
+    scroll-snap-type:x mandatory;
+    padding-bottom:10px;
+    padding-right:10px;
+    -webkit-overflow-scrolling:touch;
+}
+
+/* SCROLLBAR */
+/* AREA SLIDER */
+.slider-container{
+    display:flex;
+    overflow-x:auto;
+
+    gap:20px;
+
+    scroll-snap-type:x mandatory;
+
+    scroll-behavior:smooth;
+
+    -webkit-overflow-scrolling:touch;
+
+    padding-bottom:10px;
+
+    padding-inline:5px;
+}
+
+/* HILANGKAN SCROLLBAR */
+.slider-container::-webkit-scrollbar{
+    display:none;
+}
+
+/* 1 CARD = 1 LAYAR */
+.slide-item{
+
+    min-width:100%;
+
+    flex:0 0 100%;
+
+    scroll-snap-align:start;
+
+    scroll-snap-stop:always;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    border:1px solid #e2e8f0;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+/* GAMBAR */
+.slide-item img{
+    width:100%;
+    display:block;
+}
+
+/* KONTEN */
+.slide-content{
+    padding:16px;
+}
+
+.slide-content h3{
+    font-size:17px;
+    font-weight:800;
+    margin-bottom:8px;
+    color:#0f172a;
+}
+
+.slide-content p{
+    font-size:13px;
+    line-height:1.6;
+    color:#475569;
+}
+
+/* CARD PER GAMBAR */
+.slide-item{
+    min-width:85%;
+    flex-shrink:0;
+
+    background:#ffffff;
+    border-radius:18px;
+
+    overflow:hidden;
+
+    border:1px solid #e2e8f0;
+
+    scroll-snap-align:center;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+/* GAMBAR */
+.slide-item img{
+    width:100%;
+    display:block;
+    border-bottom:1px solid #e2e8f0;
+}
+
+/* KONTEN */
+.slide-content{
+    padding:16px;
+}
+
+/* JUDUL */
+.slide-content h3{
+    font-size:17px;
+    color:#0f172a;
+    margin-bottom:8px;
+    font-weight:800;
+}
+
+/* KETERANGAN */
+.slide-content p{
+    font-size:13px;
+    line-height:1.6;
+    color:#475569;
+}
+
+/* TABLET / DESKTOP */
+@media(min-width:768px){
+
+    .slide-item{
+        min-width:45%;
+    }
+}
+
+/* LANDSCAPE HP */
+@media screen and (orientation:landscape){
+
+    .slide-item{
+        min-width:55%;
+    }
+}
+/* VIDEO SLIDER */
+.slide-video{
+    width:100%;
+    display:block;
+    background:#000;
+    max-height:500px;
+    object-fit:cover;
+}
+.slide-content ul {
+    margin: 8px 0;
+    padding-left: 15px;
+    color: #475569;
+}
+
+.slide-content li {
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.slide-content p {
+    margin-bottom: 8px;
+}
+
     </style>
 </head>
 <body>
@@ -39,43 +227,151 @@
     </div>
 </div>
 
-<div class="content-body">
-    <!-- Bagian Konten Gambar dan Teks -->
-<div class="card">
-    <h3 style="text-align: center; color: #1e3a8a; margin-bottom: 10px;">Tag & Go Makin Cuan</h3>
-    
-    <img src="img/tag-go.jpg" alt="Program Tag & Go" style="width: 100%; border-radius: 12px; margin-bottom: 15px;">
-    
-    <!-- Bagian yang bisa diklik -->
-    <div id="btn-detail" style="background: #f8fafc; padding: 15px; border-radius: 8px; cursor: pointer; text-align: center; border: 1px dashed #cbd5e1;">
-        <span style="font-weight: bold; color: #d97706;">Tampilkan Keterangan</span>
+<!-- SLIDER PROGRAM -->
+<div class="program-slider-card">
+
+    <div class="slider-header">
+        <h2>🔥 Program Promo Terbaru</h2>
+        <p>Geser untuk melihat detail program outlet terbaru</p>
     </div>
 
-    <!-- Konten Tersembunyi (akan muncul saat diklik) -->
-    <div id="detail-program" style="display: none; margin-top: 15px; padding: 10px; border-top: 1px solid #e2e8f0;">
-        <p><b>Jualan Perdana IM3 3Gb Makin Cuan!! 💸💰</b><br>
-        Keuntungan banyak buat pelanggan, cuan banyak buat outlet!</p>
-        <ul style="padding-left: 20px;">
-            <li>Free Telp <b>Ke Semua Operator</b> 50 menit!</li>
-            <li>Free Telp ke sesama im3 & Tri 5000 menit</li>
-            <li>Free langganan <b>VIDEO Lite</b> 30hr</li>
-            <li>Free langganan <b>VIU Premium</b> 30hr</li>
-            <li>Perlindungan <b>SATSPAM Plus (+)</b> 90hr</li>
-        </ul>
-        <p>>> <b>REGISTRASI BIOMETRIC</b> sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan <b>tidak sampai 2 menit!</b></p>
-        
-        <hr>
-        <p><b>Cuan Outlet</b></p>
-        <p><b>CASHBACK TAGGING</b><br>Cuan bs sampai 150rb/bulan<br>• Cashback Rp 3.000/hit<br>• Maksimal 50 hit/bln<br>• Pembayaran langsung Realtime</p>
-        <p><b>CASHBACK BIOMETRIC</b><br>Cuan maksimum 250rb/Bulan<br>• Per Hit : 5.000 rupiah<br>• Max 50 Hit/bulan<br>• Pembayaran H+2</p>
-    </div>
+    <div class="slider-container">
 
-<div style="margin-top: 20px; text-align: center;">
-    <button id="btn-share" 
-            style="background-color: #25d366; color: white; padding: 10px 20px; border-radius: 20px; border: none; text-decoration: none; font-weight: bold; font-size: 14px; cursor: pointer;">
-       ✈️ Share ke Grup Outlet
-    </button>
+        <!-- SLIDE 1 -->
+<div class="slide-item">
+
+    <img src="img/gebyar-gajian.jpg" alt="Gebyar Gajian">
+
+<div class="slide-content">
+    <h3>🔥 Gebyar Gajian</h3>
+    <p>🚨 <b>INFO PROGRAM</b></p>
+    <p><b>Program Gebyar Gajian</b></p>
+    <p>📅 <b>27 sd 28 Mei 2026</b></p>
+    <p>🔥 Gajian datang, cashback Datang !! 🔥</p>
 </div>
+
+</div>
+
+        <!-- SLIDE 2 -->
+<div class="slide-item">
+
+    <img src="img/hotpromo-gemini.jpg" alt="Hotpromo Gemini">
+
+<div class="slide-content">
+    <h3>🔥 HotPromo Gemini</h3>
+    <p>Semangat Pagi,</p>
+    <p>Mitra outlet IM3 remind lagi terkait benefit Google Gemini untuk rebuy hot promo nya ya, dg skema masih sama ;</p>
+    <p>
+        5GB 2 Hari + Google Gemini cuma 8.000<br>
+        8GB 3 hari + Google Gemini cuma 13.000<br>
+        6GB 7 hari + Google Gemini cuma 18.000<br>
+        10GB 14 hari + Google Gemini cuma 28.000<br>
+        11GB 28 hari + Google Gemini chma 38.000
+    </p>
+    <p>Yuk gas lagi hotpromonya !!!</p>
+    <p>Happy Selling :)</p>
+</div>
+
+</div>
+
+        <!-- SLIDE 3 -->
+<div class="slide-item">
+
+    <img src="img/paket-roaming.jpg" alt="Paket Roaming">
+
+<div class="slide-content">
+    <h3>🔥 Paket Roaming</h3>
+    <p>Liburan Long Weekend Siapin kuota Roamingnya, Pilih paket Romamingnya sesuka kamu, hanya di im3.</p>
+</div>
+
+</div>
+
+        <!-- SLIDE 4 -->
+        <div class="slide-item">
+
+    <img src="img/program-supplay.jpg" alt="Program Supplay 1%">
+
+<div class="slide-content">
+    <h3>🔥 Program Supplay 1%</h3>
+    <p>🚨 <b>INFO PROGRAM</b></p>
+    <p><b>Program Supply Outlet Mei 2026</b></p>
+    <p>📅 <b>25 sd 28 Mei 2026</b></p>
+    <p>🔥 Yuk pastikan seluruh outlet <b>ter-SUPPLY</b> di akhir bulan!! 🔥</p>
+</div>
+
+
+</div>
+
+<!-- SLIDE 5 -->
+        <div class="slide-item">
+
+    <img src="img/tag-go.jpg" alt="Program Tag&Go">
+
+<div class="slide-content">
+    <h3>🔥 Program Tag&Go</h3>
+    <p><b>Jualan Perdana IM3 3Gb Makin Cuan!!</b> 💸💰</p>
+    <p>Keuntungan banyak buat pelanggan, cuan banyak buat outlet!</p>
+    <p>
+        • Free Telp <b>Ke Semua Operator</b> 50 menit!<br>
+        • Free Telp ke sesama im3 & Tri 5000 menit<br>
+        • Free langganan <b>VIDEO Lite</b> 30hr<br>
+        • Free langganan <b>VIU Premium</b> 30hr<br>
+        • Perlindungan <b>SATSPAM Plus (+)</b> 90hr
+    </p>
+    <p>>>> <b>REGISTRASI BIOMETRIC</b> sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan <b>tidak sampai 2 menit!</b></p>
+    <p><b>Cuan Outlet</b></p>
+    <p><b>CASHBACK TAGGING</b> (Cuan bs sampai 150rb/bulan):</p>
+    <p>• Cashback Rp 3.000/hit<br>• Maksimal 50 hit/bln<br>• Pembayaran langsung Realtime</p>
+    <p><b>CASHBACK BIOMETRIC</b> (Cuan maksimum 250rb/Bulan):</p>
+    <p>• Per Hit : 5.000 rupiah<br>• Max 50 Hit/bulan<br>• Pembayaran H+2</p>
+</div>
+
+</div>
+
+<!-- SLIDE 6 -->
+        <div class="slide-item">
+
+    <img src="img/benefit-sp3gb.jpg" alt="Benefit SP 3GB">
+
+<div class="slide-content">
+    <h3>🔥 Benefit SP 3GB</h3>
+    <p>Halo Mitra Outlet IM3 👋🏻💛</p>
+    <p>Sekarang SP IM3 hadir dengan benefit yang makin lengkap dan menarik 😎✨</p>
+    <p><b>🎁 BONUS BARU:</b><br>
+    ✅ GRATIS Google Gemini AI Plus<br>
+    ✅ GRATIS Google Storage 200GB<br>
+    ✅ Bonus aplikasi menarik lainnya<br>
+    💰 Total benefit senilai hingga Rp450 ribu selama 6 bulan 👀</p>
+    <p>Benefit favorit pelanggan juga tetap tersedia:<br>
+    🎬 Vidio Lite & Viu Premium<br>
+    📞 50 menit nelpon ke semua operator<br>
+    ☎️ 5000 menit nelpon ke sesama Tri & IM3<br>
+    🛡️ Perlindungan SATSPAM</p>
+    <p>🔥 Kabar baiknya, benefit ini bukan hanya untuk pelanggan baru! Pelanggan setia yang membeli kuota juga bisa menikmati benefit spesial ini.</p>
+    <p>Yuk, maksimalkan penjualan SP & kuota IM3 sekarang juga 🚀</p>
+</div>
+
+
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide-item">
+
+    <video controls playsinline class="slide-video">
+        <source src="img/tutorial-biometrik.mp4" type="video/mp4">
+        Browser tidak mendukung video.
+    </video>
+
+<div class="slide-content">
+    <h3>🔥 Tutorial Registrasi Biometrik</h3>
+    <p><b>Tutorial Registrasi Biometrik Indosat</b></p>
+    <p>⚡ <b>CASHBACK BIOMETRIC IM3 & 3ID KINI REALTIME!</b> ⚡</p>
+    <p>Setiap Registrasi Biometric sekarang langsung dapat Cashback REALTIME ! 🎉</p>
+</div>
+
+</div>
+
+    </div>
 </div>
 
 <footer class="bottom-nav">
@@ -104,48 +400,6 @@
     document.getElementById('openProfil').addEventListener('click', () => {
         alert('Fitur Profil sedang dalam pengembangan.');
     });
-        // Script untuk menampilkan/menyembunyikan detail
-    document.getElementById('btn-detail').addEventListener('click', function() {
-        const detail = document.getElementById('detail-program');
-        if (detail.style.display === 'none') {
-            detail.style.display = 'block';
-        } else {
-            detail.style.display = 'none';
-        }
-    });
-    document.getElementById('btn-share').addEventListener('click', function() {
-    const teksPesan = `Jualan Perdana IM3 3Gb Makin Cuan!! 💸💰
-Keuntungan banyak buat pelanggan, cuan banyak buat outlet!
-
-* Free Telp Ke Semua Operator 50 menit!
-* Free Telp ke sesama im3 & Tri 5000 menit
-* Free langganan VIDEO Lite 30hr
-* Free langganan VIU Premium 30hr
-* Perlindungan SATSPAM Plus (+) 90hr
-
->> REGISTRASI BIOMETRIC sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan tidak sampai 2 menit!
-
----
-*Cuan Outlet*
-
-*CASHBACK TAGGING*
-Cuan bs sampai 150rb/bulan
-• Cashback Rp 3.000/hit
-• Maksimal 50 hit/bln
-• Pembayaran langsung Realtime
-
-*CASHBACK BIOMETRIC*
-Cuan maksimum 250rb/Bulan
-• Per Hit : 5.000 rupiah
-• Max 50 Hit/bulan
-• Pembayaran H+2`;
-
-    // Encode teks agar bisa masuk ke URL
-    const waUrl = "https://wa.me/?text=" + encodeURIComponent(teksPesan);
-    
-    // Buka WhatsApp
-    window.open(waUrl, '_blank');
-});
 
 </script>
 
