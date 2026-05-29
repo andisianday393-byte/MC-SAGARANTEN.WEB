@@ -265,7 +265,153 @@ body{
     border:none;
     background:#000;
 }
+<style>
 
+/* =========================
+   SMOOTH SLIDER
+========================= */
+
+.slider-container{
+
+    scroll-behavior:smooth;
+
+    scroll-snap-type:x mandatory;
+
+    overscroll-behavior-x:contain;
+
+}
+
+/* SWIPE HALUS */
+.slide-item{
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+}
+
+/* EFEK ACTIVE */
+.slide-item.active-slide{
+
+    transform:scale(1);
+
+    box-shadow:0 8px 22px rgba(0,0,0,.12);
+
+}
+
+/* =========================
+   BADGE BARU
+========================= */
+
+.badge-baru{
+
+    position:absolute;
+
+    top:12px;
+
+    left:12px;
+
+    background:#ef4444;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    z-index:5;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+
+    animation:pulse 1.5s infinite;
+
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* AGAR BADGE BISA ABSOLUTE */
+.slide-item{
+
+    position:relative;
+
+}
+
+/* =========================
+   DOT INDIKATOR
+========================= */
+
+.slider-dots{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:14px;
+
+}
+
+.slider-dot{
+
+    width:9px;
+
+    height:9px;
+
+    border-radius:50%;
+
+    background:#cbd5e1;
+
+    transition:.3s;
+
+}
+
+.slider-dot.active{
+
+    width:24px;
+
+    border-radius:20px;
+
+    background:#2563eb;
+
+}
+
+/* =========================
+   ANIMASI SLIDE
+========================= */
+
+.slide-item{
+
+    opacity:.92;
+
+}
+
+.slide-item.active-slide{
+
+    opacity:1;
+
+}
+
+</style>
     </style>
 </head>
 <body>
@@ -290,22 +436,41 @@ body{
     <div class="slider-container">
 
         <!-- SLIDE 1 -->
-<div class="slide-item">
+<div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
-    <img src="img/gebyar-gajian.jpg" alt="Gebyar Gajian">
+    <img src="img/IMG-20260529-WA0000.jpg" alt="Gebyar Gajian 2.0">
 
 <div class="slide-content">
     <h3>🔥 Gebyar Gajian</h3>
-    <p>🚨 <b>INFO PROGRAM</b></p>
-    <p><b>Program Gebyar Gajian</b></p>
-    <p>📅 <b>27 sd 28 Mei 2026</b></p>
-    <p>🔥 Gajian datang, cashback Datang !! 🔥</p>
+    <p>🚨 <b>DIPERPANJANG SAMPAI AKHIR BULAN 🥳</b></p>
+    <p><b>INJECT VOUCHER KOSONGNYA, LANGSUNG DAPATKAN CASHBACKNYA!</b></p>
+    <p>📅 <b>29 sd 31 Mei 2026</b></p>
+    <p>🔥 Selamat pagi akang/teteh mitra outlet. Program inject voucher diperpanjang lho sampai akhir bulan.</p>
+<p>Apa aja sih produknya???</p>
+
+<p><b>*HARIAN*<br>
+5GB 1 hari CB 200 ke-5<br>
+6GB 2 hari CB 150 (BARU)<br>
+17GB 7 hari CB 1000</b></p>
+
+<p><b>*BULANAN*<br>
+16GB 28 hari CB</b></p> 
+
+<p><b>Jualan makin Cuan 🤑</b></p>
+<p><b>Yuk isi lagi stok saldonya dan gaskeun akang/ teteh,
+Semoga jualan IM3nya terus laris manis 🤲</b></p>
+
+<p>Haturnuhun</p>
+<p>Wassalamualaikum 🔥</p>
+    
 </div>
 
 </div>
 
         <!-- SLIDE 2 -->
-<div class="slide-item">
+<div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
     <img src="img/hotpromo-gemini.jpg" alt="Hotpromo Gemini">
 
@@ -327,7 +492,8 @@ body{
 </div>
 
         <!-- SLIDE 3 -->
-<div class="slide-item">
+<div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
     <img src="img/paket-roaming.jpg" alt="Paket Roaming">
 
@@ -339,7 +505,8 @@ body{
 </div>
 
         <!-- SLIDE 4 -->
-        <div class="slide-item">
+        <div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
     <img src="img/program-supplay.jpg" alt="Program Supplay 1%">
 
@@ -355,7 +522,8 @@ body{
 </div>
 
 <!-- SLIDE 5 -->
-        <div class="slide-item">
+        <div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
     <img src="img/tag-go.jpg" alt="Program Tag&Go">
 
@@ -381,7 +549,8 @@ body{
 </div>
 
 <!-- SLIDE 6 -->
-        <div class="slide-item">
+        <div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
     <img src="img/benefit-sp3gb.jpg" alt="Benefit SP 3GB">
 
@@ -407,7 +576,8 @@ body{
 </div>
 
 <!-- SLIDE 7 -->
-<div class="slide-item">
+<div class="slide-item"
+     data-update="2026-05-28T09:30:00">
 
 <iframe 
     class="slide-video"
@@ -426,6 +596,9 @@ body{
 </div>
 
     </div>
+
+<div class="slider-dots"></div>
+
 </div>
 
 <footer class="bottom-nav">
@@ -450,9 +623,262 @@ body{
 </footer>
 
 <script>
-    // Fungsionalitas sederhana untuk tombol profil (Copy dari index)
-    document.getElementById('openProfil').addEventListener('click', () => {
+
+    // =========================
+    // PROFIL
+    // =========================
+
+    document.getElementById('openProfil')
+    .addEventListener('click', () => {
+
         alert('Fitur Profil sedang dalam pengembangan.');
+
+    });
+
+
+    // =========================
+    // SLIDER PROGRAM MODERN
+    // =========================
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const slider =
+            document.querySelector('.slider-container');
+
+        let slides =
+            Array.from(
+                document.querySelectorAll('.slide-item')
+            );
+
+        const dotsContainer =
+            document.querySelector('.slider-dots');
+
+
+        // =========================
+        // AUTO SORT BERDASARKAN UPDATE
+        // =========================
+
+        slides.forEach(slide => {
+
+            // otomatis ambil waktu update halaman
+            if(!slide.dataset.update){
+
+                slide.dataset.update =
+                    new Date().toISOString();
+
+            }
+
+        });
+
+        slides.sort((a,b) => {
+
+            return new Date(b.dataset.update)
+                - new Date(a.dataset.update);
+
+        });
+
+        slides.forEach(slide => {
+
+            slider.appendChild(slide);
+
+        });
+
+
+        // refresh slides
+        slides =
+            Array.from(
+                document.querySelectorAll('.slide-item')
+            );
+
+
+        // =========================
+        // BADGE BARU
+        // =========================
+
+        const now = new Date();
+
+        slides.forEach(slide => {
+
+            const updateDate =
+                new Date(slide.dataset.update);
+
+            const diffDays =
+                (now - updateDate)
+                / (1000 * 60 * 60 * 24);
+
+            // tampil jika <= 3 hari
+            if(diffDays <= 3){
+
+                const badge =
+                    document.createElement('div');
+
+                badge.className =
+                    'badge-baru';
+
+                badge.innerText =
+                    'BARU';
+
+                slide.appendChild(badge);
+
+            }
+
+        });
+
+
+        // =========================
+        // DOT SLIDER
+        // =========================
+
+        slides.forEach((_, index) => {
+
+            const dot =
+                document.createElement('div');
+
+            dot.className =
+                'slider-dot';
+
+            if(index === 0){
+
+                dot.classList.add('active');
+
+            }
+
+            dotsContainer.appendChild(dot);
+
+        });
+
+        const dots =
+            document.querySelectorAll('.slider-dot');
+
+
+        // =========================
+        // ACTIVE SLIDE
+        // =========================
+
+        function updateActiveSlide(){
+
+            const sliderLeft =
+                slider.scrollLeft;
+
+            const slideWidth =
+                slides[0].offsetWidth + 20;
+
+            const activeIndex =
+                Math.round(
+                    sliderLeft / slideWidth
+                );
+
+            slides.forEach(slide => {
+
+                slide.classList.remove(
+                    'active-slide'
+                );
+
+            });
+
+            dots.forEach(dot => {
+
+                dot.classList.remove(
+                    'active'
+                );
+
+            });
+
+            if(slides[activeIndex]){
+
+                slides[activeIndex]
+                .classList.add(
+                    'active-slide'
+                );
+
+            }
+
+            if(dots[activeIndex]){
+
+                dots[activeIndex]
+                .classList.add(
+                    'active'
+                );
+
+            }
+
+        }
+
+
+        // =========================
+        // AUTO PLAY
+        // =========================
+
+        let currentIndex = 0;
+
+        function autoPlaySlider(){
+
+            currentIndex++;
+
+            if(currentIndex >= slides.length){
+
+                currentIndex = 0;
+
+            }
+
+            slides[currentIndex]
+            .scrollIntoView({
+
+                behavior:'smooth',
+
+                inline:'start'
+
+            });
+
+        }
+
+        let autoPlay =
+            setInterval(
+                autoPlaySlider,
+                4000
+            );
+
+
+        // stop autoplay saat disentuh
+        slider.addEventListener('touchstart', () => {
+
+            clearInterval(autoPlay);
+
+        });
+
+        slider.addEventListener('mousedown', () => {
+
+            clearInterval(autoPlay);
+
+        });
+
+
+        // =========================
+        // AUTO KE SLIDE TERBARU
+        // =========================
+
+        slides[0].scrollIntoView({
+
+            behavior:'smooth',
+
+            inline:'start'
+
+        });
+
+        slides[0].classList.add(
+            'active-slide'
+        );
+
+
+        // =========================
+        // UPDATE ACTIVE SAAT SCROLL
+        // =========================
+
+        slider.addEventListener(
+            'scroll',
+            updateActiveSlide
+        );
+
     });
 
 </script>
