@@ -778,6 +778,7 @@
 </div>
 
 <script> 
+let lastDataSignature = null;
 const WEB_APP_URL =
 'https://script.google.com/macros/s/AKfycbyRFemxVivBCbScqY77yX68CtZxZ7uy1l4YUqgYDS6qz8sH5YTKI5Tk7BBXp7ZqHS3J/exec';
 
@@ -886,91 +887,6 @@ async function updateSaldoSalmo() {
             lastGrandTotal !== null &&
             grandTotal !== lastGrandTotal
         ) {
-
-            tambahNotif(
-                'Data penjualan SALMO berhasil diperbarui.'
-            );
-
-            updateBadge();
-
-            console.log(
-                'Perubahan data terdeteksi'
-            );
-
-        }
-
-        // SIMPAN TOTAL TERAKHIR
-        lastGrandTotal = grandTotal;
-
-    } catch(error) {
-
-        console.log(error);
-
-        document.getElementById(
-            'grand-total'
-        ).innerText = 'Error';
-
-    }
-
-}
-async function updateSaldoSalmo() {
-
-    try {
-
-        const response =
-            await fetch(
-                EXCEL_FILE_URL + '?t=' + Date.now()
-            );
-
-        const arrayBuffer =
-            await response.arrayBuffer();
-
-        const workbook =
-            XLSX.read(arrayBuffer, {
-                type:'array'
-            });
-
-        const worksheet =
-            workbook.Sheets['penjualan-salmo'];
-
-        if (!worksheet) return;
-
-        const data =
-            XLSX.utils.sheet_to_json(worksheet);
-
-        let grandTotal = 0;
-
-        data.forEach(row => {
-
-            const nama =
-                String(
-                    row['Nama cso'] || ''
-                ).trim().toUpperCase();
-
-            if (nama === 'GRAND TOTAL') return;
-
-            grandTotal +=
-                ambilAngka(row['Amount']);
-
-        });
-
-        // UPDATE TAMPILAN
-        document.getElementById(
-            'grand-total'
-        ).innerText =
-            formatRupiah(grandTotal);
-
-        // CEK PERUBAHAN DATA
-        if (
-            lastGrandTotal !== null &&
-            grandTotal !== lastGrandTotal
-        ) {
-
-            tambahNotif(
-                'Data penjualan SALMO berhasil diperbarui.'
-            );
-
-            updateBadge();
 
             console.log(
                 'Perubahan data terdeteksi'
@@ -1085,15 +1001,6 @@ updateClock();
 kirimLog(
     'Membuka Home Portal'
 );
-function loadSemua() {
-    updateSaldoSalmo();
-    updateTotalSPVoucher();
-    updateTotalPaket();
-    updateTotalHifi();
-}
-
-loadSemua();
-setInterval(loadSemua, 10000);
 
 document.addEventListener('DOMContentLoaded', function() {
     // Menangkap semua elemen dengan class 'toggle-btn'
@@ -1128,14 +1035,38 @@ async function loadSemua() {
 
     try {
 
-        // UPDATE SEMUA DASHBOARD
         await updateSaldoSalmo();
-
         await updateTotalSPVoucher();
-
         await updateTotalPaket();
-
         await updateTotalHifi();
+
+        const currentSignature =
+            `${lastGrandTotal}-${
+                document.getElementById('total-sp').innerText
+            }-${
+                document.getElementById('total-paket').innerText
+            }-${
+                document.getElementById('total-hifi').innerText
+            }`;
+
+        if (
+            lastDataSignature !== null &&
+            currentSignature !== lastDataSignature
+        ) {
+
+            tambahNotif(
+                'Data Excel berhasil diperbarui'
+            );
+
+            showToast(
+                'Data terbaru berhasil dimuat'
+            );
+
+            updateBadge();
+
+        }
+
+        lastDataSignature = currentSignature;
 
     } catch(e) {
 
@@ -1147,6 +1078,14 @@ async function loadSemua() {
     }
 
 }
+
+// ======================
+// TAMBAHKAN INI
+// ======================
+
+loadSemua();
+
+setInterval(loadSemua, 10000);
 /* =========================
    SEARCH MENU
 ========================= */
@@ -1466,6 +1405,17 @@ document.getElementById('btn-download').addEventListener('click', function(e){
         'download-data.html?download=success';
 
 });
+function showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
 
 const openProfilBtn = document.getElementById('openProfil');
 const profilOverlay = document.getElementById('profilOverlay');
