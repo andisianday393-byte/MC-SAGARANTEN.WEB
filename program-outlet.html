@@ -34,7 +34,9 @@
     background:#fff;
     border-radius:16px;
     padding:16px;
-    margin-bottom:18px;
+    padding-bottom:-100px;
+    margin-bottom:1px;
+
     box-shadow:0 4px 10px rgba(0,0,0,.06);
     border:1px solid #e2e8f0;
 }
@@ -42,13 +44,16 @@
 .slider-header h2{
     font-size:18px;
     color:#1e3a8a;
+    margin-top: 10px;
     margin-bottom:4px;
+    text-align: center;
 }
 
 .slider-header p{
     font-size:12px;
     color:#64748b;
     margin-bottom:14px;
+    text-align: center;
 }
 
 /* AREA GESER */
@@ -147,6 +152,10 @@
     scroll-snap-align:center;
 
     box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:
+    height .35s ease,
+    transform .3s ease,
+    box-shadow .3s ease;
 }
 
 /* GAMBAR */
@@ -174,6 +183,11 @@
     font-size:13px;
     line-height:1.6;
     color:#475569;
+}
+
+.slider-dots{
+    position:relative;
+    z-index:5;
 }
 
 /* TABLET / DESKTOP */
@@ -265,7 +279,6 @@ body{
     border:none;
     background:#000;
 }
-<style>
 
 /* =========================
    SMOOTH SLIDER
@@ -411,11 +424,378 @@ body{
 
 }
 
+/* =========================
+   TOGGLE KETERANGAN
+========================= */
+
+/* =========================
+   TOGGLE KETERANGAN MODERN
+========================= */
+
+.slide-description{
+
+    max-height:0;
+
+    overflow:hidden;
+
+    opacity:0;
+
+    margin-top:0;
+
+    transition:
+        max-height .45s ease,
+        opacity .3s ease,
+        margin-top .3s ease;
+
+}
+
+/* SAAT DIBUKA */
+.slide-description.show{
+
+    max-height:1200px;
+
+    opacity:1;
+
+    margin-top:12px;
+
+}
+
+.toggle-desc{
+    display:inline-block;
+    margin-top:8px;
+    font-size:13px;
+    font-weight:700;
+    color:#2563eb;
+    cursor:pointer;
+    user-select:none;
+}
+
+.toggle-desc:hover{
+    text-decoration:underline;
+}
+.mobile-wrapper{
+    padding-bottom:10px;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    z-index:999;
+}
+/* =========================
+   IMAGE PREVIEW MODAL
+========================= */
+
+.clickable-image{
+    cursor:pointer;
+}
+
+/* BACKGROUND */
+.image-modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:99999;
+
+    background:#000;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+/* GAMBAR FULLSCREEN */
+.modal-image{
+
+    width:auto;
+
+    height:auto;
+
+    max-width:100vw;
+
+    max-height:100vh;
+
+    object-fit:contain;
+
+    border-radius:0;
+
+}
+
+/* TOMBOL CLOSE */
+.close-modal{
+
+    position:absolute;
+
+    top:18px;
+
+    right:22px;
+
+    color:#fff;
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+/* TOMBOL DOWNLOAD */
+.download-btn{
+
+    margin-top:20px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+
+}
+body.modal-open{
+    overflow:hidden;
+}
+
+/* =========================
+   MODERN GALLERY
+========================= */
+
+.image-modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:99999;
+
+    background:#000;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    animation:fadeIn .25s ease;
+
+}
+
+/* FADE */
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+
+}
+
+/* TOPBAR */
+.gallery-topbar{
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:16px;
+
+    z-index:20;
+
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.6),
+        transparent
+    );
+
+}
+
+/* CLOSE */
+.close-modal{
+
+    color:#fff;
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+    margin-top: -20px;
+    margin-right: -10px;
+
+}
+
+/* DOWNLOAD */
+.download-btn{
+
+    position:absolute;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:#2563eb;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:10px 16px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    z-index:30;
+
+}
+
+/* WRAPPER */
+.gallery-wrapper{
+
+    width:100%;
+
+    height:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    touch-action:none;
+
+}
+
+/* IMAGE */
+.modal-image{
+
+    max-width:100vw;
+
+    max-height:100vh;
+
+    object-fit:contain;
+
+    transition:
+        transform .2s ease;
+
+    user-select:none;
+
+    -webkit-user-drag:none;
+
+    transform-origin:center;
+
+}
+
+/* NAV */
+.gallery-nav{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.15);
+
+    color:#fff;
+
+    font-size:26px;
+
+    cursor:pointer;
+
+    backdrop-filter:blur(6px);
+
+    z-index:20;
+
+}
+
+.prev-btn{
+    left:14px;
+}
+
+.next-btn{
+    right:14px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+    .gallery-nav{
+
+        width:42px;
+
+        height:42px;
+
+        font-size:22px;
+
+    }
+
+}
+/* VIDEO FULLSCREEN */
+.modal-video{
+
+    display:none;
+
+    width:100vw;
+
+    height:100vh;
+
+    border:none;
+
+    background:#000;
+
+}
 </style>
-    </style>
 </head>
 <body>
-<div class="mobile-wrapper">
+
 <div class="sticky-container">
     <div class="header-wrapper">
         <div class="app-header">
@@ -426,7 +806,7 @@ body{
 </div>
 
 <!-- SLIDER PROGRAM -->
-<div class="program-slider-card">
+
 
     <div class="slider-header">
         <h2>🔥 Program Promo Terbaru</h2>
@@ -439,9 +819,13 @@ body{
 <div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/IMG-20260529-WA0000.jpg" alt="Gebyar Gajian 2.0">
+    <img 
+    src="img/IMG-20260529-WA0000.jpg"
+    alt="Gebyar Gajian"
+    class="clickable-image">
 
 <div class="slide-content">
+
     <h3>🔥 Gebyar Gajian</h3>
     <p>🚨 <b>DIPERPANJANG SAMPAI AKHIR BULAN 🥳</b></p>
     <p><b>INJECT VOUCHER KOSONGNYA, LANGSUNG DAPATKAN CASHBACKNYA!</b></p>
@@ -467,111 +851,100 @@ Semoga jualan IM3nya terus laris manis 🤲</b></p>
 </div>
 
 </div>
-
-        <!-- SLIDE 2 -->
+</div>
+<!-- SLIDE 2 -->
 <div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/hotpromo-gemini.jpg" alt="Hotpromo Gemini">
+    <img src="img/hotpromo-gemini.jpg" alt="Hotpromo Gemini" class="clickable-image">
 
-<div class="slide-content">
-    <h3>🔥 HotPromo Gemini</h3>
-    <p>Semangat Pagi,</p>
-    <p>Mitra outlet IM3 remind lagi terkait benefit Google Gemini untuk rebuy hot promo nya ya, dg skema masih sama ;</p>
-    <p>
-        5GB 2 Hari + Google Gemini cuma 8.000<br>
-        8GB 3 hari + Google Gemini cuma 13.000<br>
-        6GB 7 hari + Google Gemini cuma 18.000<br>
-        10GB 14 hari + Google Gemini cuma 28.000<br>
-        11GB 28 hari + Google Gemini chma 38.000
-    </p>
-    <p>Yuk gas lagi hotpromonya !!!</p>
-    <p>Happy Selling :)</p>
-</div>
+    <div class="slide-content">
+
+        <h3>🔥 Hot Promo Gemini</h3>
+            <p>Semangat Pagi,</p>
+            <p>Mitra outlet IM3 remind lagi terkait benefit Google Gemini untuk rebuy hot promo nya ya, dg skema masih sama ;</p>
+
+        </div>
+
+    </div>
 
 </div>
 
-        <!-- SLIDE 3 -->
+<!-- SLIDE 3 -->
 <div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/paket-roaming.jpg" alt="Paket Roaming">
+    <img src="img/paket-roaming.jpg" alt="Paket Roaming" class="clickable-image">
 
-<div class="slide-content">
-    <h3>🔥 Paket Roaming</h3>
-    <p>Liburan Long Weekend Siapin kuota Roamingnya, Pilih paket Romamingnya sesuka kamu, hanya di im3.</p>
+    <div class="slide-content">
+
+        <h3>🔥 Paket Roaming</h3>
+
+        <div class="toggle-desc">
+            Lihat Keterangan
+        </div>
+
+        <div class="slide-description">
+
+            <p>Liburan Long Weekend Siapin kuota Roamingnya.</p>
+
+        </div>
+
+    </div>
+
 </div>
 
-</div>
-
-        <!-- SLIDE 4 -->
-        <div class="slide-item"
+<!-- SLIDE 4 -->
+<div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/program-supplay.jpg" alt="Program Supplay 1%">
+    <img src="img/program-supplay.jpg" alt="Program Supplay 1%" class="clickable-image">
 
-<div class="slide-content">
-    <h3>🔥 Program Supplay 1%</h3>
-    <p>🚨 <b>INFO PROGRAM</b></p>
-    <p><b>Program Supply Outlet Mei 2026</b></p>
-    <p>📅 <b>25 sd 28 Mei 2026</b></p>
-    <p>🔥 Yuk pastikan seluruh outlet <b>ter-SUPPLY</b> di akhir bulan!! 🔥</p>
-</div>
+    <div class="slide-content">
 
+        <h3>🔥 Program Supplay 1%</h3>
+
+            <p>🚨 INFO PROGRAM</p>
+
+        </div>
+
+    </div>
 
 </div>
 
 <!-- SLIDE 5 -->
-        <div class="slide-item"
+<div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/tag-go.jpg" alt="Program Tag&Go">
+    <img src="img/tag-go.jpg" alt="Program Tag&Go" class="clickable-image">
 
-<div class="slide-content">
-    <h3>🔥 Program Tag&Go</h3>
-    <p><b>Jualan Perdana IM3 3Gb Makin Cuan!!</b> 💸💰</p>
-    <p>Keuntungan banyak buat pelanggan, cuan banyak buat outlet!</p>
-    <p>
-        • Free Telp <b>Ke Semua Operator</b> 50 menit!<br>
-        • Free Telp ke sesama im3 & Tri 5000 menit<br>
-        • Free langganan <b>VIDEO Lite</b> 30hr<br>
-        • Free langganan <b>VIU Premium</b> 30hr<br>
-        • Perlindungan <b>SATSPAM Plus (+)</b> 90hr
-    </p>
-    <p>>>> <b>REGISTRASI BIOMETRIC</b> sangat mudah! Cukup KTP & Selfie, tidak perlu sobek bungkus Perdananya dan <b>tidak sampai 2 menit!</b></p>
-    <p><b>Cuan Outlet</b></p>
-    <p><b>CASHBACK TAGGING</b> (Cuan bs sampai 150rb/bulan):</p>
-    <p>• Cashback Rp 3.000/hit<br>• Maksimal 50 hit/bln<br>• Pembayaran langsung Realtime</p>
-    <p><b>CASHBACK BIOMETRIC</b> (Cuan maksimum 250rb/Bulan):</p>
-    <p>• Per Hit : 5.000 rupiah<br>• Max 50 Hit/bulan<br>• Pembayaran H+2</p>
-</div>
+    <div class="slide-content">
+
+        <h3>🔥 CashBack Tag & Go</h3>
+
+            <p>Jualan Perdana IM3 3Gb Makin Cuan!!</p>
+
+        </div>
+
+    </div>
 
 </div>
 
 <!-- SLIDE 6 -->
-        <div class="slide-item"
+<div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-    <img src="img/benefit-sp3gb.jpg" alt="Benefit SP 3GB">
+    <img src="img/benefit-sp3gb.jpg" alt="Benefit SP 3GB" class="clickable-image">
 
-<div class="slide-content">
-    <h3>🔥 Benefit SP 3GB</h3>
-    <p>Halo Mitra Outlet IM3 👋🏻💛</p>
-    <p>Sekarang SP IM3 hadir dengan benefit yang makin lengkap dan menarik 😎✨</p>
-    <p><b>🎁 BONUS BARU:</b><br>
-    ✅ GRATIS Google Gemini AI Plus<br>
-    ✅ GRATIS Google Storage 200GB<br>
-    ✅ Bonus aplikasi menarik lainnya<br>
-    💰 Total benefit senilai hingga Rp450 ribu selama 6 bulan 👀</p>
-    <p>Benefit favorit pelanggan juga tetap tersedia:<br>
-    🎬 Vidio Lite & Viu Premium<br>
-    📞 50 menit nelpon ke semua operator<br>
-    ☎️ 5000 menit nelpon ke sesama Tri & IM3<br>
-    🛡️ Perlindungan SATSPAM</p>
-    <p>🔥 Kabar baiknya, benefit ini bukan hanya untuk pelanggan baru! Pelanggan setia yang membeli kuota juga bisa menikmati benefit spesial ini.</p>
-    <p>Yuk, maksimalkan penjualan SP & kuota IM3 sekarang juga 🚀</p>
-</div>
+    <div class="slide-content">
 
+        <h3>🔥 Benefit SP 3GB</h3>
+
+            <p>Halo Mitra Outlet IM3 👋🏻💛</p>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -579,27 +952,34 @@ Semoga jualan IM3nya terus laris manis 🤲</b></p>
 <div class="slide-item"
      data-update="2026-05-28T09:30:00">
 
-<iframe 
-    class="slide-video"
+    <iframe 
+    class="slide-video clickable-video"
+    data-video="https://drive.google.com/file/d/16ejLh0Vmr3SWPRqb23lR8_XUcC64ov68/preview"
     src="https://drive.google.com/file/d/16ejLh0Vmr3SWPRqb23lR8_XUcC64ov68/preview"
     allow="autoplay"
     allowfullscreen>
 </iframe>
 
-<div class="slide-content">
-    <h3>🔥 Tutorial Registrasi Biometrik</h3>
-    <p><b>Tutorial Registrasi Biometrik Indosat</b></p>
-    <p>⚡ <b>CASHBACK BIOMETRIC IM3 & 3ID KINI REALTIME!</b> ⚡</p>
-    <p>Setiap Registrasi Biometric sekarang langsung dapat Cashback REALTIME ! 🎉</p>
-</div>
+    <div class="slide-content">
 
-</div>
+        <h3>🔥 Tutorial Registrasi Biometrik</h3>
+
+            <p><b>Tutorial Registrasi Biometrik Indosat</b></p>
+
+        </div>
 
     </div>
+
+</div>
+
+</div>
 
 <div class="slider-dots"></div>
 
 </div>
+
+</div>
+<div class="slider-dots"></div>
 
 <footer class="bottom-nav">
     <a href="index.html" class="bottom-item">
@@ -621,243 +1001,244 @@ Semoga jualan IM3nya terus laris manis 🤲</b></p>
         <span>Profil</span>
     </a>
 </footer>
+<!-- MODAL PREVIEW GAMBAR -->
+<div class="image-modal" id="imageModal">
 
+    <div class="gallery-topbar">
+
+        <span class="close-modal">&times;</span>
+
+        <a id="downloadBtn"
+           class="download-btn"
+           download="program-outlet.jpg">
+           ⬇ Download
+        </a>
+
+    </div>
+
+<div class="gallery-wrapper">
+
+    <!-- IMAGE -->
+    <img class="modal-image"
+         id="modalImage">
+
+    <!-- VIDEO -->
+    <iframe
+        id="modalVideo"
+        class="modal-video"
+        allow="autoplay; fullscreen"
+        allowfullscreen>
+    </iframe>
+
+</div>
+
+    <!-- NAV -->
+    <button class="gallery-nav prev-btn">
+        ❮
+    </button>
+
+    <button class="gallery-nav next-btn">
+        ❯
+    </button>
+
+</div>
 <script>
 
+// =========================
+// PROFIL
+// =========================
+
+document.getElementById('openProfil')
+.addEventListener('click', () => {
+
+    alert('Fitur Profil sedang dalam pengembangan.');
+
+});
+
+
+// =========================
+// SLIDER PROGRAM MODERN
+// =========================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const slider =
+        document.querySelector('.slider-container');
+
+    let slides =
+        Array.from(
+            document.querySelectorAll('.slide-item')
+        );
+
+    const dotsContainer =
+        document.querySelector('.slider-dots');
+
+
     // =========================
-    // PROFIL
+    // AUTO SORT BERDASARKAN UPDATE
     // =========================
 
-    document.getElementById('openProfil')
-    .addEventListener('click', () => {
+    slides.forEach(slide => {
 
-        alert('Fitur Profil sedang dalam pengembangan.');
+        if(!slide.dataset.update){
+
+            slide.dataset.update =
+                new Date().toISOString();
+
+        }
+
+    });
+
+    slides.sort((a,b) => {
+
+        return new Date(b.dataset.update)
+            - new Date(a.dataset.update);
+
+    });
+
+    slides.forEach(slide => {
+
+        slider.appendChild(slide);
+
+    });
+
+    slides =
+        Array.from(
+            document.querySelectorAll('.slide-item')
+        );
+
+
+    // =========================
+    // BADGE BARU
+    // =========================
+
+    const now = new Date();
+
+    slides.forEach(slide => {
+
+        const updateDate =
+            new Date(slide.dataset.update);
+
+        const diffDays =
+            (now - updateDate)
+            / (1000 * 60 * 60 * 24);
+
+        if(diffDays <= 3){
+
+            const badge =
+                document.createElement('div');
+
+            badge.className =
+                'badge-baru';
+
+            badge.innerText =
+                'BARU';
+
+            slide.appendChild(badge);
+
+        }
 
     });
 
 
     // =========================
-    // SLIDER PROGRAM MODERN
+    // DOT SLIDER
     // =========================
 
-    document.addEventListener('DOMContentLoaded', () => {
+    slides.forEach((_, index) => {
 
-        const slider =
-            document.querySelector('.slider-container');
+        const dot =
+            document.createElement('div');
 
-        let slides =
-            Array.from(
-                document.querySelectorAll('.slide-item')
-            );
+        dot.className =
+            'slider-dot';
 
-        const dotsContainer =
-            document.querySelector('.slider-dots');
+        if(index === 0){
 
-
-        // =========================
-        // AUTO SORT BERDASARKAN UPDATE
-        // =========================
-
-        slides.forEach(slide => {
-
-            // otomatis ambil waktu update halaman
-            if(!slide.dataset.update){
-
-                slide.dataset.update =
-                    new Date().toISOString();
-
-            }
-
-        });
-
-        slides.sort((a,b) => {
-
-            return new Date(b.dataset.update)
-                - new Date(a.dataset.update);
-
-        });
-
-        slides.forEach(slide => {
-
-            slider.appendChild(slide);
-
-        });
-
-
-        // refresh slides
-        slides =
-            Array.from(
-                document.querySelectorAll('.slide-item')
-            );
-
-
-        // =========================
-        // BADGE BARU
-        // =========================
-
-        const now = new Date();
-
-        slides.forEach(slide => {
-
-            const updateDate =
-                new Date(slide.dataset.update);
-
-            const diffDays =
-                (now - updateDate)
-                / (1000 * 60 * 60 * 24);
-
-            // tampil jika <= 3 hari
-            if(diffDays <= 3){
-
-                const badge =
-                    document.createElement('div');
-
-                badge.className =
-                    'badge-baru';
-
-                badge.innerText =
-                    'BARU';
-
-                slide.appendChild(badge);
-
-            }
-
-        });
-
-
-        // =========================
-        // DOT SLIDER
-        // =========================
-
-        slides.forEach((_, index) => {
-
-            const dot =
-                document.createElement('div');
-
-            dot.className =
-                'slider-dot';
-
-            if(index === 0){
-
-                dot.classList.add('active');
-
-            }
-
-            dotsContainer.appendChild(dot);
-
-        });
-
-        const dots =
-            document.querySelectorAll('.slider-dot');
-
-
-        // =========================
-        // ACTIVE SLIDE
-        // =========================
-
-        function updateActiveSlide(){
-
-            const sliderLeft =
-                slider.scrollLeft;
-
-            const slideWidth =
-                slides[0].offsetWidth + 20;
-
-            const activeIndex =
-                Math.round(
-                    sliderLeft / slideWidth
-                );
-
-            slides.forEach(slide => {
-
-                slide.classList.remove(
-                    'active-slide'
-                );
-
-            });
-
-            dots.forEach(dot => {
-
-                dot.classList.remove(
-                    'active'
-                );
-
-            });
-
-            if(slides[activeIndex]){
-
-                slides[activeIndex]
-                .classList.add(
-                    'active-slide'
-                );
-
-            }
-
-            if(dots[activeIndex]){
-
-                dots[activeIndex]
-                .classList.add(
-                    'active'
-                );
-
-            }
+            dot.classList.add('active');
 
         }
 
+        dotsContainer.appendChild(dot);
 
-        // =========================
-        // AUTO PLAY
-        // =========================
+    });
 
-        let currentIndex = 0;
+    const dots =
+        document.querySelectorAll('.slider-dot');
 
-        function autoPlaySlider(){
 
-            currentIndex++;
+    // =========================
+    // ACTIVE SLIDE
+    // =========================
 
-            if(currentIndex >= slides.length){
+    function updateActiveSlide(){
 
-                currentIndex = 0;
+        const sliderLeft =
+            slider.scrollLeft;
 
-            }
+        const slideWidth =
+            slides[0].offsetWidth + 20;
 
-            slides[currentIndex]
-            .scrollIntoView({
+        const activeIndex =
+            Math.round(
+                sliderLeft / slideWidth
+            );
 
-                behavior:'smooth',
+        slides.forEach(slide => {
 
-                inline:'start'
+            slide.classList.remove(
+                'active-slide'
+            );
 
-            });
+        });
+
+        dots.forEach(dot => {
+
+            dot.classList.remove(
+                'active'
+            );
+
+        });
+
+        if(slides[activeIndex]){
+
+            slides[activeIndex]
+            .classList.add(
+                'active-slide'
+            );
 
         }
 
-        let autoPlay =
-            setInterval(
-                autoPlaySlider,
-                4000
+        if(dots[activeIndex]){
+
+            dots[activeIndex]
+            .classList.add(
+                'active'
             );
 
+        }
 
-        // stop autoplay saat disentuh
-        slider.addEventListener('touchstart', () => {
-
-            clearInterval(autoPlay);
-
-        });
-
-        slider.addEventListener('mousedown', () => {
-
-            clearInterval(autoPlay);
-
-        });
+    }
 
 
-        // =========================
-        // AUTO KE SLIDE TERBARU
-        // =========================
+    // =========================
+    // AUTO PLAY
+    // =========================
 
-        slides[0].scrollIntoView({
+    let currentIndex = 0;
+
+    function autoPlaySlider(){
+
+        currentIndex++;
+
+        if(currentIndex >= slides.length){
+
+            currentIndex = 0;
+
+        }
+
+        slides[currentIndex]
+        .scrollIntoView({
 
             behavior:'smooth',
 
@@ -865,23 +1246,472 @@ Semoga jualan IM3nya terus laris manis 🤲</b></p>
 
         });
 
-        slides[0].classList.add(
-            'active-slide'
+    }
+
+    let autoPlay =
+        setInterval(
+            autoPlaySlider,
+            4000
         );
 
 
-        // =========================
-        // UPDATE ACTIVE SAAT SCROLL
-        // =========================
+    slider.addEventListener('touchstart', () => {
 
-        slider.addEventListener(
-            'scroll',
-            updateActiveSlide
-        );
+        clearInterval(autoPlay);
 
     });
 
-</script>
+    slider.addEventListener('mousedown', () => {
 
+        clearInterval(autoPlay);
+
+    });
+
+
+    // =========================
+    // AUTO KE SLIDE TERBARU
+    // =========================
+
+    slides[0].scrollIntoView({
+
+        behavior:'smooth',
+
+        inline:'start'
+
+    });
+
+    slides[0].classList.add(
+        'active-slide'
+    );
+
+
+    // =========================
+    // UPDATE ACTIVE SAAT SCROLL
+    // =========================
+
+    slider.addEventListener(
+        'scroll',
+        updateActiveSlide
+    );
+
+});
+
+
+// =========================
+// TOGGLE KETERANGAN
+// =========================
+
+// =========================
+// TOGGLE KETERANGAN MODERN
+// =========================
+
+document.querySelectorAll('.toggle-desc')
+.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        const desc =
+            button.nextElementSibling;
+
+        const slide =
+            button.closest('.slide-item');
+
+        const isOpen =
+            desc.classList.contains('show');
+
+
+        // TUTUP SEMUA LAINNYA
+        document.querySelectorAll(
+            '.slide-description'
+        ).forEach(item => {
+
+            if(item !== desc){
+
+                item.classList.remove('show');
+
+            }
+
+        });
+
+        document.querySelectorAll(
+            '.toggle-desc'
+        ).forEach(btn => {
+
+            if(btn !== button){
+
+                btn.innerText =
+                    'Lihat Keterangan';
+
+            }
+
+        });
+
+
+        // TOGGLE ACTIVE
+        desc.classList.toggle('show');
+
+
+        if(!isOpen){
+
+            button.innerText =
+                'Sembunyikan Keterangan';
+
+            // auto scroll agar card terlihat penuh
+            setTimeout(() => {
+
+                slide.scrollIntoView({
+
+                    behavior:'smooth',
+
+                    block:'nearest',
+
+                    inline:'center'
+
+                });
+
+            },200);
+
+        }else{
+
+            button.innerText =
+                'Lihat Keterangan';
+
+        }
+
+    });
+
+});
+
+
+// =========================
+// MODERN IMAGE GALLERY
+// =========================
+
+const modal =
+    document.getElementById(
+        'imageModal'
+    );
+
+const modalImg =
+    document.getElementById(
+        'modalImage'
+    );
+const modalVideo =
+    document.getElementById(
+        'modalVideo'
+    );
+const closeModal =
+    document.querySelector(
+        '.close-modal'
+    );
+
+const downloadBtn =
+    document.getElementById(
+        'downloadBtn'
+    );
+
+const galleryItems =
+    Array.from(
+        document.querySelectorAll(
+            '.clickable-image, .clickable-video'
+        )
+    );
+
+const prevBtn =
+    document.querySelector(
+        '.prev-btn'
+    );
+
+const nextBtn =
+    document.querySelector(
+        '.next-btn'
+    );
+
+let currentGalleryIndex = 0;
+
+let scale = 1;
+
+let startY = 0;
+
+
+// =========================
+// OPEN MODAL
+// =========================
+
+function openModal(index){
+
+    currentGalleryIndex = index;
+
+    const item =
+        galleryItems[index];
+
+    modal.style.display = 'flex';
+
+    document.body.classList.add(
+        'modal-open'
+    );
+
+    // RESET
+    modalImg.style.display = 'none';
+
+    modalVideo.style.display = 'none';
+
+    // JIKA VIDEO
+    if(item.classList.contains(
+        'clickable-video'
+    )){
+
+        modalVideo.style.display =
+            'block';
+
+        modalVideo.src =
+            item.dataset.video;
+
+        downloadBtn.style.display =
+            'none';
+
+    }
+
+    // JIKA GAMBAR
+    else{
+
+        modalImg.style.display =
+            'block';
+
+        modalImg.src = item.src;
+
+        downloadBtn.href = item.src;
+
+        downloadBtn.style.display =
+            'inline-block';
+
+    }
+
+}
+
+
+// =========================
+// CLOSE
+// =========================
+
+function closeGallery(){
+
+    modal.style.display = 'none';
+
+    document.body.classList.remove(
+        'modal-open'
+    );
+
+    modalVideo.src = '';
+
+}
+
+
+// =========================
+// NEXT
+// =========================
+
+function nextImage(){
+
+    currentGalleryIndex++;
+
+    if(currentGalleryIndex >= galleryItems.length){
+
+        currentGalleryIndex = 0;
+
+    }
+
+    openModal(currentGalleryIndex);
+
+}
+
+
+// =========================
+// PREV
+// =========================
+
+function prevImage(){
+
+    currentGalleryIndex--;
+
+    if(currentGalleryIndex < 0){
+
+        currentGalleryIndex =
+            galleryItems.length - 1;
+
+    }
+
+    openModal(currentGalleryIndex);
+
+}
+
+
+// =========================
+// CLICK IMAGE
+// =========================
+
+galleryItems.forEach((item,index) => {
+
+    item.addEventListener('click', () => {
+
+        openModal(index);
+
+    });
+
+});
+
+
+// =========================
+// BUTTONS
+// =========================
+
+closeModal.addEventListener(
+    'click',
+    closeGallery
+);
+
+nextBtn.addEventListener(
+    'click',
+    nextImage
+);
+
+prevBtn.addEventListener(
+    'click',
+    prevImage
+);
+
+
+// =========================
+// CLICK BACKGROUND
+// =========================
+
+modal.addEventListener(
+    'click',
+    (e) => {
+
+        if(e.target === modal){
+
+            closeGallery();
+
+        }
+
+    }
+);
+
+
+// =========================
+// DOUBLE TAP ZOOM
+// =========================
+
+modalImg.addEventListener(
+    'dblclick',
+    () => {
+
+        scale =
+            scale === 1
+            ? 2
+            : 1;
+
+        modalImg.style.transform =
+            `scale(${scale})`;
+
+    }
+);
+
+
+// =========================
+// TOUCH SWIPE
+// =========================
+
+let touchStartX = 0;
+
+let touchEndX = 0;
+
+modal.addEventListener(
+    'touchstart',
+    (e) => {
+
+        touchStartX =
+            e.changedTouches[0].screenX;
+
+        startY =
+            e.changedTouches[0].screenY;
+
+    }
+);
+
+modal.addEventListener(
+    'touchend',
+    (e) => {
+
+        touchEndX =
+            e.changedTouches[0].screenX;
+
+        const endY =
+            e.changedTouches[0].screenY;
+
+        const diffX =
+            touchStartX - touchEndX;
+
+        const diffY =
+            startY - endY;
+
+        if(Math.abs(diffX) > 60){
+
+            if(diffX > 0){
+
+                nextImage();
+
+            }else{
+
+                prevImage();
+
+            }
+
+        }
+
+        if(diffY < -120){
+
+            closeGallery();
+
+        }
+
+    }
+);
+
+
+// =========================
+// KEYBOARD
+// =========================
+
+document.addEventListener(
+    'keydown',
+    (e) => {
+
+        if(modal.style.display !== 'flex')
+            return;
+
+        if(e.key === 'ArrowRight'){
+
+            nextImage();
+
+        }
+
+        if(e.key === 'ArrowLeft'){
+
+            prevImage();
+
+        }
+
+        if(e.key === 'Escape'){
+
+            closeGallery();
+
+        }
+
+    }
+);
+
+</script>
 </body>
 </html>
