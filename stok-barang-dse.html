@@ -350,61 +350,65 @@ await cekUpdateExcel(
 
         // RENDER TABEL
         processAndRender(matrix);
+// ==========================
+// TAMPILKAN WAKTU UPDATE
+// ==========================
 
-        // ==========================
-        // TAMPILKAN WAKTU UPDATE
-        // ==========================
-        let updateText = "Update Data: Tidak diketahui";
+let updateDate = null;
 
-        // PRIORITAS 1
-        // LAST MODIFIED SERVER
-        if (lastModified) {
+// PRIORITAS 1
+// TANGGAL DARI FILE EXCEL
+if (
+    workbook.Props &&
+    workbook.Props.ModifiedDate
+) {
 
-            const updateDate =
-                new Date(lastModified);
+    updateDate =
+        new Date(
+            workbook.Props.ModifiedDate
+        );
+}
 
-            updateText =
-                "Update Data: " +
-                updateDate.toLocaleString(
-                    "id-ID",
-                    {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                    }
-                );
-        }
+// PRIORITAS 2
+// LAST MODIFIED SERVER
+if (
+    (!updateDate || isNaN(updateDate)) &&
+    lastModified
+) {
 
-        // PRIORITAS 2
-        // PROPERTIES FILE EXCEL
-        else if (workbook.Props?.ModifiedDate) {
+    updateDate =
+        new Date(lastModified);
+}
 
-            const excelDate =
-                new Date(
-                    workbook.Props.ModifiedDate
-                );
+// TAMPILKAN
+if (
+    updateDate &&
+    !isNaN(updateDate)
+) {
 
-            updateText =
-                "Update Data: " +
-                excelDate.toLocaleString(
-                    "id-ID",
-                    {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                    }
-                );
-        }
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: " +
+        updateDate.toLocaleString(
+            "id-ID",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
 
-        document.getElementById(
-            "updateTime"
-        ).textContent = updateText;
+} else {
+
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: Tidak diketahui";
+}
 
     } catch (error) {
 
