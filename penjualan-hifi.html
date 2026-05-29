@@ -279,6 +279,7 @@ body{
     border: 1px solid #fecaca; 
 }
 
+
     </style>
 </head>
 <body>
@@ -610,20 +611,24 @@ if (
             badgeClass += ' badge-sold'; // Default
         }
 
-        // --- LOGIKA PERHITUNGAN (Opsional, sesuaikan kriteria anda) ---
-        if (nama !== 'GUDANG') {
-            if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
-                dseSudahBayarCount++;
-                nominalTerjualLunas += harga;
-            } else {
-                sisaOnHandDSE++;
-                sisaTagihanNominal += harga;
-                sisaTagihanQty++;
-            }
-        } else {
-            segelGudangCount++;
-            gudangDataMap.push({ noHifi, imei, qty });
-        }
+        // --- LOGIKA PERHITUNGAN (DIMODIFIKASI: REWARD & RETURE DIKECUALIKAN) ---
+if (nama !== 'GUDANG') {
+    // KECECUALIAN: reward dan reture TIDAK masuk hitungan On Hand DSE
+    if (ketLower.includes('reward') || ketLower.includes('reture')) {
+        // Lewati: tidak menambah sisaOnHandDSE, sisaTagihanNominal, atau sisaTagihanQty
+        // Item ini tetap muncul di tabel tapi tidak dihitung di dashboard
+    } else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
+        dseSudahBayarCount++;
+        nominalTerjualLunas += harga;
+    } else {
+        sisaOnHandDSE++;
+        sisaTagihanNominal += harga;
+        sisaTagihanQty++;
+    }
+} else {
+    segelGudangCount++;
+    gudangDataMap.push({ noHifi, imei, qty });
+}
 
         const tr = document.createElement('tr');
         tr.className = 'row-item';
