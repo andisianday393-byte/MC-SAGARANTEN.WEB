@@ -642,9 +642,9 @@
                 <img src="img/mobii.jpg" class="submenu-img">
                 <div class="submenu-title">Penjualan SALMO</div>
             </a>
-            <a href="penjualan-reguler3.html" class="submenu-item">
+            <a href="penjualan-reguler-new.html" class="submenu-item">
                 <div class="submenu-icon">🛒</div>
-                <div class="submenu-title">Penjualan Regular</div>
+                <div class="submenu-title">Penjualan Fisik SP dan Voucher</div>
             </a>
             <a href="penjualan-paket-tm2.html" class="submenu-item">
                 <div class="submenu-icon">📞</div>
@@ -911,27 +911,59 @@ async function updateSaldoSalmo() {
 
 async function updateTotalSPVoucher() {
     try {
-        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type:'array' });
-        const worksheet = workbook.Sheets['penjualan-reguler'];
+
+        const response =
+            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, { type:'array' });
+
+        const worksheet =
+            workbook.Sheets['penjualan-reguler-new'];
+
         if (!worksheet) return;
-        const rows = XLSX.utils.sheet_to_json(worksheet, { header:1, defval:0 });
-        let total = 0;
-        for(let i=2; i<rows.length; i++) {
-            const row = rows[i];
-            if(!row) continue;
-            const harga = ambilAngka(row[6]);
-            let qty = 0;
-            for(let c=1; c<=4; c++) {
-                qty += ambilAngka(row[c]);
+
+        const data =
+            XLSX.utils.sheet_to_json(worksheet, {
+                header: 1,
+                defval: ''
+            });
+
+        let totalSP = 0;
+        let totalVoucher = 0;
+
+        data.forEach(row => {
+
+            const label =
+                String(row[0] || '')
+                .trim()
+                .toUpperCase();
+
+            if(label === 'TOTAL SP'){
+                totalSP = ambilAngka(row[7]);
             }
-            total += qty * harga;
-        }
-        document.getElementById('total-sp').innerText = formatRupiah(total);
+
+            if(label === 'TOTAL VOUCHER'){
+                totalVoucher = ambilAngka(row[7]);
+            }
+
+        });
+
+        const grandTotal =
+            totalSP + totalVoucher;
+
+        document.getElementById('total-sp').innerText =
+            formatRupiah(grandTotal);
+
     } catch(error) {
+
         console.log(error);
-        document.getElementById('total-sp').innerText = 'Error';
+
+        document.getElementById('total-sp').innerText =
+            'Error';
     }
 }
 
