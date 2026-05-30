@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Request Stock - Monitor Stock Gudang</title>
+    <link rel="stylesheet" href="global-ui.css">
+    <script src="global-notif.js"></script>
+    <style>
+
+        /* DASHBOARD CONTAINER - FULL SCREEN TANPA KARTU */
+        .dashboard-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0 10px;
+        }
+
+        /* FORM BODY & SUB SECTION */
+        .form-content {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        /* SECTION TITLE - SINKRON DENGAN STYLING HEADER TABEL GUDANG */
+        .section-title {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 10px 12px;
+            border-bottom: 2px solid #cbd5e1;
+            margin-bottom: 12px;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* STYLING INPUT FORM */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #475569;
+        }
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #334155;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #0284c7;
+            background-color: #ffffff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+        }
+        input[readonly] {
+            background-color: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+            font-weight: 600;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        /* GRID DAFTAR ITEM */
+        .item-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        /* STRUKTUR INPUT KELAS ITEM (MIMIK BARIS TABEL STOK) */
+        .item-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+        .item-input-group:hover {
+            background-color: #f8fafc;
+        }
+        .item-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            flex: 1;
+        }
+        .item-count {
+            width: 75px;
+            padding: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0284c7;
+            background-color: #f0f9ff; /* Soft Blue khas kolom total tabel */
+            font-variant-numeric: tabular-nums;
+            outline: none;
+        }
+        .item-count:focus {
+            border-color: #0284c7;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.1);
+        }
+
+        /* BUTTON KIRIM - BERGAYA UTAMA MODERN */
+        .btn-submit {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #0369a1 0%, #0f172a 100%);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        }
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        /* MEDIA QUERY UNTUK DESKTOP/TABLET (FLEXIBEL GRID) */
+        @media (min-width: 600px) {
+            .dashboard-container {
+                padding: 0 20px;
+            }
+            .item-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 10px;
+            }
+            .item-input-group {
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sticky-container">
+    <div class="header-wrapper">
+        <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+</div>
+        <div class="app-header">
+        <h1>Form Request Stock Gudang</h1>
+        <p>Silakan input data kuantitas barang yang diperlukan</p>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-container">
+        <form id="requestForm" class="form-content" onsubmit="handleSubmit(event)">
+            
+            <div class="section-title">Nama Micro Cluster</div>
+
+<div class="form-group">
+    <label for="nama_cabang">Nama MC</label>
+    <select id="nama_cabang" name="nama_cabang" required>
+        <option value="" disabled selected>-- Pilih MC --</option>
+        <option value="MC-SAGARANTEN">MC-SAGARANTEN</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="tanggal">Tanggal Permintaan</label>
+    <input type="date" id="tanggal" name="tanggal" required>
+</div>
+
+            <div class="section-title">Kategori Starter Pack (SP)</div>
+            <div class="item-grid">
+                <div class="item-input-group">
+                    <span class="item-label">SP ZERO</span>
+                    <input type="number" class="item-count" name="sp_zero" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">SP 3GB</span>
+                    <input type="number" class="item-count" name="sp_3gb" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+            </div>
+
+            <div class="section-title">Kategori Voucher</div>
+            <div class="item-grid">
+                <div class="item-input-group">
+                    <span class="item-label">VDK</span>
+                    <input type="number" class="item-count" name="vdk" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">3GB 14HR</span>
+                    <input type="number" class="item-count" name="v_3gb_14hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">2,5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_2_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">FI 3 GB 30HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_30hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">3.5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_3_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">5GB 5HR</span>
+                    <input type="number" class="item-count" name="v_5gb_5hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">7GB 7HR</span>
+                    <input type="number" class="item-count" name="v_7gb_7hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 6GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_6gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 1.5GB 1HR</span>
+                    <input type="number" class="item-count" name="v_fi_1_5gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 3GB 1HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_1hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 3GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_3gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 5GB 2HR</span>
+                    <input type="number" class="item-count" name="v_fi_5gb_2hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+                <div class="item-input-group">
+                    <span class="item-label">Fi 5GB 3HR</span>
+                    <input type="number" class="item-count" name="v_fi_5gb_3hr" min="0" value="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                </div>
+            </div>
+
+            <div class="section-title">Catatan Tambahan</div>
+            <div class="form-group">
+                <label for="komentar">Komentar / Keterangan Lain</label>
+                <textarea id="komentar" name="komentar" placeholder="Masukkan catatan atau instruksi khusus jika ada..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Kirim Permintaan</button>
+        </form>
+    </div>
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // JS NAVIGASI MENU RESPONSIVE (ANTI TUMPANG TINDIH)
+           
+            document.addEventListener
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal').value = today;
+        });
+
+        const dseMapping = {
+            'SKBPLARA04': 'Parhan',
+            'SKBPLARA08': 'Andi',
+            'SKBPLARA11': 'Endem',
+            'DSESGRN01': 'Pebrian'
+        };
+
+        function updateNamaDSE() {
+            const idDse = document.getElementById('id_dse').value;
+            const namaField = document.getElementById('nama_dse');
+            namaField.value = dseMapping[idDse] || '';
+        }
+
+        function clearZero(input) {
+            if (input.value === "0") input.value = "";
+        }
+
+        function restoreZero(input) {
+            if (input.value === "") input.value = "0";
+        }
+
+function handleSubmit(event) {
+    event.preventDefault();
+    const noAdminPusat = "6285692469992"; 
+    const formData = new FormData(event.target);
+    
+    let message = "*--- REQUEST TAMBAHAN STOK BARANG ---\n\n";
+    message += `*Nama MC:* ${formData.get('nama_cabang')}\n`;
+    message += `*Tanggal:* ${formData.get('tanggal')}\n\n`;
+    message += "*Daftar Request:*\n";
+
+    let hasItems = false;
+    for (let [key, value] of formData.entries()) {
+        // Abaikan field non-item
+        if (!['tanggal', 'nama_cabang', 'komentar'].includes(key) && parseInt(value) > 0) {
+            const inputElement = document.querySelector(`[name="${key}"]`);
+            const labelText = inputElement.closest('.item-input-group').querySelector('.item-label').innerText;
+            message += `- ${labelText}: *${value} pcs*\n`;
+            hasItems = true;
+        }
+    }
+
+    if (!hasItems) {
+        alert("Silakan masukkan jumlah barang yang diminta.");
+        return;
+    }
+
+    const catatan = formData.get('komentar').trim();
+    if (catatan) {
+        message += `\n*Catatan:* \n_${catatan}_\n`;
+    }
+
+    const encodedMessage = encodeURIComponent(message);
+    const waLink = `https://api.whatsapp.com/send?phone=${noAdminPusat}&text=${encodedMessage}`;
+    window.open(waLink, '_blank');
+}
+
+    </script>
+    
+    <script src="global-ui.js"></script>
+</body>
+</html>
+
+
+
