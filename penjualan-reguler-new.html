@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Penjualan Reguler - Monitor Excel Real-time</title>
+
+<link rel="stylesheet" href="global-ui.css">
+<script src="global-notif.js"></script>
+
+<!-- XLSX -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+
+.dashboard-container{
+    width:100%;
+    padding:0 10px;
+}
+
+#updateTime{
+    font-size:11px;
+    color:#64748b;
+    margin-top:15px;
+    font-weight:600;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
+
+th,td{
+    padding:10px 6px;
+    font-size:11px;
+    border-bottom:1px solid #e2e8f0;
+    white-space:nowrap;
+}
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:10px;
+}
+
+td{
+    text-align:right;
+}
+
+td:first-child,
+th:first-child{
+    text-align:left;
+    font-weight:600;
+    width:34%;
+}
+
+.section-row td{
+    background:#0f172a !important;
+    color:#fff !important;
+    font-weight:700;
+    text-align:left !important;
+    font-size:12px;
+}
+
+.total-row td{
+    background:#fef08a !important;
+    color:#713f12 !important;
+    font-weight:700;
+}
+
+.empty-row td{
+    height:14px;
+    background:#f8fafc;
+    padding:0;
+}
+
+.loading-text{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+    font-weight:600;
+}
+
+.zero-val{
+    color:#cbd5e1;
+}
+
+tbody tr:hover td{
+    background:#f8fafc;
+}
+
+@media(min-width:768px){
+
+    th,td{
+        font-size:13px;
+        padding:12px 10px;
+    }
+
+    th{
+        font-size:11px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sticky-container">
+
+    <div class="header-wrapper">
+
+        <div class="back-container" onclick="goBack()">
+            <div class="back-button"></div>
+        </div>
+
+        <div class="app-header">
+            <h1>PENJUALAN FISIK</h1>
+            <p>Monitoring penjualan SP dan Voucher DSE</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="dashboard-container">
+
+    <div id="updateTime">
+        Update Data: Memuat...
+    </div>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Andi</th>
+                    <th>Farhan</th>
+                    <th>Enden</th>
+                    <th>Pebrian</th>
+                    <th>Total PCS</th>
+                    <th>Harga</th>
+                    <th>Total Rp</th>
+                </tr>
+            </thead>
+
+            <tbody id="penjualan-table">
+
+                <tr>
+                    <td colspan="8" class="loading-text">
+                        🔄 Sedang mengambil data Excel...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<footer class="bottom-nav">
+
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <a href="notif.html" class="bottom-item">
+
+        <div class="notif-container">
+            <span class="bell-icon">🔔</span>
+        </div>
+
+        <span>Notif</span>
+
+    </a>
+
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+
+<script>
+
+const excelFileUrl = "index-data.xlsx";
+const TARGET_SHEET_NAME = "penjualan-reguler-new";
+
+// ==========================
+// FETCH EXCEL
+// ==========================
+
+async function fetchExcelData(){
+
+    try{
+
+        const response =
+            await fetch(
+                excelFileUrl + "?v=" + Date.now()
+            );
+
+        if(!response.ok){
+            throw new Error("Gagal mengambil file Excel");
+        }
+
+        const lastModified =
+            response.headers.get("Last-Modified");
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer,{
+                type:"array"
+            });
+
+        const sheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        if(!sheet){
+            throw new Error("Sheet tidak ditemukan");
+        }
+
+        const matrix =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {
+                    header:1,
+                    defval:""
+                }
+            );
+
+        processAndRender(matrix);
+
+        // ==========================
+// TAMPILKAN WAKTU UPDATE
+// ==========================
+
+let updateDate = null;
+
+// PRIORITAS 1
+// TANGGAL DARI FILE EXCEL
+if (
+    workbook.Props &&
+    workbook.Props.ModifiedDate
+) {
+
+    updateDate =
+        new Date(
+            workbook.Props.ModifiedDate
+        );
+}
+
+// PRIORITAS 2
+// LAST MODIFIED SERVER
+if (
+    (!updateDate || isNaN(updateDate)) &&
+    lastModified
+) {
+
+    updateDate =
+        new Date(lastModified);
+}
+
+// TAMPILKAN
+if (
+    updateDate &&
+    !isNaN(updateDate)
+) {
+
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: " +
+        updateDate.toLocaleString(
+            "id-ID",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+} 
+
+else {
+
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: Tidak diketahui";
+}
+
+    }
+    
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "penjualan-table"
+        ).innerHTML = `
+            <tr>
+                <td colspan="8"
+                    class="loading-text">
+                    ⚠️ Gagal memuat data Excel
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+// ==========================
+// FORMAT ANGKA
+// ==========================
+
+function formatNumber(val){
+
+    if(
+        val === null ||
+        val === undefined ||
+        val === ""
+    ){
+        return `<span class="zero-val">-</span>`;
+    }
+
+    if(typeof val === "number"){
+        return val.toLocaleString("id-ID");
+    }
+
+    return val;
+
+}
+
+// ==========================
+// RENDER TABLE
+// ==========================
+
+function processAndRender(matrix){
+
+    let html = "";
+
+    matrix.forEach((row,index)=>{
+
+        if(!row || row.length === 0){
+
+            html += `
+                <tr class="empty-row">
+                    <td colspan="8"></td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        const col0 =
+            row[0]
+            ? row[0].toString().trim()
+            : "";
+
+        // BARIS JUDUL SECTION
+        if(
+            col0 === "SP" ||
+            col0 === "VOUCHER"
+        ){
+
+            html += `
+                <tr class="section-row">
+                    <td colspan="8">
+                        ${col0}
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        // SKIP HEADER KOLOM
+        if(
+            col0 === "Rabu, 27 Mei 2027" ||
+            col0 === "Andi"
+        ){
+            return;
+        }
+
+        const isTotal =
+            col0.toUpperCase().includes("TOTAL");
+
+        html += `
+            <tr class="${
+                isTotal
+                ? 'total-row'
+                : ''
+            }">
+
+                <td>${col0}</td>
+
+                <td>${formatNumber(row[1])}</td>
+
+                <td>${formatNumber(row[2])}</td>
+
+                <td>${formatNumber(row[3])}</td>
+
+                <td>${formatNumber(row[4])}</td>
+
+                <td>${formatNumber(row[5])}</td>
+
+                <td>${formatNumber(row[6])}</td>
+
+                <td>${formatNumber(row[7])}</td>
+
+            </tr>
+        `;
+
+    });
+
+    document.getElementById(
+        "penjualan-table"
+    ).innerHTML = html;
+
+}
+
+// ==========================
+// LOAD
+// ==========================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        fetchExcelData();
+
+        // AUTO REFRESH
+        setInterval(()=>{
+            fetchExcelData();
+        },30000);
+
+    }
+);
+
+</script>
+
+<script src="global-ui.js"></script>
+
+</body>
+</html>
