@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan Paket Jupiter - Monitor Real-time</title>
+    <link rel="stylesheet" href="global-ui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* Styling Tabel agar mirip Excel */
+.table-responsive {
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px; /* Ukuran font lebih kecil agar kolom muat banyak */
+    white-space: nowrap;
+}
+
+th {
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 2px solid #cbd5e1;
+    text-align: left;
+}
+
+td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+
+        .dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+        .filter-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .filter-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-select { width: 100%; padding: 10px 12px; font-size: 13.5px; color: #1e293b; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; outline: none; cursor: pointer; font-weight: 600; transition: border-color 0.2s; }
+        .filter-select:focus { border-color: #0284c7; background-color: #ffffff; }
+        
+        /* Desain Card Tampilan / Detail DSE */
+        .single-dse-card, .list-dse-card { background: #ffffff; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .single-dse-header, .list-dse-header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; padding: 14px 16px; }
+        .single-dse-header .name, .list-dse-header .name { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Desain Card Khusus Total Gabungan di bawah List */
+        .total-gabungan-card { background: #fffde7; border: 2px solid #facc15; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .total-gabungan-header { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #ffffff; padding: 14px 16px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Desain Card Ranking */
+        .ranking-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px; overflow: hidden; }
+        .ranking-header { background: linear-gradient(135deg, #475569 0%, #334155 100%); color: #ffffff; padding: 14px 16px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+
+        .detail-row-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .detail-row-item:last-child { border-bottom: none; }
+        .detail-row-item .label { color: #64748b; font-weight: 600; }
+        .detail-row-item .val { font-weight: 700; color: #1e293b; font-variant-numeric: tabular-nums; }
+        .detail-group-title { background-color: #f8fafc; padding: 8px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; }
+        
+        
+        /* Rank Badge Style */
+        .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #ffffff; font-weight: 700; font-size: 11px; margin-right: 8px; text-align: center; min-width: 24px; }
+        .rank-1 { background-color: #eab308; box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3); }
+        .rank-2 { background-color: #94a3b8; box-shadow: 0 2px 4px rgba(148, 163, 184, 0.3); }
+        .rank-3 { background-color: #b45309; box-shadow: 0 2px 4px rgba(180, 83, 9, 0.3); }
+        .rank-other { background-color: #64748b; }
+
+        .section-title-container { background-color: #1e293b; color: #ffffff; padding: 14px 16px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+        /* Konfigurasi Grid Ringkasan Atas (2x2) */
+        .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .summary-card-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .summary-card-box .title { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; }
+        .summary-card-box .value { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+        
+        @media(min-width: 640px) {
+            .summary-card-box .value { font-size: 20px; }
+            .summary-grid { gap: 16px; }
+            .filter-card { flex-direction: row; align-items: center; gap: 16px; }
+            .filter-label { white-space: nowrap; }
+            .filter-select { max-width: 300px; }
+            .all-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        @media(min-width: 1024px) {
+            .all-cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        /* ========================================
+   RESPONSIVE FLEXIBLE UI
+======================================== */
+
+/* CONTAINER UTAMA */
+.dashboard-container{
+    width:100%;
+    max-width:1450px;
+    margin:0 auto;
+    padding:0 12px 30px;
+}
+
+/* GRID SUMMARY */
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+/* CARD SUMMARY */
+.summary-card-box{
+    min-width:0;
+    overflow:hidden;
+}
+
+/* CARD LIST */
+.all-cards-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+}
+
+/* HEADER CARD */
+.single-dse-header,
+.list-dse-header,
+.ranking-header,
+.total-gabungan-header{
+    padding:10px 14px;
+}
+
+/* TITLE */
+.single-dse-header .name,
+.list-dse-header .name{
+    font-size:12px;
+    line-height:1.3;
+}
+
+/* ROW */
+.detail-row-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:8px 12px;
+    min-height:38px;
+}
+
+/* LABEL VALUE */
+.detail-row-item .label{
+    font-size:10px;
+    line-height:1.3;
+}
+
+.detail-row-item .val{
+    font-size:11px;
+    text-align:right;
+    line-height:1.3;
+}
+
+/* FILTER */
+.filter-card{
+    padding:10px 12px;
+    gap:8px;
+    </style>
+</head>
+<body>
+<div class="sticky-container">
+    <div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+    </div>
+        <div class="app-header">
+        <h1>PENJUALAN PAKET JUPITER</h1>
+        <p>Data Monitor Paket Mei 2026</p>
+        
+</div>
+</div>
+</div>
+       
+
+    <div class="dashboard-container">
+      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-top: 10px; margin-bottom: 5px; font-weight: 500;">
+        Update Data: Memuat...
+    </div>  
+        <!-- STRUKTUR GRID ATAS YANG SUDAH DISESUAIKAN PASANGAN VERTIKALNYA -->
+        <div class="summary-grid">
+            <!-- Kolom 1 - Baris 1: Pengambilan -->
+            <div class="summary-card-box" style="border-left: 4px solid #0284c7;">
+                <div class="title">Total Tagihan Pengambilan</div>
+                <div class="value" id="topTotalTake" style="color: #0284c7;">Rp 0</div>
+            </div>
+            <!-- Kolom 2 - Baris 1: Sisa Belum Bayar -->
+            <div class="summary-card-box" style="border-left: 4px solid #ef4444;">
+                <div class="title">Sisa Belum Bayar</div>
+                <div class="value" id="topTotalSisa" style="color: #ef4444;">Rp 0</div>
+            </div>
+            <!-- Kolom 1 - Baris 2: Pembayaran (Berada di bawah Pengambilan) -->
+            <div class="summary-card-box" style="border-left: 4px solid #16a34a;">
+                <div class="title">Total Pembayaran</div>
+                <div class="value" id="topTotalPay" style="color: #16a34a;">Rp 0</div>
+            </div>
+            <!-- Kolom 2 - Baris 2: Total Paket (Berada di bawah Sisa Belum Bayar) -->
+            <div class="summary-card-box" style="border-left: 4px solid #64748b;">
+                <div class="title">Total Akumulasi Paket Jupiter</div>
+                <div class="value" id="topTotalQty" style="color: #64748b;">0 Paket</div>
+            </div>
+        </div>
+
+<select class="filter-select" id="dseFilter">
+    <option value="ALL" style="text-align: center">-- TAMPILKAN SEMUA DATA --</option>
+    <option value="SUMMARY" style="text-align: center">-- SUMMARY PAKET JUPITER --</option>
+</select>
+
+        <div id="mainCardsContainer" style="margin-top: 10px">
+            <div class="section-title-container">
+                📞 REKAPITULASI PAKET JUPITER JUNI 2026
+            </div>
+            
+            <div class="all-cards-grid" id="cardsListContainer" style="display: none;">
+            </div>
+            
+            <div class="ranking-card" id="rankingCard">
+            </div>
+
+            <div class="total-gabungan-card" id="totalGabunganCard">
+            </div>
+        </div>
+    </div>
+<div id="sync-total-paket" style="display:none;">
+    2500000
+</div>
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+   <script>
+    const EXCEL_FILE_URL = 'index-data.xlsx'; 
+    const TARGET_SHEET_NAME = 'penjualan-paket-jupiter';
+
+    let currentLoadedData = [];
+
+    function formatRupiah(angka) {
+        if (angka === 0 || isNaN(angka)) return '-';
+        return new Intl.NumberFormat('id-ID').format(angka);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadExcelSpreadsheet();
+    });
+
+async function loadExcelSpreadsheet() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + "?t=" + Date.now());
+        if (!response.ok) throw new Error('File excel tidak ditemukan.');
+        const arrayBuffer = await response.arrayBuffer();
+
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        
+        // Mengambil properti tanggal modifikasi
+        let excelModifiedDate = null;
+        if (workbook.Props && workbook.Props.ModifiedDate) {
+            excelModifiedDate = new Date(workbook.Props.ModifiedDate);
+        } else {
+            // Jika tidak ada di Props, gunakan waktu saat ini sebagai fallback
+            excelModifiedDate = new Date(); 
+        }
+
+        const sheetName = workbook.SheetNames.includes(TARGET_SHEET_NAME) ? TARGET_SHEET_NAME : workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: 0 });
+
+        renderDashboard(rawData, excelModifiedDate);
+    } catch (err) {
+        console.error(err);
+        document.getElementById("updateTime").textContent = "Update Data: gagal memuat";
+    }
+}
+
+function formatDate(val) {
+    if (!val) return '-';
+    // Jika data adalah angka (format serial Excel)
+    if (typeof val === 'number') {
+        const date = new Date(Math.round((val - 25569) * 86400 * 1000));
+        return date.toLocaleDateString('id-ID'); // Format DD/MM/YYYY
+    }
+    // Jika data sudah berupa string
+    return val;
+}
+
+function renderDashboard(rawData, excelModifiedDate) {
+    currentLoadedData = rawData; 
+    
+    // Tampilkan tanggal update dari file Excel
+    const updateTimeElement = document.getElementById("updateTime");
+    if (excelModifiedDate) {
+        // Format tanggal ke Indonesia
+        const formattedDate = excelModifiedDate.toLocaleString('id-ID', {
+            day: '2-digit', month: 'long', year: 'numeric', 
+            hour: '2-digit', minute: '2-digit'
+        });
+        updateTimeElement.textContent = "Update Data Terakhir: " + formattedDate;
+    } else {
+        updateTimeElement.textContent = "Update Data: Informasi tidak tersedia";
+    }
+    
+    // Update kartu atas
+    const totals = calculateTotals(rawData);
+    document.getElementById('topTotalTake').textContent = 'Rp ' + formatRupiah(totals.take);
+    document.getElementById('topTotalPay').textContent = 'Rp ' + formatRupiah(totals.pay);
+    document.getElementById('topTotalSisa').textContent = 'Rp ' + formatRupiah(totals.take - totals.pay);
+    document.getElementById('topTotalQty').textContent = totals.qty + ' Paket';
+
+    // Populate filter CSO
+    const dseFilter = document.getElementById('dseFilter');
+    const csoList = [...new Set(rawData.slice(2).map(r => r[6]).filter(n => n !== 0))];
+    csoList.forEach(cso => {
+        let opt = document.createElement('option');
+        opt.value = cso; opt.innerHTML = cso;
+        dseFilter.appendChild(opt);
+    });
+
+    renderTable('ALL');
+}
+
+
+// Tambahkan fungsi pembantu untuk menghitung total keseluruhan
+function calculateTotals(data) {
+    let totals = { take: 0, pay: 0, qty: 0 };
+    data.slice(2).forEach(row => {
+        totals.take += (parseInt(row[8]) || 0);
+        totals.pay += (parseInt(row[9]) || 0);
+        totals.qty += (parseInt(row[7]) || 0);
+    });
+    return totals;
+}
+
+function renderTable(filterValue) {
+    const cardsListContainer = document.getElementById('cardsListContainer');
+    const data = currentLoadedData.slice(2);
+    
+    // Variabel Total
+    let totalQty = 0, totalTake = 0, totalPay = 0, totalSelisih = 0;
+    
+    // 1. Tampilan Summary CSO
+    // 1. Tampilan Summary CSO
+    if (filterValue === 'SUMMARY') {
+        let summary = {};
+        // Tambahkan variabel total per paket
+        let totalP1 = 0, totalP2 = 0, totalP3 = 0, totalP4 = 0; 
+        
+        data.forEach(row => {
+            let cso = row[6];
+            let namaPaket = row[2] ? row[2].toString().toUpperCase().trim() : ''; 
+            let qty = parseInt(row[7]) || 0;
+            
+            if (!cso || cso === 0) return;
+            
+            if (!summary[cso]) {
+                summary[cso] = { pengambilan: 0, bayar: 0, p1: 0, p2: 0, p3: 0, p4: 0, total: 0 };
+            }
+            
+            if((parseInt(row[8]) || 0) === 0 && (parseInt(row[9]) || 0) === 0) return;
+
+            summary[cso].pengambilan += (parseInt(row[8]) || 0);
+            summary[cso].bayar += (parseInt(row[9]) || 0);
+            summary[cso].total += qty;
+            
+            // Logika perhitungan dinamis
+            if (namaPaket.includes('PAKET1')) { summary[cso].p1 += qty; totalP1 += qty; }
+            else if (namaPaket.includes('PAKET2')) { summary[cso].p2 += qty; totalP2 += qty; }
+            else if (namaPaket.includes('PAKET3')) { summary[cso].p3 += qty; totalP3 += qty; }
+            else if (namaPaket.includes('PAKET4')) { summary[cso].p4 += qty; totalP4 += qty; }
+        });
+
+        let rows = Object.keys(summary).map((cso, i) => {
+            let s = summary[cso];
+            totalTake += s.pengambilan; totalPay += s.bayar; totalQty += s.total;
+            return `<tr>
+                <td>${i+1}</td><td>${cso}</td><td>${formatRupiah(s.pengambilan)}</td>
+                <td>${formatRupiah(s.bayar)}</td><td>${formatRupiah(s.pengambilan - s.bayar)}</td>
+                <td>${s.p1}</td><td>${s.p2}</td><td>${s.p3}</td><td>${s.p4}</td>
+                <td style="font-weight:700">${s.total}</td>
+            </tr>`;
+        }).join('');
+
+        // Baris footer dengan total P1, P2, P3, P4
+        cardsListContainer.innerHTML = `
+            <div class="table-responsive"><table>
+                <thead><tr><th>No</th><th>Nama CSO</th><th>Pengambilan</th><th>Pembayaran</th><th>Sisa</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>Total</th></tr></thead>
+                <tbody>${rows}
+                <tr style="background:#f1f5f9; font-weight:700;">
+                    <td colspan="2">TOTAL</td><td>${formatRupiah(totalTake)}</td><td>${formatRupiah(totalPay)}</td>
+                    <td>${formatRupiah(totalTake - totalPay)}</td>
+                    <td>${totalP1}</td><td>${totalP2}</td><td>${totalP3}</td><td>${totalP4}</td>
+                    <td>${totalQty}</td>
+                </tr></tbody>
+            </table></div>`;
+    }
+
+    // 2. Tampilan ALL atau per CSO
+    else {
+        let filtered = (filterValue === 'ALL') ? data : data.filter(r => r[6] === filterValue);
+        
+        filtered = filtered.filter(row => (parseInt(row[8]) || 0) !== 0 || (parseInt(row[9]) || 0) !== 0);
+
+        let rows = filtered.map((row, i) => {
+            totalQty += (parseInt(row[7]) || 0);
+            totalTake += (parseInt(row[8]) || 0);
+            totalPay += (parseInt(row[9]) || 0);
+            totalSelisih += (parseInt(row[10]) || 0);
+            return `<tr>
+                <td>${i+1}</td><td>${formatDate(row[1])}</td><td>${row[2] || '-'}</td>
+                <td>${row[5] || '-'}</td><td>${row[6] || '-'}</td><td>${row[7] || 0}</td>
+                <td>${formatRupiah(row[8])}</td><td>${formatRupiah(row[9])}</td>
+                <td style="color:${(row[10]||0) !== 0 ? 'red' : 'green'}">${formatRupiah(row[10])}</td>
+                <td>${formatDate(row[11])}</td>
+            </tr>`;
+        }).join('');
+
+        cardsListContainer.innerHTML = `
+            <div class="table-responsive"><table>
+                <thead><tr><th>No</th><th>Tgl</th><th>Paket</th><th>Outlet</th><th>CSO</th><th>Qty</th><th>Tagihan</th><th>Bayar</th><th>Selisih</th><th>Ket</th></tr></thead>
+                <tbody>${rows}
+                <tr style="background:#f1f5f9; font-weight:700;">
+                    <td colspan="5">TOTAL</td><td>${totalQty}</td><td>${formatRupiah(totalTake)}</td>
+                    <td>${formatRupiah(totalPay)}</td><td>${formatRupiah(totalSelisih)}</td><td>-</td>
+                </tr></tbody>
+            </table></div>`;
+    }
+    cardsListContainer.style.display = 'block';
+}
+
+
+// Tambahkan Listener
+document.getElementById('dseFilter').addEventListener('change', (e) => {
+    renderTable(e.target.value);
+});
+
+
+
+    function setupFilterListener() {
+        // ... (Logika filter tetap sama) ...
+    }
+</script>
+
+    <script src="global-notif.js"></script>
+<script src="global-ui.js"></script>
+</body>
+</html>
+
+
+
+
+
