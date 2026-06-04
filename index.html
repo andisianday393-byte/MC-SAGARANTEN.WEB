@@ -981,24 +981,31 @@ async function updateTotalPaket() {
         // 1. Hitung Total dari sheet 'penjualan-paket-jupiter'
         const worksheetJupiter = workbook.Sheets['penjualan-paket-jupiter'];
         const dataJupiter = XLSX.utils.sheet_to_json(worksheetJupiter);
-        let totalJupiter = 0;
-        dataJupiter.forEach(row => {
-            totalJupiter += ambilAngka(row['Jumlah Pembayaran']);
-        });
+        let totalJupiter = dataJupiter.reduce((sum,row)=>{
+
+    const key = Object.keys(row).find(
+        k => k.trim().toLowerCase() === 'jumlah pembayaran'
+    );
+
+    return sum + (Number(row[key]) || 0);
+
+},0);
 
         // 2. Hitung Total dari sheet 'penjualan-direct-selling'
         const worksheetDS = workbook.Sheets['penjualan-direct-selling'];
         const dataDS = XLSX.utils.sheet_to_json(worksheetDS);
         let totalDS = 0;
         dataDS.forEach(row => {
-            // Asumsi baris yang memiliki ID DSE adalah data valid
+            // Memastikan baris tersebut adalah data transaksi (cek ID DSE)
             if (row['ID DSE']) {
                 totalDS += ambilAngka(row['Pembayaran']);
             }
         });
 
-        // 3. Gabungkan total dan update ke tampilan
+        // 3. Gabungkan total
         const grandTotal = totalJupiter + totalDS;
+        
+        // 4. Update tampilan
         document.getElementById('total-paket').innerText = formatRupiah(grandTotal);
         
     } catch(error) {
@@ -1006,6 +1013,7 @@ async function updateTotalPaket() {
         document.getElementById('total-paket').innerText = 'Error';
     }
 }
+
 
 
 async function updateTotalHifi() {
