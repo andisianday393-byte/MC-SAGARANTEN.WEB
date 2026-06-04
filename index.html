@@ -976,28 +976,37 @@ async function updateTotalPaket() {
     try {
         const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
         const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type:'array' });
-        let grandTotal = 0;
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        
+        // 1. Hitung Total dari sheet 'penjualan-paket-jupiter'
+        const worksheetJupiter = workbook.Sheets['penjualan-paket-jupiter'];
+        const dataJupiter = XLSX.utils.sheet_to_json(worksheetJupiter);
+        let totalJupiter = 0;
+        dataJupiter.forEach(row => {
+            totalJupiter += ambilAngka(row['Jumlah Pembayaran']);
+        });
 
-        function ambilCell(sheetName, cell) {
-            const worksheet = workbook.Sheets[sheetName];
-            if (!worksheet) {
-                console.log('Sheet tidak ditemukan:', sheetName);
-                return 0;
+        // 2. Hitung Total dari sheet 'penjualan-direct-selling'
+        const worksheetDS = workbook.Sheets['penjualan-direct-selling'];
+        const dataDS = XLSX.utils.sheet_to_json(worksheetDS);
+        let totalDS = 0;
+        dataDS.forEach(row => {
+            // Asumsi baris yang memiliki ID DSE adalah data valid
+            if (row['ID DSE']) {
+                totalDS += ambilAngka(row['Pembayaran']);
             }
-            const value = worksheet[cell] ? worksheet[cell].v : 0;
-            return ambilAngka(value);
-        }
+        });
 
-        const totalTM = ambilCell('penjualan-paket-tm', 'E7');
-        const totalDS = ambilCell('penjualan-direct-selling', 'E6');
-        grandTotal = totalTM + totalDS;
+        // 3. Gabungkan total dan update ke tampilan
+        const grandTotal = totalJupiter + totalDS;
         document.getElementById('total-paket').innerText = formatRupiah(grandTotal);
+        
     } catch(error) {
-        console.error(error);
+        console.error('Error saat menghitung total paket:', error);
         document.getElementById('total-paket').innerText = 'Error';
     }
 }
+
 
 async function updateTotalHifi() {
     try {
