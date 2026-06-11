@@ -279,7 +279,17 @@ body{
     border: 1px solid #fecaca; 
 }
 
+.badge-segel {
+    background-color: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
 
+.badge-onhand {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+}
     </style>
 </head>
 <body>
@@ -540,13 +550,19 @@ if (
                 TARGET_SHEET_NAME
             ];
 
-        const jsonData =
-            XLSX.utils.sheet_to_json(
-                worksheet,
-                { defval: '' }
-            );
+        const rawData = XLSX.utils.sheet_to_json(
+    worksheet,
+    { defval: '' }
+);
 
-        renderHiFiDashboard(jsonData);
+// Hilangkan baris kosong
+const jsonData = rawData.filter(row =>
+    Object.values(row).some(value =>
+        String(value).trim() !== ''
+    )
+);
+
+renderHiFiDashboard(jsonData);
 
     } catch (err) {
 
@@ -600,15 +616,31 @@ const statusText = keterangan === '' ? '-' : keterangan;
         // Tentukan style badge berdasarkan isi kolom Keterangan
         let badgeClass = 'badge-status';
 const ketLower = statusText.toLowerCase();
+        if (ketLower.includes('stok gudang')) {
 
-        if (ketLower.includes('segel')) {
     badgeClass += ' badge-segel';
-} else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
+
+} else if (ketLower.includes('on hand dse')) {
+
+    badgeClass += ' badge-onhand';
+
+} else if (
+    ketLower.includes('terjual') ||
+    ketLower.includes('lunas')
+) {
+
     badgeClass += ' badge-terjual-sukses';
-} else if (ketLower.includes('reture')) {
+
+} else if (
+    ketLower.includes('reture')
+) {
+
     badgeClass += ' badge-status-danger';
+
 } else {
+
     badgeClass += ' badge-sold';
+
 }
 
         // --- LOGIKA PERHITUNGAN (DIMODIFIKASI: REWARD & RETURE DIKECUALIKAN) ---
@@ -685,7 +717,16 @@ else if (
     });
 
 }
+const hasData =
+    barang !== '-' ||
+    nomor !== '-' ||
+    iccid !== '-' ||
+    imei !== '-' ||
+    nama !== '' ||
+    harga > 0 ||
+    jumlah > 0;
 
+if (!hasData) return;
         const tr = document.createElement('tr');
 tr.className = 'row-item';
 tr.setAttribute('data-nama', nama);
@@ -720,15 +761,21 @@ tbody.appendChild(tr);
     hifiFilter.appendChild(optGudang);
 
     const totalTr = document.createElement('tr');
-    totalTr.className = 'total-row';
-    totalTr.id = 'defaultTotalRow';
-    totalTr.innerHTML = `
-        <td class="text-left" colspan="4" data-label="Kategori">TOTAL SISA TAGIHAN</td>
-        <td class="qty-col" id="bottomTotalQty" data-label="Total Unit">${sisaTagihanQty} Unit</td>
-        <td colspan="2" class="hide-mobile"></td>
-        <td class="text-right currency-col" id="bottomTotalNominal" data-label="Total Sisa">${formatRupiah(sisaTagihanNominal)}</td>
-        <td colspan="2" class="hide-mobile"></td>
-    `;
+totalTr.className = 'total-row';
+totalTr.id = 'defaultTotalRow';
+totalTr.innerHTML = `
+    <td class="text-left" colspan="4" data-label="Kategori">
+        TOTAL SISA TAGIHAN
+    </td>
+
+    <td class="qty-col"
+        id="bottomTotalQty"
+        data-label="Total Unit">
+        ${sisaTagihanQty} Unit
+    </td>
+
+    <td colspan="6" class="hide-mobile"></td>
+`;
     tbody.appendChild(totalTr);
 
     document.getElementById('topTotalUnit').textContent = `${totalStok} Unit`;
