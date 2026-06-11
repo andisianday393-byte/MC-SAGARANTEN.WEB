@@ -352,7 +352,7 @@ function renderDashboard(rawData, excelModifiedDate) {
 
     // Populate filter CSO
     const dseFilter = document.getElementById('dseFilter');
-    const csoList = [...new Set(rawData.slice(2).map(r => r[6]).filter(n => n !== 0))];
+    const csoList = [...new Set(rawData.slice(1).map(r => r[6]).filter(n => n !== 0))];
     csoList.forEach(cso => {
         let opt = document.createElement('option');
         opt.value = cso; opt.innerHTML = cso;
@@ -366,7 +366,7 @@ function renderDashboard(rawData, excelModifiedDate) {
 // Tambahkan fungsi pembantu untuk menghitung total keseluruhan
 function calculateTotals(data) {
     let totals = { take: 0, pay: 0, qty: 0 };
-    data.slice(2).forEach(row => {
+    data.slice(1).forEach(row => {
         totals.take += (parseInt(row[8]) || 0);
         totals.pay += (parseInt(row[9]) || 0);
         totals.qty += (parseInt(row[7]) || 0);
@@ -376,7 +376,7 @@ function calculateTotals(data) {
 
 function renderTable(filterValue) {
     const cardsListContainer = document.getElementById('cardsListContainer');
-    const data = currentLoadedData.slice(2);
+    const data = currentLoadedData.slice(1);
     
     // Variabel Total
     let totalQty = 0, totalTake = 0, totalPay = 0, totalSelisih = 0;
