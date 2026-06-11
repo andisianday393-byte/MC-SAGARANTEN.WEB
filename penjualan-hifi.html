@@ -323,22 +323,24 @@ body{
             <div class="table-responsive" id="tableWrapper">
                 <div id="loadingMessage" class="loading-text">Sedang memproses & sinkronisasi data file Excel...</div>
                 <table id="hifiTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th class="text-center" style="width: 50px;">No</th>
-                            <th>Tgl Ambil</th>
-                            <th class="text-left">Nama</th>
-                            <th>Barang</th>
-                            <th>Jumlah</th>
-                            <th>Nomor HiFi</th>
-                            <th>IMEI Devices</th>
-                            <th>Harga</th>
-                            <th>Tgl Bayar</th>
-                            <th>Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
+    <thead>
+        <tr>
+            <th class="text-center" style="width: 50px;">No</th>
+            <th>Barang</th>
+            <th>Jumlah</th>
+            <th>Nomor Hifi</th>
+            <th>ICCID</th>
+            <th>IMEI Devices</th>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th>Tgl Ambil</th>
+            <th>Tgl Bayar</th>
+            <th>Keterangan</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
             </div>
         </div>
     </div>
@@ -577,75 +579,131 @@ if (
     let nominalTerjualLunas = 0;
 
     data.forEach(row => {
-        const no = row['No'];
-        const nama = (row['Nama'] || '').trim().toUpperCase();
-        if (!no || !nama) return;
-
-        totalStok++;
-        if(nama !== 'GUDANG') listNamaFilter.add(nama);
-
-        const tglAmbil = parseExcelDate(row['Tgl Ambil']);
-        const tglBayar = parseExcelDate(row['Tgl Bayar']);
-        
-        const barang = row['Barang'] || '-';
-        const qty = parseInt(row['Jumlah']) || 0;
-        const noHifi = row['Nomor Hifi'] || '-';
-        const imei = row['IMEI Devices'] || '-';
-        const harga = parseInt(row['HARGA']) || 0;
-
-        // --- PERUBAHAN: MENGAMBIL KETERANGAN LANGSUNG DARI EXCEL ---
-        const rawKeterangan = (row['Keterangan'] || '').trim();
-        const statusText = rawKeterangan === '' ? '-' : rawKeterangan;
+    // 1. Pastikan nama key di row['...'] SAMA PERSIS dengan header di Excel
+    const no = row['No'];
+    const barang = row['Barang'] || '-';
+    const jumlah = parseInt(row['Jumlah']) || 0;
+    totalStok += jumlah;
+    const nomor = row['Nomor Hifi'] || '-'; 
+    const iccid = row['ICCID'] || '-';
+    const imei = row['IMEI Devices'] || '-';
+    const nama = (row['Nama'] || '').trim().toUpperCase();
+    if (nama && nama !== 'GUDANG') {
+    listNamaFilter.add(nama);
+}
+    const harga = parseInt(row['Harga']) || 0; // Pastikan header Excel adalah 'Harga'
+    const tglAmbil = parseExcelDate(row['Tgl Ambil']);
+    const tglBayar = parseExcelDate(row['Tgl Bayar']);
+    const keterangan = (row['Keterangan'] || '').trim();
+const statusText = keterangan === '' ? '-' : keterangan;
         
         // Tentukan style badge berdasarkan isi kolom Keterangan
         let badgeClass = 'badge-status';
-        const ketLower = statusText.toLowerCase();
+const ketLower = statusText.toLowerCase();
 
         if (ketLower.includes('segel')) {
-            badgeClass += ' badge-segel';
-        } else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
-            badgeClass += ' badge-terjual-sukses';
-        } else if (ketLower.includes('reture')) {
-            badgeClass += ' badge-status-danger'; // Pastikan CSS ini ada
-        } else {
-            badgeClass += ' badge-sold'; // Default
-        }
+    badgeClass += ' badge-segel';
+} else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
+    badgeClass += ' badge-terjual-sukses';
+} else if (ketLower.includes('reture')) {
+    badgeClass += ' badge-status-danger';
+} else {
+    badgeClass += ' badge-sold';
+}
 
         // --- LOGIKA PERHITUNGAN (DIMODIFIKASI: REWARD & RETURE DIKECUALIKAN) ---
-if (nama !== 'GUDANG') {
-    // KECECUALIAN: reward dan reture TIDAK masuk hitungan On Hand DSE
-    if (ketLower.includes('reward') || ketLower.includes('reture')) {
-        // Lewati: tidak menambah sisaOnHandDSE, sisaTagihanNominal, atau sisaTagihanQty
-        // Item ini tetap muncul di tabel tapi tidak dihitung di dashboard
-    } else if (ketLower.includes('terjual') || ketLower.includes('lunas')) {
-        dseSudahBayarCount++;
+if (nama !== 'STOK GUDANG') {
+
+    // Reward & Reture tidak dihitung
+if (ketLower.includes('stok gudang')) {
+
+    segelGudangCount += jumlah;
+
+    gudangDataMap.push({
+    barang: barang,
+    noHifi: nomor,
+    imei: imei,
+    iccid: iccid,
+    qty: jumlah
+});
+
+}
+else if (ketLower.includes('reward') || ketLower.includes('reture')) {
+
+    // tidak dihitung
+
+}
+else if (
+    ketLower.includes('terjual') ||
+    ketLower.includes('lunas')
+) {
+
+    dseSudahBayarCount += jumlah;
+    nominalTerjualLunas += harga;
+
+}
+else if (
+    ketLower.includes('on hand dse')
+) {
+
+    sisaOnHandDSE += jumlah;
+    sisaTagihanNominal += harga;
+    sisaTagihanQty += jumlah;
+
+}
+
+    // Sudah terjual / lunas
+    else if (
+        ketLower.includes('terjual') ||
+        ketLower.includes('lunas')
+    ) {
+
+        dseSudahBayarCount += jumlah;
         nominalTerjualLunas += harga;
-    } else {
-        sisaOnHandDSE++;
-        sisaTagihanNominal += harga;
-        sisaTagihanQty++;
+
     }
+
+    // ON HAND DSE
+    else if (
+        ketLower.includes('on hand dse')
+    ) {
+
+        sisaOnHandDSE += jumlah;
+        sisaTagihanNominal += harga;
+        sisaTagihanQty += jumlah;
+
+    }
+
 } else {
-    segelGudangCount++;
-    gudangDataMap.push({ noHifi, imei, qty });
+
+    segelGudangCount += jumlah;
+
+    gudangDataMap.push({
+        noHifi: nomor,
+        imei: imei,
+        qty: jumlah
+    });
+
 }
 
         const tr = document.createElement('tr');
-        tr.className = 'row-item';
-        tr.setAttribute('data-nama', nama);
-        tr.innerHTML = `
-            <td class="text-center" data-label="No">${no}</td>
-            <td class="text-center" data-label="Tgl Ambil">${tglAmbil}</td>
-            <td class="text-left" data-label="Nama" style="font-weight: 700; color: ${nama === 'GUDANG' ? '#64748b' : '#1e293b'};">${nama}</td>
-            <td class="text-center" data-label="Barang">${barang}</td>
-            <td class="qty-col" data-label="Jumlah">${qty}</td>
-            <td class="text-center mono-col" data-label="Nomor HiFi">${noHifi}</td>
-            <td class="text-center mono-col" data-label="IMEI Devices">${imei}</td>
-            <td class="text-right currency-col" data-label="Harga">${harga ? formatRupiah(harga) : '<span class="empty-cell">-</span>'}</td>
-            <td class="text-center" data-label="Tgl Bayar">${tglBayar === '-' || tglBayar === '' ? '<span class="empty-cell">-</span>' : tglBayar}</td>
-            <td class="text-center" data-label="Keterangan"><span class="${badgeClass}">${statusText}</span></td>
-        `;
-        tbody.appendChild(tr);
+tr.className = 'row-item';
+tr.setAttribute('data-nama', nama);
+tr.setAttribute('data-keterangan', ketLower);
+tr.innerHTML = `
+    <td class="text-center" data-label="No">${no}</td>
+    <td class="text-center" data-label="Barang">${barang}</td>
+    <td class="qty-col" data-label="Jumlah">${jumlah}</td>
+    <td class="text-center" data-label="Nomor Hifi">${nomor}</td>
+    <td class="text-center mono-col" data-label="ICCID">${iccid}</td>
+    <td class="text-center mono-col" data-label="IMEI">${imei}</td>
+    <td class="text-left" data-label="Nama" style="font-weight: 700;">${nama}</td>
+    <td class="text-right currency-col" data-label="Harga">${harga ? formatRupiah(harga) : '-'}</td>
+    <td class="text-center" data-label="Tgl Ambil">${tglAmbil}</td>
+    <td class="text-center" data-label="Tgl Bayar">${tglBayar}</td>
+    <td class="text-center" data-label="Keterangan"><span class="${badgeClass}">${keterangan || '-'}</span></td>
+`;
+tbody.appendChild(tr);
     });
 
     // ... sisa kode (filter, total, dsb) tetap sama ...
@@ -686,44 +744,115 @@ if (nama !== 'GUDANG') {
     setupHifiFilterListener();
 }
 
+function buildGudangSingleView() {
 
-        function buildGudangSingleView() {
-            const container = document.getElementById('gudangSingleView');
-            let totalGudangUnit = 0;
-            gudangDataMap.forEach(item => totalGudangUnit += item.qty);
+    const container = document.getElementById('gudangSingleView');
 
-            let optionsHtml = '<option value="">-- PILIH NOMOR HIFI --</option>';
-            gudangDataMap.forEach(item => {
-                optionsHtml += `<option value="${item.noHifi}">${item.noHifi}</option>`;
-            });
+    let totalGudangUnit = 0;
 
-            container.innerHTML = `
-                <div class="gudang-single-layout">
-                    <div class="gudang-form-group">
-                        <label for="gudangNoHifiSelect">Nomor HiFi (Stok Segel)</label>
-                        <select id="gudangNoHifiSelect" class="filter-select">${optionsHtml}</select>
-                    </div>
-                    <div class="gudang-form-group">
-                        <label>IMEI Devices</label>
-                        <div id="gudangImeiDisplay" class="gudang-display-box">Silahkan pilih Nomor HiFi terlebih dahulu</div>
-                    </div>
-                    <div class="gudang-total-box"><span>TOTAL UNIT GUDANG</span><span>${totalGudangUnit} Unit</span></div>
-                </div>
-            `;
+    gudangDataMap.forEach(item => {
+        totalGudangUnit += item.qty;
+    });
 
-            const selectEl = document.getElementById('gudangNoHifiSelect');
-            const displayEl = document.getElementById('gudangImeiDisplay');
+    container.innerHTML = `
 
-            selectEl.addEventListener('change', function() {
-                if (!this.value) {
-                    displayEl.textContent = 'Silahkan pilih Nomor HiFi terlebih dahulu';
-                    return;
-                }
-                const match = gudangDataMap.find(item => item.noHifi === this.value);
-                displayEl.textContent = match ? match.imei : '-';
-            });
+    <div class="gudang-single-layout">
+
+        <div class="gudang-form-group">
+            <label>Filter Jenis HiFi</label>
+
+            <select id="filterJenisGudang" class="filter-select">
+                <option value="ALL">SEMUA HIFI</option>
+                <option value="IM3">HIFI IM3</option>
+                <option value="3ID">HIFI 3ID</option>
+            </select>
+        </div>
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Barang</th>
+                        <th>Nomor Hifi</th>
+                        <th>ICCID</th>
+                        <th>IMEI</th>
+                        <th>Qty</th>
+                    </tr>
+                </thead>
+
+                <tbody id="gudangTableBody"></tbody>
+
+            </table>
+
+        </div>
+
+        <div class="gudang-total-box">
+            <span>TOTAL UNIT GUDANG</span>
+            <span id="gudangTotalUnit">${totalGudangUnit} Unit</span>
+        </div>
+
+    </div>
+    `;
+
+    renderGudangTable('ALL');
+
+    document
+        .getElementById('filterJenisGudang')
+        .addEventListener('change', function () {
+
+            renderGudangTable(this.value);
+
+        });
+}
+function renderGudangTable(filterJenis) {
+
+    const tbody =
+        document.getElementById('gudangTableBody');
+
+    tbody.innerHTML = '';
+
+    let totalUnit = 0;
+
+    gudangDataMap.forEach(item => {
+
+        const barangUpper =
+            (item.barang || '').toUpperCase();
+
+        let tampil = true;
+
+        if (filterJenis === 'IM3') {
+
+            tampil =
+                barangUpper.includes('IM3');
+
+        } else if (filterJenis === '3ID') {
+
+            tampil =
+                barangUpper.includes('3ID');
         }
 
+        if (!tampil) return;
+
+        totalUnit += item.qty;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.barang}</td>
+                <td>${item.noHifi}</td>
+                <td>${item.iccid}</td>
+                <td>${item.imei}</td>
+                <td class="qty-col">${item.qty}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById(
+        'gudangTotalUnit'
+    ).textContent =
+        totalUnit + ' Unit';
+}
         function setupHifiFilterListener() {
             const hifiFilter = document.getElementById('hifiFilter');
             const tableRows = document.querySelectorAll('#tableBody .row-item');
