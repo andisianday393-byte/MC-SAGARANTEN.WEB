@@ -547,9 +547,35 @@ async function loadExcelSpreadsheet() {
                 `;
                 tableBody.appendChild(tr);
             });
+// BARIS TOTAL
+const totalSisa = totalTake - totalPay;
 
-            // Update Summary Cards
-            const totalSisa = totalTake - totalPay;
+const totalRow = document.createElement('tr');
+totalRow.className = 'total-row';
+
+totalRow.innerHTML = `
+    <td class="text-left">
+        <strong>TOTAL KESELURUHAN</strong>
+    </td>
+    <td class="qty-col">${totalSp3gb}</td>
+    <td class="text-right currency-col">
+        Rp ${formatRupiah(totalTake)}
+    </td>
+    <td class="text-right currency-col">
+        Rp ${formatRupiah(totalPay)}
+    </td>
+    <td class="text-center currency-col">
+        ${totalSisa <= 0 ? 'LUNAS' : 'Rp ' + formatRupiah(totalSisa)}
+    </td>
+    <td class="qty-col">${totalHt10}</td>
+    <td class="qty-col">${totalHt}</td>
+    <td class="qty-col">
+        ${totalAllQty}
+    </td>
+`;
+
+tableBody.appendChild(totalRow);// Update Summary Cards
+            
             document.getElementById('topTotalTake').textContent = 'Rp ' + formatRupiah(totalTake);
             document.getElementById('topTotalPay').textContent = 'Rp ' + formatRupiah(totalPay);
             document.getElementById('topTotalQty').textContent = totalAllQty + ' Pcs';
