@@ -137,7 +137,7 @@ body{
 .back-container {
     position: absolute; 
     top: 50%;
-    left: 10px;
+    left: 20px;
     transform: translateY(-50%);
     padding: 10px; /* Memberi area klik yang luas */
     cursor: pointer;
