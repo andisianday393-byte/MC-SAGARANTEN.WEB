@@ -293,23 +293,23 @@ async function loadExcelSpreadsheet() {
         const response = await fetch(EXCEL_FILE_URL + "?t=" + Date.now());
         if (!response.ok) throw new Error('File excel tidak ditemukan.');
         const arrayBuffer = await response.arrayBuffer();
-
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         
-        // Mengambil properti tanggal modifikasi
-        let excelModifiedDate = null;
-        if (workbook.Props && workbook.Props.ModifiedDate) {
-            excelModifiedDate = new Date(workbook.Props.ModifiedDate);
-        } else {
-            // Jika tidak ada di Props, gunakan waktu saat ini sebagai fallback
-            excelModifiedDate = new Date(); 
-        }
-
         const sheetName = workbook.SheetNames.includes(TARGET_SHEET_NAME) ? TARGET_SHEET_NAME : workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: 0 });
+        
+        // Gunakan raw: false untuk format data yang lebih bersih
+        // defval: null membantu mendeteksi cell kosong
+        const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null });
 
-        renderDashboard(rawData, excelModifiedDate);
+        // Filter: Hanya ambil baris yang setidaknya punya isi di kolom ke-1 sampai ke-8
+        // Ini akan membuang baris yang kosong melompong di akhir file
+        const cleanData = rawData.filter(row => {
+            // Cek apakah baris ini memiliki isi (bukan baris kosong)
+            return row.some(cell => cell !== null && cell !== undefined && cell !== "");
+        });
+
+        renderDashboard(cleanData, new Date());
     } catch (err) {
         console.error(err);
         document.getElementById("updateTime").textContent = "Update Data: gagal memuat";
@@ -376,7 +376,8 @@ function calculateTotals(data) {
 
 function renderTable(filterValue) {
     const cardsListContainer = document.getElementById('cardsListContainer');
-    const data = currentLoadedData.slice(1);
+    // Gunakan data bersih (sudah difilter di awal)
+    const data = currentLoadedData.slice(1); 
     
     // Variabel Total
     let totalQty = 0, totalTake = 0, totalPay = 0, totalSelisih = 0;
@@ -441,7 +442,11 @@ function renderTable(filterValue) {
     else {
         let filtered = (filterValue === 'ALL') ? data : data.filter(r => r[6] === filterValue);
         
-        filtered = filtered.filter(row => (parseInt(row[8]) || 0) !== 0 || (parseInt(row[9]) || 0) !== 0);
+        // Filter baris agar hanya menampilkan data yang ada nilainya
+        filtered = filtered.filter(row => {
+            // Pastikan baris memiliki data transaksi (Tagihan > 0 atau Bayar > 0)
+            return (parseInt(row[8]) || 0) !== 0 || (parseInt(row[9]) || 0) !== 0;
+        });
 
         let rows = filtered.map((row, i) => {
             totalQty += (parseInt(row[7]) || 0);
@@ -449,9 +454,14 @@ function renderTable(filterValue) {
             totalPay += (parseInt(row[9]) || 0);
             totalSelisih += (parseInt(row[10]) || 0);
             return `<tr>
-                <td>${i+1}</td><td>${formatDate(row[1])}</td><td>${row[2] || '-'}</td>
-                <td>${row[5] || '-'}</td><td>${row[6] || '-'}</td><td>${row[7] || 0}</td>
-                <td>${formatRupiah(row[8])}</td><td>${formatRupiah(row[9])}</td>
+                <td>${i+1}</td>
+                <td>${formatDate(row[1])}</td>
+                <td>${row[2] || '-'}</td>
+                <td>${row[5] || '-'}</td>
+                <td>${row[6] || '-'}</td>
+                <td>${row[7] || 0}</td>
+                <td>${formatRupiah(row[8])}</td>
+                <td>${formatRupiah(row[9])}</td>
                 <td style="color:${(row[10]||0) !== 0 ? 'red' : 'green'}">${formatRupiah(row[10])}</td>
                 <td>${formatDate(row[11])}</td>
             </tr>`;
