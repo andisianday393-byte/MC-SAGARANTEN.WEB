@@ -681,7 +681,7 @@
 
     <!-- Submenu Trade Program -->
 <div class="submenu-container" id="submenu-trade">
-    <a href="program-outlet.html" class="submenu-item">
+    <a href="https://andisianday393-byte.github.io/Info_dan-Materi_Biometrik" class="submenu-item">
         <div class="submenu-icon">🏪</div>
         <div class="submenu-title">Program Outlet</div>
     </a>
@@ -1451,10 +1451,6 @@ document.getElementById('btn-download').addEventListener('click', function(e){
 
     kirimLog('Melakukan Download File');
 
-    // Notif proses
-    tambahNotif("Membuka halaman download file...");
-
-    // Pindah halaman sambil kirim status
     window.location.href =
         'download-data.html?download=success';
 
@@ -1492,7 +1488,25 @@ document.getElementById('btn-submit-akun').addEventListener('click', () => {
     profilOverlay.classList.remove('active');
 });
 // Tambahkan ini di bagian script laciTrigger
+document.querySelectorAll(
+    '.nav-item[href], .submenu-item[href], .bottom-item[href]'
+).forEach(menu => {
 
+    menu.addEventListener('click', () => {
+
+        localStorage.removeItem('notif_logs');
+
+        const badge =
+            document.getElementById('notif-badge');
+
+        if (badge) {
+            badge.style.display = 'none';
+            badge.textContent = '';
+        }
+
+    });
+
+});
 </script>
 
 </body>
