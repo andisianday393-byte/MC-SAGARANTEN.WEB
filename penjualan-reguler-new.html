@@ -25,9 +25,50 @@
     margin-top:15px;
     font-weight:600;
 }
+/* Hapus atau ganti pengaturan table-layout: fixed sebelumnya dengan ini */
+table {
+    table-layout: auto;
+    width: 100%;
+    border-collapse: separate; /* Ganti dari collapse ke separate */
+    border-spacing: 0;         /* Wajib ditambahkan agar border-radius muncul */
+}
 
-.table-wrapper{
-    overflow-x:auto;
+
+/* Pastikan header dan data cell memiliki padding yang seragam */
+th, td {
+    padding: 10px 8px; /* Gunakan padding yang sama untuk keduanya */
+    white-space: nowrap; /* Mencegah baris turun ke bawah */
+    text-align: right;   /* Angka di kanan */
+}
+
+/* Khusus kolom pertama (Produk) agar selalu di kiri */
+th:first-child, td:first-child {
+    text-align: left;
+    width: auto; /* Biarkan menyesuaikan teks */
+}
+
+/* Berikan jarak minimum agar tabel tidak terlalu rapat */
+#tableDaily, #tableTotal {
+    min-width: 100%;
+}
+
+  .table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Mencegah tabel jadi terlalu lebar di desktop */
+@media(min-width: 768px) {
+    #tableDaily, #tableTotal {
+        min-width: 700px; /* Sesuaikan angka ini jika perlu */
+    }
+}
+
+@media(orientation: landscape) {
+    th {
+        font-size: 10px !important; /* Perkecil font header saat landscape */
+        padding: 5px !important;
+    }
 }
 
 table{
@@ -114,7 +155,21 @@ tbody tr:hover td{
     }
 
 }
+.tabs-container { display: flex; gap: 5px; padding: 10px; }
+.tab-btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; background: #e2e8f0; font-weight: 600; }
+.tab-btn.active { background: #0f172a; color: #fff; }
+.table-wrapper { width: 100%; overflow-x: auto; }
+#tableDaily, #tableTotal { min-width: 500px; }
 
+/* Membuat sudut bawah TOTAL SP membulat */
+.round-bottom-sp td:first-child { border-bottom-left-radius: 10px; }
+.round-bottom-sp td:last-child { border-bottom-right-radius: 10px; }
+
+/* Membuat sudut atas VOUCHER membulat */
+.round-top-voucher td:first-child { border-top-left-radius: 10px; }
+.round-top-voucher td:last-child { border-top-right-radius: 10px; }
+
+  
 </style>
 </head>
 
@@ -137,21 +192,29 @@ tbody tr:hover td{
 
 </div>
 
+<div class="tabs-container">
+    <button id="btnDaily" class="tab-btn active" onclick="showTab('daily')">Daily Penjualan</button>
+    <button id="btnTotal" class="tab-btn" onclick="showTab('total')">Total Penjualan</button>
+</div>
+
 <div class="dashboard-container">
+    <div id="updateTime">Update Data: Memuat...</div>
 
-    <div id="updateTime">
-        Update Data: Memuat...
-    </div>
+    <div id="wrapperDaily" class="table-wrapper">
+    <table id="tableDaily">
+        <thead id="headDaily"></thead> 
+        <tbody id="bodyDaily"></tbody>
+    </table>
+</div>
 
-    <div class="table-wrapper">
 
-        <table>
-
+    <div id="wrapperTotal" class="table-wrapper" style="display:none;">
+        <table id="tableTotal">
             <thead>
                 <tr>
                     <th>Produk</th>
                     <th>Andi</th>
-                    <th>Farhan</th>
+                    <th>Parhan</th>
                     <th>Enden</th>
                     <th>Pebrian</th>
                     <th>Total PCS</th>
@@ -159,21 +222,9 @@ tbody tr:hover td{
                     <th>Total Rp</th>
                 </tr>
             </thead>
-
-            <tbody id="penjualan-table">
-
-                <tr>
-                    <td colspan="8" class="loading-text">
-                        🔄 Sedang mengambil data Excel...
-                    </td>
-                </tr>
-
-            </tbody>
-
+            <tbody id="bodyTotal"></tbody>
         </table>
-
     </div>
-
 </div>
 
 <footer class="bottom-nav">
@@ -324,16 +375,10 @@ else {
 
         console.error(error);
 
-        document.getElementById(
-            "penjualan-table"
-        ).innerHTML = `
-            <tr>
-                <td colspan="8"
-                    class="loading-text">
-                    ⚠️ Gagal memuat data Excel
-                </td>
-            </tr>
-        `;
+        // Di dalam catch(error)
+document.getElementById("bodyDaily").innerHTML = `<tr><td colspan="6" class="loading-text">⚠️ Gagal memuat data</td></tr>`;
+document.getElementById("bodyTotal").innerHTML = `<tr><td colspan="8" class="loading-text">⚠️ Gagal memuat data</td></tr>`;
+
 
     }
 
@@ -361,93 +406,99 @@ function formatNumber(val){
 
 }
 
-// ==========================
-// RENDER TABLE
-// ==========================
+function processAndRender(matrix) {
+    if (!matrix || matrix.length === 0) return;
 
-function processAndRender(matrix){
+    const headerRow = matrix[0];
+    // Update Header Daily
+    document.getElementById("headDaily").innerHTML = `<tr>
+        <th>Produk</th><th>${headerRow[1] || 'Andi'}</th><th>${headerRow[3] || 'Parhan'}</th>
+        <th>${headerRow[5] || 'Enden'}</th><th>${headerRow[7] || 'Pebrian'}</th>
+        <th>Total PCS</th><th>Harga</th><th>Total Rp</th>
+    </tr>`;
 
-    let html = "";
+    let htmlDaily = "";
+    let htmlTotal = "";
 
-    matrix.forEach((row,index)=>{
+    // Akumulator untuk Daily
+    let runningPCS = 0;
+    let runningRp = 0;
 
-        if(!row || row.length === 0){
+    matrix.slice(1).forEach((row) => {
+        if (!row || row.length === 0) return;
 
-            html += `
-                <tr class="empty-row">
-                    <td colspan="8"></td>
-                </tr>
-            `;
-
+        // Reset akumulator jika pindah section
+        if (row[0] === "SP" || row[0] === "VOUCHER") {
+            runningPCS = 0;
+            runningRp = 0;
+            htmlDaily += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
+            htmlTotal += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
             return;
         }
 
-        const col0 =
-            row[0]
-            ? row[0].toString().trim()
-            : "";
+        if (row[0].toString().includes("Produk") || row[0].toString().includes("Daily")) return;
 
-        // BARIS JUDUL SECTION
-        if(
-            col0 === "SP" ||
-            col0 === "VOUCHER"
-        ){
+        const isTotal = row[0].toString().toUpperCase().includes("TOTAL");
+        
+        // --- LOGIKA DAILY ---
+        const v1 = parseFloat(row[1]) || 0;
+        const v2 = parseFloat(row[3]) || 0;
+        const v3 = parseFloat(row[5]) || 0;
+        const v4 = parseFloat(row[7]) || 0;
+        const harga = parseFloat(row[11]) || 0;
+        const linePCS = v1 + v2 + v3 + v4;
+        const lineRp = linePCS * harga;
 
-            html += `
-                <tr class="section-row">
-                    <td colspan="8">
-                        ${col0}
-                    </td>
-                </tr>
-            `;
-
-            return;
+        if (!isTotal) {
+            runningPCS += linePCS;
+            runningRp += lineRp;
         }
 
-        // SKIP HEADER KOLOM
-        if(
-            col0 === "Rabu, 27 Mei 2027" ||
-            col0 === "Andi"
-        ){
-            return;
-        }
+        let rowClass = isTotal ? 'total-row' : '';
+        if (row[0] === "TOTAL SP") rowClass += " round-bottom-sp";
+        if (row[0] === "VOUCHER")  rowClass += " round-top-voucher"; 
 
-        const isTotal =
-            col0.toUpperCase().includes("TOTAL");
-
-        html += `
-            <tr class="${
-                isTotal
-                ? 'total-row'
-                : ''
-            }">
-
-                <td>${col0}</td>
-
+        // Isi HTML Daily
+        htmlDaily += `
+            <tr class="${rowClass}">
+                <td>${row[0]}</td>
                 <td>${formatNumber(row[1])}</td>
-
-                <td>${formatNumber(row[2])}</td>
-
                 <td>${formatNumber(row[3])}</td>
-
-                <td>${formatNumber(row[4])}</td>
-
                 <td>${formatNumber(row[5])}</td>
-
-                <td>${formatNumber(row[6])}</td>
-
                 <td>${formatNumber(row[7])}</td>
+                <td>${formatNumber(isTotal ? runningPCS : linePCS)}</td>
+                <td>${isTotal ? "-" : formatNumber(harga)}</td>
+                <td>${formatNumber(isTotal ? runningRp : lineRp)}</td>
+            </tr>`;
 
-            </tr>
-        `;
-
+        // --- LOGIKA TOTAL ---
+        // Asumsi data tabel total ada di kolom index 2,4,6,8 (sesuai script lama Anda)
+        htmlTotal += `
+            <tr class="${rowClass}">
+                <td>${row[0]}</td>
+                <td>${formatNumber(row[2])}</td>
+                <td>${formatNumber(row[4])}</td>
+                <td>${formatNumber(row[6])}</td>
+                <td>${formatNumber(row[8])}</td>
+                <td>${formatNumber(row[10])}</td>
+                <td>${formatNumber(row[11])}</td>
+                <td>${formatNumber(row[13])}</td>
+            </tr>`;
     });
 
-    document.getElementById(
-        "penjualan-table"
-    ).innerHTML = html;
-
+    document.getElementById("bodyDaily").innerHTML = htmlDaily;
+    document.getElementById("bodyTotal").innerHTML = htmlTotal;
 }
+
+
+function showTab(type) {
+    document.getElementById('wrapperDaily').style.display = (type === 'daily') ? 'block' : 'none';
+    document.getElementById('wrapperTotal').style.display = (type === 'total') ? 'block' : 'none';
+    document.getElementById('btnDaily').className = (type === 'daily') ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('btnTotal').className = (type === 'total') ? 'tab-btn active' : 'tab-btn';
+}
+
+
 
 // ==========================
 // LOAD
