@@ -25,55 +25,41 @@
     margin-top:15px;
     font-weight:600;
 }
-/* Hapus atau ganti pengaturan table-layout: fixed sebelumnya dengan ini */
-table {
-    table-layout: auto;
-    width: 100%;
-    border-collapse: separate; /* Ganti dari collapse ke separate */
-    border-spacing: 0;         /* Wajib ditambahkan agar border-radius muncul */
+
+.tabs-container{
+    display:flex;
+    gap:5px;
+    padding:10px;
+    overflow-x:auto;
 }
 
-
-/* Pastikan header dan data cell memiliki padding yang seragam */
-th, td {
-    padding: 10px 8px; /* Gunakan padding yang sama untuk keduanya */
-    white-space: nowrap; /* Mencegah baris turun ke bawah */
-    text-align: right;   /* Angka di kanan */
+.tab-btn{
+    padding:10px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    background:#e2e8f0;
+    font-weight:600;
+    flex:0 0 auto;
 }
 
-/* Khusus kolom pertama (Produk) agar selalu di kiri */
-th:first-child, td:first-child {
-    text-align: left;
-    width: auto; /* Biarkan menyesuaikan teks */
+.tab-btn.active{
+    background:#0f172a;
+    color:#fff;
 }
 
-/* Berikan jarak minimum agar tabel tidak terlalu rapat */
-#tableDaily, #tableTotal {
-    min-width: 100%;
-}
-
-  .table-wrapper {
-    overflow-x: auto;
-    width: 100%;
-}
-
-/* Mencegah tabel jadi terlalu lebar di desktop */
-@media(min-width: 768px) {
-    #tableDaily, #tableTotal {
-        min-width: 700px; /* Sesuaikan angka ini jika perlu */
-    }
-}
-
-@media(orientation: landscape) {
-    th {
-        font-size: 10px !important; /* Perkecil font header saat landscape */
-        padding: 5px !important;
-    }
+.table-wrapper{
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
 }
 
 table{
     width:100%;
-    border-collapse:collapse;
+    table-layout:fixed;
+    border-collapse:separate;
+    border-spacing:0;
     background:#fff;
     border-radius:10px;
     overflow:hidden;
@@ -82,32 +68,55 @@ table{
     box-shadow:0 4px 10px rgba(0,0,0,.05);
 }
 
-th,td{
-    padding:10px 6px;
+th, td{
+    box-sizing:border-box;
+    padding:8px 6px;
     font-size:11px;
     border-bottom:1px solid #e2e8f0;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
+td,
 th{
-    background:#f8fafc;
-    color:#475569;
-    font-weight:700;
-    text-transform:uppercase;
-    font-size:10px;
-}
-
-td{
     text-align:right;
 }
 
 td:first-child,
 th:first-child{
     text-align:left;
-    font-weight:600;
-    width:34%;
+    width:180px;
 }
 
+#tableDaily,
+#tableTotal,
+#tableWeekly{
+    min-width:unset;
+}
+
+#tableWeekly th,
+#tableWeekly td{
+    width:60px;
+}
+
+#tableWeekly th:first-child,
+#tableWeekly td:first-child{
+    width:180px;
+}
+
+#tableWeekly th:last-child,
+#tableWeekly td:last-child{
+    width:85px;
+}
+
+#tableWeekly td:nth-child(6),
+#tableWeekly td:nth-child(11),
+#tableWeekly td:nth-child(16),
+#tableWeekly td:nth-child(21){
+    background:#f8fafc;
+    font-weight:600;
+}
 .section-row td{
     background:#0f172a !important;
     color:#fff !important;
@@ -143,9 +152,25 @@ tbody tr:hover td{
     background:#f8fafc;
 }
 
-@media(min-width:768px){
+.round-bottom-sp td:first-child{
+    border-bottom-left-radius:10px;
+}
 
-    th,td{
+.round-bottom-sp td:last-child{
+    border-bottom-right-radius:10px;
+}
+
+.round-top-voucher td:first-child{
+    border-top-left-radius:10px;
+}
+
+.round-top-voucher td:last-child{
+    border-top-right-radius:10px;
+}
+
+@media(min-width:768px){
+    th,
+    td{
         font-size:13px;
         padding:12px 10px;
     }
@@ -154,36 +179,47 @@ tbody tr:hover td{
         font-size:11px;
     }
 
-}
-.tabs-container { display: flex; gap: 5px; padding: 10px; }
-.tab-btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; background: #e2e8f0; font-weight: 600; }
-.tab-btn.active { background: #0f172a; color: #fff; }
-.table-wrapper { width: 100%; overflow-x: auto; }
-#tableDaily, #tableTotal { min-width: 500px; }
-
-/* Membuat sudut bawah TOTAL SP membulat */
-.round-bottom-sp td:first-child { border-bottom-left-radius: 10px; }
-.round-bottom-sp td:last-child { border-bottom-right-radius: 10px; }
-
-/* Membuat sudut atas VOUCHER membulat */
-.round-top-voucher td:first-child { border-top-left-radius: 10px; }
-.round-top-voucher td:last-child { border-top-right-radius: 10px; }
-
-/* Tambahkan agar tabel weekly tidak hancur */
-#tableWeekly td {
-    padding: 6px 4px; /* Perkecil padding agar kolom lebih rapat */
-    font-size: 11px;  /* Sesuaikan ukuran font */
+    table{
+        min-width:1100px;
+    }
 }
 
-/* Memberi warna latar sedikit berbeda pada kolom Total per orang agar mata mudah membedakan */
-#tableWeekly td:nth-child(6), 
-#tableWeekly td:nth-child(11), 
-#tableWeekly td:nth-child(16), 
-#tableWeekly td:nth-child(21) {
-    background-color: #f8fafc;
-    font-weight: 600;
+@media(max-width:767px){
+    table{
+        min-width:900px;
+    }
+
+    td:first-child,
+    th:first-child{
+        width:34%;
+    }
 }
-  
+
+@media(orientation:landscape){
+    th{
+        font-size:10px !important;
+        padding:5px !important;
+    }
+}
+
+.weekly-product{
+    font-weight:700;
+    text-align:left;
+}
+
+.weekly-total-cell{
+    background:#f1f5f9;
+    font-weight:600;
+}
+
+.weekly-grand-total{
+    font-weight:700;
+    color:#0f172a;
+}
+
+.cell-left{
+    text-align:left;
+}
 </style>
 </head>
 
@@ -477,7 +513,6 @@ function processAndRender(matrix) {
 
         if (!row || row.length === 0) return;
 
-        // FILTER DATA SAMPAH
         if (
             String(row[15]).trim().toLowerCase() === "nama barang" || 
             String(row[15]).trim().toLowerCase() === "weekly" ||
@@ -486,7 +521,6 @@ function processAndRender(matrix) {
             return;
         }
 
-        // SECTION ROW (Menangani header pembatas)
         if (
             row[0] === "SP" ||
             row[0] === "VOUCHER" ||
@@ -501,10 +535,8 @@ function processAndRender(matrix) {
             return;
         }
 
-        // Penanda baris total
         const isTotal = String(row[0]).toUpperCase().includes("TOTAL");
 
-        // --- PROSES DAILY ---
         const v1 = parseFloat(row[1]) || 0;
         const v2 = parseFloat(row[3]) || 0;
         const v3 = parseFloat(row[5]) || 0;
@@ -533,28 +565,33 @@ function processAndRender(matrix) {
             </tr>
         `;
 
-        // --- PROSES WEEKLY (Menyatu) ---
         htmlWeekly += `
             <tr class="${rowClass}">
-                <td style="font-weight:700;">${row[15] || '-'}</td> 
-                
-                <td>${formatNumber(row[16])}</td><td>${formatNumber(row[17])}</td><td>${formatNumber(row[18])}</td><td>${formatNumber(row[19])}</td>
-                <td style="background:#f1f5f9;">${formatNumber(row[20])}</td>
-                
-                <td>${formatNumber(row[21])}</td><td>${formatNumber(row[22])}</td><td>${formatNumber(row[23])}</td><td>${formatNumber(row[24])}</td>
-                <td style="background:#f1f5f9;">${formatNumber(row[25])}</td>
-                
-                <td>${formatNumber(row[26])}</td><td>${formatNumber(row[27])}</td><td>${formatNumber(row[28])}</td><td>${formatNumber(row[29])}</td>
-                <td style="background:#f1f5f9;">${formatNumber(row[30])}</td>
-                
-                <td>${formatNumber(row[31])}</td><td>${formatNumber(row[32])}</td><td>${formatNumber(row[33])}</td><td>${formatNumber(row[34])}</td>
-                <td style="background:#f1f5f9;">${formatNumber(row[35])}</td>
-                
-                <td style="font-weight:700; color:#0f172a;">${formatNumber(row[36])}</td>
+                <td class="weekly-product">${row[15] || '-'}</td>
+                <td>${formatNumber(row[16])}</td>
+                <td>${formatNumber(row[17])}</td>
+                <td>${formatNumber(row[18])}</td>
+                <td>${formatNumber(row[19])}</td>
+                <td class="weekly-total-cell">${formatNumber(row[20])}</td>
+                <td>${formatNumber(row[21])}</td>
+                <td>${formatNumber(row[22])}</td>
+                <td>${formatNumber(row[23])}</td>
+                <td>${formatNumber(row[24])}</td>
+                <td class="weekly-total-cell">${formatNumber(row[25])}</td>
+                <td>${formatNumber(row[26])}</td>
+                <td>${formatNumber(row[27])}</td>
+                <td>${formatNumber(row[28])}</td>
+                <td>${formatNumber(row[29])}</td>
+                <td class="weekly-total-cell">${formatNumber(row[30])}</td>
+                <td>${formatNumber(row[31])}</td>
+                <td>${formatNumber(row[32])}</td>
+                <td>${formatNumber(row[33])}</td>
+                <td>${formatNumber(row[34])}</td>
+                <td class="weekly-total-cell">${formatNumber(row[35])}</td>
+                <td class="weekly-grand-total">${formatNumber(row[36])}</td>
             </tr>
         `;
 
-        // --- PROSES TOTAL ---
         htmlTotal += `
             <tr class="${rowClass}">
                 <td>${row[0]}</td>
@@ -573,7 +610,6 @@ function processAndRender(matrix) {
     document.getElementById("bodyTotal").innerHTML = htmlTotal;
     document.getElementById("bodyWeekly").innerHTML = htmlWeekly;
 }
-
 
 function showTab(type) {
     document.getElementById('wrapperDaily').style.display = (type === 'daily') ? 'block' : 'none';
