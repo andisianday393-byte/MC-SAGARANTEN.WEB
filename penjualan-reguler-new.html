@@ -68,7 +68,15 @@ table{
     box-shadow:0 4px 10px rgba(0,0,0,.05);
 }
 
-th, td{
+thead th{
+    background:#0f172a;
+    color:#fff;
+    font-weight:600;
+    text-align:center;
+}
+
+th,
+td{
     box-sizing:border-box;
     padding:8px 6px;
     font-size:11px;
@@ -78,8 +86,8 @@ th, td{
     text-overflow:ellipsis;
 }
 
-td,
-th{
+th,
+td{
     text-align:right;
 }
 
@@ -89,25 +97,72 @@ th:first-child{
     width:180px;
 }
 
-#tableDaily,
-#tableTotal,
+#tableDaily td:first-child,
+#tableTotal td:first-child{
+    font-weight:700;
+    text-align:left !important;
+}
+  
+ #tableDaily,
+#tableTotal{
+    width:100%;
+    table-layout:fixed;
+}
+
+#tableDaily th:first-child,
+#tableTotal th:first-child{
+    font-size: 14px;
+    width:300px;
+    white-space:normal;
+    word-break:break-word;
+}  
+
+  
 #tableWeekly{
-    min-width:unset;
+    width:100%;
+    table-layout:fixed;
+}
+
+#tableWeekly .col-product{
+    width:180px;
+}
+
+#tableWeekly .col-num{
+    width:72px;
+}
+
+#tableWeekly .col-total{
+    width:82px;
+}
+
+#tableWeekly .col-grand{
+    width:96px;
 }
 
 #tableWeekly th,
 #tableWeekly td{
-    width:60px;
+    box-sizing:border-box;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
-#tableWeekly th:first-child,
-#tableWeekly td:first-child{
-    width:180px;
+#tableWeekly th{
+    padding:8px 6px;
+    font-size:10px;
+    text-align:center;
 }
 
-#tableWeekly th:last-child,
-#tableWeekly td:last-child{
-    width:85px;
+#tableWeekly td{
+    padding:6px 6px;
+    font-size:11px;
+    text-align:right;
+}
+
+#tableWeekly td:first-child,
+#tableWeekly th:first-child{
+    text-align:left;
+    font-weight:600;
 }
 
 #tableWeekly td:nth-child(6),
@@ -117,6 +172,7 @@ th:first-child{
     background:#f8fafc;
     font-weight:600;
 }
+
 .section-row td{
     background:#0f172a !important;
     color:#fff !important;
@@ -168,6 +224,29 @@ tbody tr:hover td{
     border-top-right-radius:10px;
 }
 
+.cell-left{
+    text-align:left;
+}
+
+.weekly-product{
+    font-weight:700;
+    text-align:left !important;
+}
+
+.weekly-num{
+    text-align:right;
+}
+
+.weekly-total-cell{
+    background:#f1f5f9;
+    font-weight:600;
+}
+
+.weekly-grand-total{
+    font-weight:700;
+    color:#0f172a;
+}
+
 @media(min-width:768px){
     th,
     td{
@@ -179,16 +258,18 @@ tbody tr:hover td{
         font-size:11px;
     }
 
-    table{
-        min-width:1100px;
+    #tableWeekly th{
+        font-size:10px;
+        padding:8px 6px;
+    }
+
+    #tableWeekly td{
+        font-size:11px;
+        padding:6px 6px;
     }
 }
 
 @media(max-width:767px){
-    table{
-        min-width:900px;
-    }
-
     td:first-child,
     th:first-child{
         width:34%;
@@ -202,24 +283,6 @@ tbody tr:hover td{
     }
 }
 
-.weekly-product{
-    font-weight:700;
-    text-align:left;
-}
-
-.weekly-total-cell{
-    background:#f1f5f9;
-    font-weight:600;
-}
-
-.weekly-grand-total{
-    font-weight:700;
-    color:#0f172a;
-}
-
-.cell-left{
-    text-align:left;
-}
 </style>
 </head>
 
@@ -253,41 +316,65 @@ tbody tr:hover td{
 
     <div id="wrapperDaily" class="table-wrapper">
     <table id="tableDaily">
+<colgroup>
+    <col style="width:120px"> <!-- Produk -->
+    <col style="width:100px">  <!-- Andi -->
+    <col style="width:100px">  <!-- Parhan -->
+    <col style="width:100px">  <!-- Enden -->
+    <col style="width:100px">  <!-- Pebrian -->
+    <col style="width:80px">  <!-- Total PCS -->
+    <col style="width:80px">  <!-- Harga -->
+    <col style="width:100px"> <!-- Total Rp -->
+</colgroup>      
         <thead id="headDaily"></thead> 
         <tbody id="bodyDaily"></tbody>
     </table>
 </div>
 
-    <div id="wrapperWeekly" class="table-wrapper" style="display:none;">
+   <div id="wrapperWeekly" class="table-wrapper" style="display:none;">
     <table id="tableWeekly">
-  <thead>
-<tr>
-    <th rowspan="2">Produk</th>
-
-    <th colspan="5">Andi</th>
-    <th colspan="5">Parhan</th>
-    <th colspan="5">Enden</th>
-    <th colspan="5">Pebrian</th>
-
-    <th rowspan="2">Total Weekly</th>
-</tr>
-
-<tr>
-    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
-    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
-    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
-    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
-</tr>
-</thead>
-    <tbody id="bodyWeekly"></tbody>
-</table>
-
+        <colgroup>
+            <col class="col-product">
+            <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-total">
+            <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-total">
+            <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-total">
+            <col class="col-num"><col class="col-num"><col class="col-num"><col class="col-num"><col class="col-total">
+            <col class="col-grand">
+        </colgroup>
+        <thead>
+            <tr>
+                <th rowspan="2" style="font-size: 12px; border-right:1px solid #e2e8f0;">PRODUK</th>
+                <th colspan="5" style="font-size: 11px; border-right:1px solid #e2e8f0;">Andi</th>
+                <th colspan="5" style="font-size: 11px; border-right:1px solid #e2e8f0;">Parhan</th>
+                <th colspan="5" style="font-size: 11px; border-right:1px solid #e2e8f0;">Enden</th>
+                <th colspan="5" style="font-size: 11px; border-right:1px solid #e2e8f0;">Pebrian</th>
+                <th rowspan="2" style="font-size: 11px;">Total Weekly</th>
+            </tr>
+            <tr style="background:#0f172a; color: white;">
+                <th style="border-right:1px solid #e2e8f0;">W1</th><th style="border-right:1px solid #e2e8f0;">W2</th><th style="border-right:1px solid #e2e8f0;">W3</th><th style="border-right:1px solid #e2e8f0;">W4</th><th style="border-right:1px solid #e2e8f0;">Total</th>
+                <th style="border-right:1px solid #e2e8f0;">W1</th><th style="border-right:1px solid #e2e8f0;">W2</th><th style="border-right:1px solid #e2e8f0;">W3</th><th style="border-right:1px solid #e2e8f0;">W4</th><th style="border-right:1px solid #e2e8f0;">Total</th>
+                <th style="border-right:1px solid #e2e8f0;">W1</th><th style="border-right:1px solid #e2e8f0;">W2</th><th style="border-right:1px solid #e2e8f0;">W3</th><th style="border-right:1px solid #e2e8f0;">W4</th><th style="border-right:1px solid #e2e8f0;">Total</th>
+                <th style="border-right:1px solid #e2e8f0;">W1</th><th style="border-right:1px solid #e2e8f0;">W2</th><th style="border-right:1px solid #e2e8f0;">W3</th><th style="border-right:1px solid #e2e8f0;">W4</th><th style="border-right:1px solid #e2e8f0;">Total</th>
+            </tr>
+        </thead>
+        <tbody id="bodyWeekly"></tbody>
+    </table>
 </div>
-
-
+  
     <div id="wrapperTotal" class="table-wrapper" style="display:none;">
         <table id="tableTotal">
-            <thead>
+<colgroup>
+    <col style="width:100px"> <!-- Produk -->
+    <col style="width:80px">  <!-- Andi -->
+    <col style="width:80px">  <!-- Parhan -->
+    <col style="width:80px">  <!-- Enden -->
+    <col style="width:80px">  <!-- Pebrian -->
+    <col style="width:80px">  <!-- Total PCS -->
+    <col style="width:80px">  <!-- Harga -->
+    <col style="width:100px"> <!-- Total Rp -->
+</colgroup>      
+    
+          <thead>
                 <tr>
                     <th>Produk</th>
                     <th>Andi</th>
@@ -484,7 +571,6 @@ function formatNumber(val){
 }
 
 function processAndRender(matrix) {
-
     if (!matrix || matrix.length === 0) return;
 
     const headerRow = matrix[0];
@@ -508,34 +594,34 @@ function processAndRender(matrix) {
 
     let runningPCS = 0;
     let runningRp = 0;
+    let keptWeeklyTotalRow = false;
 
     matrix.slice(1).forEach((row) => {
-
         if (!row || row.length === 0) return;
 
-        if (
-            String(row[15]).trim().toLowerCase() === "nama barang" || 
-            String(row[15]).trim().toLowerCase() === "weekly" ||
-            (row[0] === "" && row[15] === "")
-        ) {
-            return;
-        }
+        const cell15 = String(row[15] || "").trim().toLowerCase();
+        if (cell15 === "nama barang" || cell15 === "weekly" || (row[0] === "" && row[15] === "")) return;
 
-        if (
-            row[0] === "SP" ||
-            row[0] === "VOUCHER" ||
-            row[0] === "TOTAL VOUCHER"
-        ) {
+        const row0 = String(row[0] || "").trim().toUpperCase();
+        const isSection = row0 === "SP" || row0 === "VOUCHER";
+        const isTotalSP = row0 === "TOTAL SP";
+        const isTotalVoucher = row0 === "TOTAL VOUCHER";
+        const isAnyTotal = isTotalSP || isTotalVoucher;
+
+        if (isSection) {
             runningPCS = 0;
             runningRp = 0;
 
-            htmlDaily += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
-            htmlTotal += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
-            htmlWeekly += `<tr class="section-row"><td colspan="22">${row[0]}</td></tr>`;
+            htmlDaily += `<tr class="section-row"><td colspan="8">${row0}</td></tr>`;
+            htmlTotal += `<tr class="section-row"><td colspan="8">${row0}</td></tr>`;
+            htmlWeekly += `<tr class="section-row"><td colspan="22">${row0}</td></tr>`;
             return;
         }
 
-        const isTotal = String(row[0]).toUpperCase().includes("TOTAL");
+        if (isTotalVoucher) {
+            if (keptWeeklyTotalRow) return;
+            keptWeeklyTotalRow = true;
+        }
 
         const v1 = parseFloat(row[1]) || 0;
         const v2 = parseFloat(row[3]) || 0;
@@ -545,12 +631,15 @@ function processAndRender(matrix) {
         const linePCS = v1 + v2 + v3 + v4;
         const lineRp = linePCS * harga;
 
-        if (!isTotal) {
+        if (!isAnyTotal) {
             runningPCS += linePCS;
             runningRp += lineRp;
         }
 
-        const rowClass = isTotal ? "total-row" : "";
+        const dailyPCS = isAnyTotal ? (parseFloat(row[10]) || runningPCS) : linePCS;
+        const dailyRp = isAnyTotal ? (parseFloat(row[13]) || runningRp) : lineRp;
+
+        const rowClass = isAnyTotal ? "total-row" : "";
 
         htmlDaily += `
             <tr class="${rowClass}">
@@ -559,36 +648,9 @@ function processAndRender(matrix) {
                 <td>${formatNumber(row[3])}</td>
                 <td>${formatNumber(row[5])}</td>
                 <td>${formatNumber(row[7])}</td>
-                <td>${formatNumber(isTotal ? runningPCS : linePCS)}</td>
-                <td>${isTotal ? "-" : formatNumber(harga)}</td>
-                <td>${formatNumber(isTotal ? runningRp : lineRp)}</td>
-            </tr>
-        `;
-
-        htmlWeekly += `
-            <tr class="${rowClass}">
-                <td class="weekly-product">${row[15] || '-'}</td>
-                <td>${formatNumber(row[16])}</td>
-                <td>${formatNumber(row[17])}</td>
-                <td>${formatNumber(row[18])}</td>
-                <td>${formatNumber(row[19])}</td>
-                <td class="weekly-total-cell">${formatNumber(row[20])}</td>
-                <td>${formatNumber(row[21])}</td>
-                <td>${formatNumber(row[22])}</td>
-                <td>${formatNumber(row[23])}</td>
-                <td>${formatNumber(row[24])}</td>
-                <td class="weekly-total-cell">${formatNumber(row[25])}</td>
-                <td>${formatNumber(row[26])}</td>
-                <td>${formatNumber(row[27])}</td>
-                <td>${formatNumber(row[28])}</td>
-                <td>${formatNumber(row[29])}</td>
-                <td class="weekly-total-cell">${formatNumber(row[30])}</td>
-                <td>${formatNumber(row[31])}</td>
-                <td>${formatNumber(row[32])}</td>
-                <td>${formatNumber(row[33])}</td>
-                <td>${formatNumber(row[34])}</td>
-                <td class="weekly-total-cell">${formatNumber(row[35])}</td>
-                <td class="weekly-grand-total">${formatNumber(row[36])}</td>
+                <td>${formatNumber(dailyPCS)}</td>
+                <td>${isAnyTotal ? "-" : formatNumber(harga)}</td>
+                <td>${formatNumber(dailyRp)}</td>
             </tr>
         `;
 
@@ -604,23 +666,62 @@ function processAndRender(matrix) {
                 <td>${formatNumber(row[13])}</td>
             </tr>
         `;
+
+        htmlWeekly += `
+            <tr class="${rowClass}">
+                <td class="weekly-product">${row[15] || '-'}</td>
+                <td class="weekly-num">${formatNumber(row[16])}</td>
+                <td class="weekly-num">${formatNumber(row[17])}</td>
+                <td class="weekly-num">${formatNumber(row[18])}</td>
+                <td class="weekly-num">${formatNumber(row[19])}</td>
+                <td class="weekly-total-cell weekly-num">${formatNumber(row[20])}</td>
+                <td class="weekly-num">${formatNumber(row[21])}</td>
+                <td class="weekly-num">${formatNumber(row[22])}</td>
+                <td class="weekly-num">${formatNumber(row[23])}</td>
+                <td class="weekly-num">${formatNumber(row[24])}</td>
+                <td class="weekly-total-cell weekly-num">${formatNumber(row[25])}</td>
+                <td class="weekly-num">${formatNumber(row[26])}</td>
+                <td class="weekly-num">${formatNumber(row[27])}</td>
+                <td class="weekly-num">${formatNumber(row[28])}</td>
+                <td class="weekly-num">${formatNumber(row[29])}</td>
+                <td class="weekly-total-cell weekly-num">${formatNumber(row[30])}</td>
+                <td class="weekly-num">${formatNumber(row[31])}</td>
+                <td class="weekly-num">${formatNumber(row[32])}</td>
+                <td class="weekly-num">${formatNumber(row[33])}</td>
+                <td class="weekly-num">${formatNumber(row[34])}</td>
+                <td class="weekly-total-cell weekly-num">${formatNumber(row[35])}</td>
+                <td class="weekly-grand-total weekly-num">${formatNumber(row[36])}</td>
+            </tr>
+        `;
     });
 
     document.getElementById("bodyDaily").innerHTML = htmlDaily;
     document.getElementById("bodyTotal").innerHTML = htmlTotal;
     document.getElementById("bodyWeekly").innerHTML = htmlWeekly;
 }
+  
+  function showTab(type) {
+    const daily = document.getElementById('wrapperDaily');
+    const weekly = document.getElementById('wrapperWeekly');
+    const total = document.getElementById('wrapperTotal');
 
-function showTab(type) {
-    document.getElementById('wrapperDaily').style.display = (type === 'daily') ? 'block' : 'none';
-    document.getElementById('wrapperTotal').style.display = (type === 'total') ? 'block' : 'none';
-    document.getElementById('wrapperWeekly').style.display = (type === 'weekly') ? 'block' : 'none';
-    
-    document.getElementById('btnDaily').className = (type === 'daily') ? 'tab-btn active' : 'tab-btn';
-    document.getElementById('btnTotal').className = (type === 'total') ? 'tab-btn active' : 'tab-btn';
-    document.getElementById('btnWeekly').className = (type === 'weekly') ? 'tab-btn active' : 'tab-btn';
+    const btnDaily = document.getElementById('btnDaily');
+    const btnWeekly = document.getElementById('btnWeekly');
+    const btnTotal = document.getElementById('btnTotal');
+
+    if (!daily || !weekly || !total || !btnDaily || !btnWeekly || !btnTotal) {
+        console.error('Element tab atau wrapper tidak ditemukan');
+        return;
+    }
+
+    daily.style.display = (type === 'daily') ? 'block' : 'none';
+    weekly.style.display = (type === 'weekly') ? 'block' : 'none';
+    total.style.display = (type === 'total') ? 'block' : 'none';
+
+    btnDaily.className = (type === 'daily') ? 'tab-btn active' : 'tab-btn';
+    btnWeekly.className = (type === 'weekly') ? 'tab-btn active' : 'tab-btn';
+    btnTotal.className = (type === 'total') ? 'tab-btn active' : 'tab-btn';
 }
-
 
 
 
