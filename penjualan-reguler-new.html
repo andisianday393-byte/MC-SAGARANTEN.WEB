@@ -1,378 +1,614 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penjualan Fisik DSE - Monitor Penjualan SP dan Voucher</title>
-    <link rel="stylesheet" href="global-ui.css">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <style>
-        
-        /* DROPDOWN NAVIGASI MENU UTAMA */
-        .nav-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-            z-index: 99;
-            border-bottom: 3px solid #0284c7;
-        }
-        .nav-menu.open { 
-            max-height: 100vh;
-            overflow-y: auto; 
-        } 
-        .nav-menu ul { list-style: none; padding: 0; margin: 0; }
-        .nav-menu ul li { border-bottom: 1px solid #f1f5f9; }
-        
-        .nav-menu ul li a { 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 20px; 
-            color: #334155; 
-            text-decoration: none; 
-            font-size: 13.5px; 
-            font-weight: 600; 
-            text-align: left; 
-        }
-        .nav-menu ul li a:hover { background-color: #f0f9ff; color: #0284c7; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        /* NAVIGASI SUB-MENU PENJUALAN */
-        .nav-submenu-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background-color: #f8fafc;
-        }
-        .nav-submenu-container a {
-            display: block !important;
-            padding: 12px 20px 12px 35px !important;
-            font-size: 13px !important;
-            color: #475569 !important;
-            border-left: 4px solid #0d9488;
-            border-bottom: 1px solid #f1f5f9;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .nav-submenu-container a:last-child {
-            border-bottom: none;
-        }
-        .nav-submenu-container a:hover {
-            background-color: #f0fdfa !important;
-            color: #0d9488 !important;
-        }
-        
-        .menu-arrow-icon {
-            transition: transform 0.3s ease;
-            font-size: 11px;
-            color: #94a3b8;
-        }
-        .nav-menu ul li.active-trigger .menu-arrow-icon {
-            transform: rotate(90deg);
-            color: #10b981;
-        }
+<title>Penjualan Reguler - Monitor Excel Real-time</title>
 
-        /* STYLE DISABLED MENU HALAMAN AKTIF */
-        .nav-menu ul li.disabled-menu-item a {
-            color: #94a3b8 !important; 
-            background-color: #f8fafc !important;
-            pointer-events: none; 
-            cursor: default;
-            user-select: none;
-        }
+<link rel="stylesheet" href="global-ui.css">
+<script src="global-notif.js"></script>
 
-        /* CONTAINER RESPONSIF */
-        .dashboard-container {
-            width: 100%;
-            max-width: 900%;
-            margin: 0;
-            padding: 0 10px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed; 
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            margin-top:5px;
-        }
+<!-- XLSX -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-        th, td {
-            padding: 10px 4px;
-            font-size: 11px;
-            border-bottom: 1px solid #e2e8f0;
-            white-space: nowrap; 
-        }
+<style>
 
-        th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 10px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #cbd5e1;
-        }
-        @media (min-width: 1024px) {
-    .dashboard-container {
-        max-width: 800px;
-    }
+.dashboard-container{
+    width:100%;
+    padding:0 10px;
+}
 
-    th, td {
-        font-size: 13px;
-        padding: 14px 12px;
+#updateTime{
+    font-size:11px;
+    color:#64748b;
+    margin-top:15px;
+    font-weight:600;
+}
+/* Hapus atau ganti pengaturan table-layout: fixed sebelumnya dengan ini */
+table {
+    table-layout: auto;
+    width: 100%;
+    border-collapse: separate; /* Ganti dari collapse ke separate */
+    border-spacing: 0;         /* Wajib ditambahkan agar border-radius muncul */
+}
+
+
+/* Pastikan header dan data cell memiliki padding yang seragam */
+th, td {
+    padding: 10px 8px; /* Gunakan padding yang sama untuk keduanya */
+    white-space: nowrap; /* Mencegah baris turun ke bawah */
+    text-align: right;   /* Angka di kanan */
+}
+
+/* Khusus kolom pertama (Produk) agar selalu di kiri */
+th:first-child, td:first-child {
+    text-align: left;
+    width: auto; /* Biarkan menyesuaikan teks */
+}
+
+/* Berikan jarak minimum agar tabel tidak terlalu rapat */
+#tableDaily, #tableTotal {
+    min-width: 100%;
+}
+
+  .table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Mencegah tabel jadi terlalu lebar di desktop */
+@media(min-width: 768px) {
+    #tableDaily, #tableTotal {
+        min-width: 700px; /* Sesuaikan angka ini jika perlu */
     }
 }
 
-        .item-name-col {
-            text-align: left;
-            font-weight: 600;
-            color: #334155;
-            width: 34%;
-            white-space: normal; 
-            padding-left: 8px;
-        }
+@media(orientation: landscape) {
+    th {
+        font-size: 10px !important; /* Perkecil font header saat landscape */
+        padding: 5px !important;
+    }
+}
 
-        .data-user-col {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            width: 13%;
-            padding-right: 6px;
-        }
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
 
-        table th:last-child, table td:last-child {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            width: 14%;
-            padding-right: 8px;
-        }
+th,td{
+    padding:10px 6px;
+    font-size:11px;
+    border-bottom:1px solid #e2e8f0;
+    white-space:nowrap;
+}
 
-        tbody tr:not(.empty-row):not(.total-row) td:last-child {
-            background-color: #f0f9ff !important;
-            font-weight: 700;
-            color: #0284c7;
-        }
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:10px;
+}
 
-        .zero-val {
-            color: #cbd5e1;
-            text-align: right;
-        }
-        
-        /* BARIS KOSONG (PEMISAH SP / VDK) */
-        .empty-row td {
-            height: 16px;
-            background-color: #f8fafc !important;
-            border-top: 1px solid #e2e8f0;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0;
-        }
+td{
+    text-align:right;
+}
 
-        /* BARIS TOTAL PALING BAWAH */
-        .total-row td {
-            background-color: #fef08a !important; 
-            color: #713f12 !important;
-            font-weight: 700;
-            font-size: 11.5px;
-            border-top: 2px solid #fef08a;
-            border-bottom: 1px solid #ca8a04;
-        }
-        .total-row td:first-child {
-            color: #713f12 !important;
-        }
-        
-        tbody tr:not(.empty-row):not(.total-row):hover td { 
-            background-color: #f8fafc !important; 
-        }
-        
-        .loading-text { 
-            text-align: center; 
-            padding: 30px; 
-            font-size: 13px; 
-            color: #64748b; 
-            font-weight: 600;
-        }
+td:first-child,
+th:first-child{
+    text-align:left;
+    font-weight:600;
+    width:34%;
+}
 
-        @media (min-width: 768px) {
-            .dashboard-container { padding: 0 20px; }
-            th, td { padding: 12px 10px; font-size: 12px; }
-            th { font-size: 11px; }
-            .total-row td { font-size: 13px; }
-        }
-    </style>
+.section-row td{
+    background:#0f172a !important;
+    color:#fff !important;
+    font-weight:700;
+    text-align:left !important;
+    font-size:12px;
+}
+
+.total-row td{
+    background:#fef08a !important;
+    color:#713f12 !important;
+    font-weight:700;
+}
+
+.empty-row td{
+    height:14px;
+    background:#f8fafc;
+    padding:0;
+}
+
+.loading-text{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+    font-weight:600;
+}
+
+.zero-val{
+    color:#cbd5e1;
+}
+
+tbody tr:hover td{
+    background:#f8fafc;
+}
+
+@media(min-width:768px){
+
+    th,td{
+        font-size:13px;
+        padding:12px 10px;
+    }
+
+    th{
+        font-size:11px;
+    }
+
+}
+.tabs-container { display: flex; gap: 5px; padding: 10px; }
+.tab-btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; background: #e2e8f0; font-weight: 600; }
+.tab-btn.active { background: #0f172a; color: #fff; }
+.table-wrapper { width: 100%; overflow-x: auto; }
+#tableDaily, #tableTotal { min-width: 500px; }
+
+/* Membuat sudut bawah TOTAL SP membulat */
+.round-bottom-sp td:first-child { border-bottom-left-radius: 10px; }
+.round-bottom-sp td:last-child { border-bottom-right-radius: 10px; }
+
+/* Membuat sudut atas VOUCHER membulat */
+.round-top-voucher td:first-child { border-top-left-radius: 10px; }
+.round-top-voucher td:last-child { border-top-right-radius: 10px; }
+
+/* Tambahkan agar tabel weekly tidak hancur */
+#tableWeekly td {
+    padding: 6px 4px; /* Perkecil padding agar kolom lebih rapat */
+    font-size: 11px;  /* Sesuaikan ukuran font */
+}
+
+/* Memberi warna latar sedikit berbeda pada kolom Total per orang agar mata mudah membedakan */
+#tableWeekly td:nth-child(6), 
+#tableWeekly td:nth-child(11), 
+#tableWeekly td:nth-child(16), 
+#tableWeekly td:nth-child(21) {
+    background-color: #f8fafc;
+    font-weight: 600;
+}
+  
+</style>
 </head>
+
 <body>
 
-  <div class="sticky-container">
-      <div class="header-wrapper">
+<div class="sticky-container">
+
+    <div class="header-wrapper">
+
         <div class="back-container" onclick="goBack()">
-    <div class="back-button"></div>
+            <div class="back-button"></div>
+        </div>
+
+        <div class="app-header">
+            <h1>PENJUALAN FISIK</h1>
+            <p>Monitoring penjualan SP dan Voucher DSE</p>
+        </div>
+
     </div>
-          <div class="app-header">
-    <h1>PENJUALAN FISIK DSE</h1>
-    <p>Monitoring Penjualan SPN dan Voucher</p>
+
 </div>
-      </div>
-  </div>
-         
-    <div class="dashboard-container">
-      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-top: 15px; font-weight: 500;">
-        Update Data: Memuat...
-    </div>
-        <table>
+
+<div class="tabs-container">
+    <button id="btnDaily" class="tab-btn active" onclick="showTab('daily')">Daily Penjualan</button>
+    <button id="btnWeekly" class="tab-btn" onclick="showTab('weekly')">Weekly</button>
+    <button id="btnTotal" class="tab-btn" onclick="showTab('total')">Total Penjualan</button>
+</div>
+
+<div class="dashboard-container">
+    <div id="updateTime">Update Data: Memuat...</div>
+
+    <div id="wrapperDaily" class="table-wrapper">
+    <table id="tableDaily">
+        <thead id="headDaily"></thead> 
+        <tbody id="bodyDaily"></tbody>
+    </table>
+</div>
+
+    <div id="wrapperWeekly" class="table-wrapper" style="display:none;">
+    <table id="tableWeekly">
+  <thead>
+<tr>
+    <th rowspan="2">Produk</th>
+
+    <th colspan="5">Andi</th>
+    <th colspan="5">Parhan</th>
+    <th colspan="5">Enden</th>
+    <th colspan="5">Pebrian</th>
+
+    <th rowspan="2">Total Weekly</th>
+</tr>
+
+<tr>
+    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
+    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
+    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
+    <th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>Total</th>
+</tr>
+</thead>
+    <tbody id="bodyWeekly"></tbody>
+</table>
+
+</div>
+
+
+    <div id="wrapperTotal" class="table-wrapper" style="display:none;">
+        <table id="tableTotal">
             <thead>
                 <tr>
-                    <th class="item-name-col">Jenis Barang</th>
-                    <th class="data-user-col">Andi</th>
-                    <th class="data-user-col">Farhan</th>
-                    <th class="data-user-col">Enden</th>
-                    <th class="data-user-col">Pebrian</th>
-                    <th>Total</th>
+                    <th>Produk</th>
+                    <th>Andi</th>
+                    <th>Parhan</th>
+                    <th>Enden</th>
+                    <th>Pebrian</th>
+                    <th>Total PCS</th>
+                    <th>Harga</th>
+                    <th>Total Rp</th>
                 </tr>
             </thead>
-            <tbody id="cso-stock-table">
-                <tr>
-                    <td colspan="6" class="loading-text">🔄 Sedang mengambil data terbaru langsung dari Excel...</td>
-                </tr>
-            </tbody>
+            <tbody id="bodyTotal"></tbody>
         </table>
     </div>
+</div>
+
 <footer class="bottom-nav">
 
-    <!-- HOME -->
     <a href="index.html" class="bottom-item active">
         <div>🏠</div>
         <span>Home</span>
     </a>
 
-   <!-- REPORT -->
     <a href="#" class="bottom-item">
         <div>📊</div>
         <span>Report</span>
     </a>
 
-    <!-- NOTIF -->
-    <a href="#" class="bottom-item">
-        <div>🔔</div>
+    <a href="notif.html" class="bottom-item">
+
+        <div class="notif-container">
+            <span class="bell-icon">🔔</span>
+        </div>
+
         <span>Notif</span>
+
     </a>
 
-    <!-- PROFILE -->
     <a href="#" class="bottom-item">
         <div>👤</div>
         <span>Profil</span>
     </a>
 
 </footer>
-    <script>
-const excelFileUrl = "penjualan-reguler-new.xlsx - Lembar1.csv"; // Nama file yang baru
 
-async function fetchExcelData() {
-    try {
-        const fileUrl = excelFileUrl + "?v=" + Date.now();
-        const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error("Gagal akses file");
+<script>
 
-        const text = await response.text();
-        // Menggunakan opsi type: "string" untuk CSV
-        const workbook = XLSX.read(text, { type: "string" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+const excelFileUrl = "index-data.xlsx";
+const TARGET_SHEET_NAME = "penjualan-reguler-new";
 
-        // Ambil data dalam bentuk array matrix (baris demi baris)
-        const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+// ==========================
+// FETCH EXCEL
+// ==========================
 
-        if (matrix.length === 0) throw new Error("File kosong");
+async function fetchExcelData(){
 
-        // Tampilkan Waktu Update
-        document.getElementById("updateTime").textContent = "Update Data: " + new Date().toLocaleTimeString("id-ID");
+    try{
+
+        const response =
+            await fetch(
+                excelFileUrl + "?v=" + Date.now()
+            );
+
+        if(!response.ok){
+            throw new Error("Gagal mengambil file Excel");
+        }
+
+        const lastModified =
+            response.headers.get("Last-Modified");
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer,{
+                type:"array"
+            });
+
+        const sheet =
+            workbook.Sheets[TARGET_SHEET_NAME];
+
+        if(!sheet){
+            throw new Error("Sheet tidak ditemukan");
+        }
+
+        const matrix =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {
+                    header:1,
+                    defval:""
+                }
+            );
 
         processAndRender(matrix);
-    } catch (error) {
-        console.error("Error Detail:", error);
-        document.getElementById("cso-stock-table").innerHTML = `<tr><td colspan="6" class="loading-text">⚠️ Gagal: ${error.message}</td></tr>`;
+
+        // ==========================
+// TAMPILKAN WAKTU UPDATE
+// ==========================
+
+let updateDate = null;
+
+// PRIORITAS 1
+// TANGGAL DARI FILE EXCEL
+if (
+    workbook.Props &&
+    workbook.Props.ModifiedDate
+) {
+
+    updateDate =
+        new Date(
+            workbook.Props.ModifiedDate
+        );
+}
+
+// PRIORITAS 2
+// LAST MODIFIED SERVER
+if (
+    (!updateDate || isNaN(updateDate)) &&
+    lastModified
+) {
+
+    updateDate =
+        new Date(lastModified);
+}
+
+// TAMPILKAN
+if (
+    updateDate &&
+    !isNaN(updateDate)
+) {
+
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: " +
+        updateDate.toLocaleString(
+            "id-ID",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+} 
+
+else {
+
+    document.getElementById(
+        "updateTime"
+    ).textContent =
+        "Update Data: Tidak diketahui";
+}
+
     }
+    
+    catch(error){
+
+        console.error(error);
+
+        // Di dalam catch(error)
+document.getElementById("bodyDaily").innerHTML = `<tr><td colspan="6" class="loading-text">⚠️ Gagal memuat data</td></tr>`;
+document.getElementById("bodyTotal").innerHTML = `<tr><td colspan="8" class="loading-text">⚠️ Gagal memuat data</td></tr>`;
+
+
+    }
+
 }
 
-function parseNum(val) {
-    if (val === undefined || val === null || val === "" || val === "-") return 0;
-    if (typeof val === 'number') return val;
-    let clean = val.toString().replace(/[^0-9]/g, ''); // Hapus semua karakter selain angka
-    return parseInt(clean) || 0;
-}
+// ==========================
+// FORMAT ANGKA
+// ==========================
 
-function formatDisplay(num) {
-    return num === 0 ? `<span class="zero-val">-</span>` : num.toLocaleString('id-ID');
+function formatNumber(val){
+
+    if(
+        val === null ||
+        val === undefined ||
+        val === ""
+    ){
+        return `<span class="zero-val">-</span>`;
+    }
+
+    if(typeof val === "number"){
+        return val.toLocaleString("id-ID");
+    }
+
+    return val;
+
 }
 
 function processAndRender(matrix) {
-    let html = "";
-    let dataSp = [];
-    let dataVdk = [];
-    let isVoucherGroup = false;
-    let totals = { andi: 0, farhan: 0, enden: 0, pebrian: 0, grand: 0 };
 
-    // Debugging: Cetak baris pertama ke console untuk memastikan struktur benar
-    console.log("Struktur baris pertama:", matrix[1]);
+    if (!matrix || matrix.length === 0) return;
 
-    matrix.forEach((row, index) => {
-        // Lewati header (baris 0 & 1 berdasarkan snippet Anda)
-        if (index < 2 || !row[0]) return;
-        
-        let nama = row[0].toString().trim();
-        
-        // Deteksi pindah ke grup VOUCHER (kata kunci di kolom pertama)
-        if (nama.toLowerCase().includes("voucher")) {
-            isVoucherGroup = true;
+    const headerRow = matrix[0];
+
+    document.getElementById("headDaily").innerHTML = `
+        <tr>
+            <th>Produk</th>
+            <th>${headerRow[1] || 'Andi'}</th>
+            <th>${headerRow[3] || 'Parhan'}</th>
+            <th>${headerRow[5] || 'Enden'}</th>
+            <th>${headerRow[7] || 'Pebrian'}</th>
+            <th>Total PCS</th>
+            <th>Harga</th>
+            <th>Total Rp</th>
+        </tr>
+    `;
+
+    let htmlDaily = "";
+    let htmlTotal = "";
+    let htmlWeekly = "";
+
+    let runningPCS = 0;
+    let runningRp = 0;
+
+    matrix.slice(1).forEach((row) => {
+
+        if (!row || row.length === 0) return;
+
+        // FILTER DATA SAMPAH
+        if (
+            String(row[15]).trim().toLowerCase() === "nama barang" || 
+            String(row[15]).trim().toLowerCase() === "weekly" ||
+            (row[0] === "" && row[15] === "")
+        ) {
             return;
         }
 
-        // Lewati baris total dari CSV
-        if (nama.toLowerCase().includes("total")) return;
+        // SECTION ROW (Menangani header pembatas)
+        if (
+            row[0] === "SP" ||
+            row[0] === "VOUCHER" ||
+            row[0] === "TOTAL VOUCHER"
+        ) {
+            runningPCS = 0;
+            runningRp = 0;
 
-        // Ambil angka dari kolom index 1, 2, 3, 4
-        let andi = parseNum(row[1]);
-        let farhan = parseNum(row[2]);
-        let enden = parseNum(row[3]);
-        let pebrian = parseNum(row[4]);
-        
-        let totalBaris = andi + farhan + enden + pebrian;
+            htmlDaily += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
+            htmlTotal += `<tr class="section-row"><td colspan="8">${row[0]}</td></tr>`;
+            htmlWeekly += `<tr class="section-row"><td colspan="22">${row[0]}</td></tr>`;
+            return;
+        }
 
-        totals.andi += andi;
-        totals.farhan += farhan;
-        totals.enden += enden;
-        totals.pebrian += pebrian;
-        totals.grand += totalBaris;
+        // Penanda baris total
+        const isTotal = String(row[0]).toUpperCase().includes("TOTAL");
 
-        let item = { nama, andi, farhan, enden, pebrian, total: totalBaris };
-        if (isVoucherGroup) dataVdk.push(item);
-        else dataSp.push(item);
+        // --- PROSES DAILY ---
+        const v1 = parseFloat(row[1]) || 0;
+        const v2 = parseFloat(row[3]) || 0;
+        const v3 = parseFloat(row[5]) || 0;
+        const v4 = parseFloat(row[7]) || 0;
+        const harga = parseFloat(row[11]) || 0;
+        const linePCS = v1 + v2 + v3 + v4;
+        const lineRp = linePCS * harga;
+
+        if (!isTotal) {
+            runningPCS += linePCS;
+            runningRp += lineRp;
+        }
+
+        const rowClass = isTotal ? "total-row" : "";
+
+        htmlDaily += `
+            <tr class="${rowClass}">
+                <td>${row[0]}</td>
+                <td>${formatNumber(row[1])}</td>
+                <td>${formatNumber(row[3])}</td>
+                <td>${formatNumber(row[5])}</td>
+                <td>${formatNumber(row[7])}</td>
+                <td>${formatNumber(isTotal ? runningPCS : linePCS)}</td>
+                <td>${isTotal ? "-" : formatNumber(harga)}</td>
+                <td>${formatNumber(isTotal ? runningRp : lineRp)}</td>
+            </tr>
+        `;
+
+        // --- PROSES WEEKLY (Menyatu) ---
+        htmlWeekly += `
+            <tr class="${rowClass}">
+                <td style="font-weight:700;">${row[15] || '-'}</td> 
+                
+                <td>${formatNumber(row[16])}</td><td>${formatNumber(row[17])}</td><td>${formatNumber(row[18])}</td><td>${formatNumber(row[19])}</td>
+                <td style="background:#f1f5f9;">${formatNumber(row[20])}</td>
+                
+                <td>${formatNumber(row[21])}</td><td>${formatNumber(row[22])}</td><td>${formatNumber(row[23])}</td><td>${formatNumber(row[24])}</td>
+                <td style="background:#f1f5f9;">${formatNumber(row[25])}</td>
+                
+                <td>${formatNumber(row[26])}</td><td>${formatNumber(row[27])}</td><td>${formatNumber(row[28])}</td><td>${formatNumber(row[29])}</td>
+                <td style="background:#f1f5f9;">${formatNumber(row[30])}</td>
+                
+                <td>${formatNumber(row[31])}</td><td>${formatNumber(row[32])}</td><td>${formatNumber(row[33])}</td><td>${formatNumber(row[34])}</td>
+                <td style="background:#f1f5f9;">${formatNumber(row[35])}</td>
+                
+                <td style="font-weight:700; color:#0f172a;">${formatNumber(row[36])}</td>
+            </tr>
+        `;
+
+        // --- PROSES TOTAL ---
+        htmlTotal += `
+            <tr class="${rowClass}">
+                <td>${row[0]}</td>
+                <td>${formatNumber(row[2])}</td>
+                <td>${formatNumber(row[4])}</td>
+                <td>${formatNumber(row[6])}</td>
+                <td>${formatNumber(row[8])}</td>
+                <td>${formatNumber(row[10])}</td>
+                <td>${formatNumber(row[11])}</td>
+                <td>${formatNumber(row[13])}</td>
+            </tr>
+        `;
     });
 
-    // ... (sisa kode makeRow dan rendering html sama dengan sebelumnya)
-    const makeRow = (item) => `<tr><td class="item-name-col">${item.nama}</td><td class="data-user-col">${formatDisplay(item.andi)}</td><td class="data-user-col">${formatDisplay(item.farhan)}</td><td class="data-user-col">${formatDisplay(item.enden)}</td><td class="data-user-col">${formatDisplay(item.pebrian)}</td><td>${formatDisplay(item.total)}</td></tr>`;
-
-    dataSp.forEach(i => html += makeRow(i));
-    if (dataSp.length > 0) html += `<tr class="empty-row"><td colspan="6"></td></tr>`;
-    dataVdk.forEach(i => html += makeRow(i));
-
-    html += `<tr class="total-row"><td class="item-name-col">TOTAL</td><td class="data-user-col">${totals.andi.toLocaleString('id-ID')}</td><td class="data-user-col">${totals.farhan.toLocaleString('id-ID')}</td><td class="data-user-col">${totals.enden.toLocaleString('id-ID')}</td><td class="data-user-col">${totals.pebrian.toLocaleString('id-ID')}</td><td>${totals.grand.toLocaleString('id-ID')}</td></tr>`;
-
-    document.getElementById('cso-stock-table').innerHTML = html;
+    document.getElementById("bodyDaily").innerHTML = htmlDaily;
+    document.getElementById("bodyTotal").innerHTML = htmlTotal;
+    document.getElementById("bodyWeekly").innerHTML = htmlWeekly;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchExcelData();
-    setInterval(fetchExcelData, 30000);
-});
+
+function showTab(type) {
+    document.getElementById('wrapperDaily').style.display = (type === 'daily') ? 'block' : 'none';
+    document.getElementById('wrapperTotal').style.display = (type === 'total') ? 'block' : 'none';
+    document.getElementById('wrapperWeekly').style.display = (type === 'weekly') ? 'block' : 'none';
+    
+    document.getElementById('btnDaily').className = (type === 'daily') ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('btnTotal').className = (type === 'total') ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('btnWeekly').className = (type === 'weekly') ? 'tab-btn active' : 'tab-btn';
+}
+
+
+
+
+// ==========================
+// LOAD
+// ==========================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        fetchExcelData();
+
+        // AUTO REFRESH
+        setInterval(()=>{
+            fetchExcelData();
+        },30000);
+
+    }
+);
 
 </script>
+
 <script src="global-ui.js"></script>
+
 </body>
 </html>
