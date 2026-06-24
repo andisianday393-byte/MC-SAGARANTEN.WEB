@@ -606,11 +606,6 @@
                 <div class="submenu-icon">🗒️</div>
                 <div class="submenu-title">Form Daily Report DSE</div>
             </a>
-            <a href="form-Request-Stock.html" class="submenu-item">
-              <div class="submenu-icon">📦</div>
-              <div class="submenu-title">Form Request Stock Gudang</div>
-            </a>
-            
         </div>
       
         <a href="stok-gudang.html" class="nav-item gudang-link">
@@ -647,13 +642,13 @@
                 <img src="img/mobii.jpg" class="submenu-img">
                 <div class="submenu-title">Penjualan SALMO</div>
             </a>
-            <a href="penjualan-reguler-new.html" class="submenu-item">
+            <a href="penjualan-reguler3.html" class="submenu-item">
                 <div class="submenu-icon">🛒</div>
-                <div class="submenu-title">Penjualan Fisik SP dan Voucher</div>
+                <div class="submenu-title">Penjualan Regular</div>
             </a>
-            <a href="penjualan-paket-jupiter.html" class="submenu-item">
+            <a href="penjualan-paket-tm2.html" class="submenu-item">
                 <div class="submenu-icon">📞</div>
-                <div class="submenu-title">Penjualan Paket Jupiter</div>
+                <div class="submenu-title">Penjualan Paket TM</div>
             </a>
             <a href="penjualan-direct-selling.html" class="submenu-item">
                 <div class="submenu-icon">🚶</div>
@@ -681,7 +676,7 @@
 
     <!-- Submenu Trade Program -->
 <div class="submenu-container" id="submenu-trade">
-    <a href="https://andisianday393-byte.github.io/Info_dan-Materi_Biometrik" class="submenu-item">
+    <a href="program-outlet.html" class="submenu-item">
         <div class="submenu-icon">🏪</div>
         <div class="submenu-title">Program Outlet</div>
     </a>
@@ -783,7 +778,6 @@
 </div>
 
 <script> 
-let lastDataSignature = null;
 const WEB_APP_URL =
 'https://script.google.com/macros/s/AKfycbyRFemxVivBCbScqY77yX68CtZxZ7uy1l4YUqgYDS6qz8sH5YTKI5Tk7BBXp7ZqHS3J/exec';
 
@@ -893,6 +887,91 @@ async function updateSaldoSalmo() {
             grandTotal !== lastGrandTotal
         ) {
 
+            tambahNotif(
+                'Data penjualan SALMO berhasil diperbarui.'
+            );
+
+            updateBadge();
+
+            console.log(
+                'Perubahan data terdeteksi'
+            );
+
+        }
+
+        // SIMPAN TOTAL TERAKHIR
+        lastGrandTotal = grandTotal;
+
+    } catch(error) {
+
+        console.log(error);
+
+        document.getElementById(
+            'grand-total'
+        ).innerText = 'Error';
+
+    }
+
+}
+async function updateSaldoSalmo() {
+
+    try {
+
+        const response =
+            await fetch(
+                EXCEL_FILE_URL + '?t=' + Date.now()
+            );
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(arrayBuffer, {
+                type:'array'
+            });
+
+        const worksheet =
+            workbook.Sheets['penjualan-salmo'];
+
+        if (!worksheet) return;
+
+        const data =
+            XLSX.utils.sheet_to_json(worksheet);
+
+        let grandTotal = 0;
+
+        data.forEach(row => {
+
+            const nama =
+                String(
+                    row['Nama cso'] || ''
+                ).trim().toUpperCase();
+
+            if (nama === 'GRAND TOTAL') return;
+
+            grandTotal +=
+                ambilAngka(row['Amount']);
+
+        });
+
+        // UPDATE TAMPILAN
+        document.getElementById(
+            'grand-total'
+        ).innerText =
+            formatRupiah(grandTotal);
+
+        // CEK PERUBAHAN DATA
+        if (
+            lastGrandTotal !== null &&
+            grandTotal !== lastGrandTotal
+        ) {
+
+            tambahNotif(
+                'Data penjualan SALMO berhasil diperbarui.'
+            );
+
+            updateBadge();
+
             console.log(
                 'Perubahan data terdeteksi'
             );
@@ -916,59 +995,27 @@ async function updateSaldoSalmo() {
 
 async function updateTotalSPVoucher() {
     try {
-
-        const response =
-            await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
-
-        const arrayBuffer =
-            await response.arrayBuffer();
-
-        const workbook =
-            XLSX.read(arrayBuffer, { type:'array' });
-
-        const worksheet =
-            workbook.Sheets['penjualan-reguler-new'];
-
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        const worksheet = workbook.Sheets['penjualan-reguler'];
         if (!worksheet) return;
-
-        const data =
-            XLSX.utils.sheet_to_json(worksheet, {
-                header: 1,
-                defval: ''
-            });
-
-        let totalSP = 0;
-        let totalVoucher = 0;
-
-        data.forEach(row => {
-
-            const label =
-                String(row[0] || '')
-                .trim()
-                .toUpperCase();
-
-            if(label === 'TOTAL SP'){
-                totalSP = ambilAngka(row[7]);
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header:1, defval:0 });
+        let total = 0;
+        for(let i=2; i<rows.length; i++) {
+            const row = rows[i];
+            if(!row) continue;
+            const harga = ambilAngka(row[6]);
+            let qty = 0;
+            for(let c=1; c<=4; c++) {
+                qty += ambilAngka(row[c]);
             }
-
-            if(label === 'TOTAL VOUCHER'){
-                totalVoucher = ambilAngka(row[7]);
-            }
-
-        });
-
-        const grandTotal =
-            totalSP + totalVoucher;
-
-        document.getElementById('total-sp').innerText =
-            formatRupiah(grandTotal);
-
+            total += qty * harga;
+        }
+        document.getElementById('total-sp').innerText = formatRupiah(total);
     } catch(error) {
-
         console.log(error);
-
-        document.getElementById('total-sp').innerText =
-            'Error';
+        document.getElementById('total-sp').innerText = 'Error';
     }
 }
 
@@ -976,45 +1023,28 @@ async function updateTotalPaket() {
     try {
         const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
         const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-        
-        // 1. Hitung Total dari sheet 'penjualan-paket-jupiter'
-        const worksheetJupiter = workbook.Sheets['penjualan-paket-jupiter'];
-        const dataJupiter = XLSX.utils.sheet_to_json(worksheetJupiter);
-        let totalJupiter = dataJupiter.reduce((sum,row)=>{
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        let grandTotal = 0;
 
-    const key = Object.keys(row).find(
-        k => k.trim().toLowerCase() === 'jumlah pembayaran'
-    );
-
-    return sum + (Number(row[key]) || 0);
-
-},0);
-
-        // 2. Hitung Total dari sheet 'penjualan-direct-selling'
-        const worksheetDS = workbook.Sheets['penjualan-direct-selling'];
-        const dataDS = XLSX.utils.sheet_to_json(worksheetDS);
-        let totalDS = 0;
-        dataDS.forEach(row => {
-            // Memastikan baris tersebut adalah data transaksi (cek ID DSE)
-            if (row['ID DSE']) {
-                totalDS += ambilAngka(row['Pembayaran']);
+        function ambilCell(sheetName, cell) {
+            const worksheet = workbook.Sheets[sheetName];
+            if (!worksheet) {
+                console.log('Sheet tidak ditemukan:', sheetName);
+                return 0;
             }
-        });
+            const value = worksheet[cell] ? worksheet[cell].v : 0;
+            return ambilAngka(value);
+        }
 
-        // 3. Gabungkan total
-        const grandTotal = totalJupiter + totalDS;
-        
-        // 4. Update tampilan
+        const totalTM = ambilCell('penjualan-paket-tm', 'E7');
+        const totalDS = ambilCell('penjualan-direct-selling', 'E6');
+        grandTotal = totalTM + totalDS;
         document.getElementById('total-paket').innerText = formatRupiah(grandTotal);
-        
     } catch(error) {
-        console.error('Error saat menghitung total paket:', error);
+        console.error(error);
         document.getElementById('total-paket').innerText = 'Error';
     }
 }
-
-
 
 async function updateTotalHifi() {
     try {
@@ -1055,6 +1085,15 @@ updateClock();
 kirimLog(
     'Membuka Home Portal'
 );
+function loadSemua() {
+    updateSaldoSalmo();
+    updateTotalSPVoucher();
+    updateTotalPaket();
+    updateTotalHifi();
+}
+
+loadSemua();
+setInterval(loadSemua, 10000);
 
 document.addEventListener('DOMContentLoaded', function() {
     // Menangkap semua elemen dengan class 'toggle-btn'
@@ -1089,38 +1128,14 @@ async function loadSemua() {
 
     try {
 
+        // UPDATE SEMUA DASHBOARD
         await updateSaldoSalmo();
+
         await updateTotalSPVoucher();
+
         await updateTotalPaket();
+
         await updateTotalHifi();
-
-        const currentSignature =
-            `${lastGrandTotal}-${
-                document.getElementById('total-sp').innerText
-            }-${
-                document.getElementById('total-paket').innerText
-            }-${
-                document.getElementById('total-hifi').innerText
-            }`;
-
-        if (
-            lastDataSignature !== null &&
-            currentSignature !== lastDataSignature
-        ) {
-
-            tambahNotif(
-                'Data Excel berhasil diperbarui'
-            );
-
-            showToast(
-                'Data terbaru berhasil dimuat'
-            );
-
-            updateBadge();
-
-        }
-
-        lastDataSignature = currentSignature;
 
     } catch(e) {
 
@@ -1132,14 +1147,6 @@ async function loadSemua() {
     }
 
 }
-
-// ======================
-// TAMBAHKAN INI
-// ======================
-
-loadSemua();
-
-setInterval(loadSemua, 10000);
 /* =========================
    SEARCH MENU
 ========================= */
@@ -1451,6 +1458,10 @@ document.getElementById('btn-download').addEventListener('click', function(e){
 
     kirimLog('Melakukan Download File');
 
+    // Notif proses
+    tambahNotif("Membuka halaman download file...");
+
+    // Pindah halaman sambil kirim status
     window.location.href =
         'download-data.html?download=success';
 
@@ -1467,6 +1478,14 @@ function showToast(message) {
     }, 3000);
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a.kpi-link, a.md-link').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            showToast('Program akan segera hadir');
+        });
+    });
+});
 const openProfilBtn = document.getElementById('openProfil');
 const profilOverlay = document.getElementById('profilOverlay');
 
@@ -1488,25 +1507,7 @@ document.getElementById('btn-submit-akun').addEventListener('click', () => {
     profilOverlay.classList.remove('active');
 });
 // Tambahkan ini di bagian script laciTrigger
-document.querySelectorAll(
-    '.nav-item[href], .submenu-item[href], .bottom-item[href]'
-).forEach(menu => {
 
-    menu.addEventListener('click', () => {
-
-        localStorage.removeItem('notif_logs');
-
-        const badge =
-            document.getElementById('notif-badge');
-
-        if (badge) {
-            badge.style.display = 'none';
-            badge.textContent = '';
-        }
-
-    });
-
-});
 </script>
 
 </body>
