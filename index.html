@@ -1014,8 +1014,6 @@ async function updateTotalPaket() {
     }
 }
 
-
-
 async function updateTotalHifi() {
     try {
         const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
@@ -1086,52 +1084,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 async function loadSemua() {
-
     try {
+        // Panggil satu fungsi saja untuk semua data
+        await updateDashboardData();
 
-        await updateSaldoSalmo();
-        await updateTotalSPVoucher();
-        await updateTotalPaket();
-        await updateTotalHifi();
-
-        const currentSignature =
-            `${lastGrandTotal}-${
-                document.getElementById('total-sp').innerText
-            }-${
-                document.getElementById('total-paket').innerText
-            }-${
-                document.getElementById('total-hifi').innerText
-            }`;
-
-        if (
-            lastDataSignature !== null &&
-            currentSignature !== lastDataSignature
-        ) {
-
-            tambahNotif(
-                'Data Excel berhasil diperbarui'
-            );
-
-            showToast(
-                'Data terbaru berhasil dimuat'
-            );
-
-            updateBadge();
-
-        }
-
-        lastDataSignature = currentSignature;
+        // (Opsional) Logika deteksi perubahan tetap bisa dipakai 
+        // jika Anda membandingkan nilai dari row tersebut
+        tambahNotif('Data Dashboard berhasil diperbarui');
+        showToast('Data terbaru berhasil dimuat');
+        updateBadge();
 
     } catch(e) {
-
-        console.error(
-            'Gagal load dashboard:',
-            e
-        );
-
+        console.error('Gagal load dashboard:', e);
     }
-
 }
+
 
 // ======================
 // TAMBAHKAN INI
@@ -1507,6 +1474,37 @@ document.querySelectorAll(
     });
 
 });
+
+async function updateDashboardData() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        
+        // Membaca sheet "Dashboard"
+        const worksheet = workbook.Sheets['Dashboard'];
+        if (!worksheet) {
+            console.error("Sheet 'Dashboard' tidak ditemukan");
+            return;
+        }
+
+        // Mengonversi ke JSON (baris pertama adalah header)
+        const data = XLSX.utils.sheet_to_json(worksheet);
+        
+        if (data.length > 0) {
+            const row = data[0]; // Mengambil baris pertama data
+
+            // Mengupdate tampilan berdasarkan nama kolom
+            document.getElementById('grand-total').innerText = formatRupiah(row['TOTAL PENJUALAN SALMO'] || 0);
+            document.getElementById('total-sp').innerText = formatRupiah(row['SP DAN VOUCHER'] || 0);
+            document.getElementById('total-paket').innerText = formatRupiah(row['ALL PAKET'] || 0);
+            document.getElementById('total-hifi').innerText = formatRupiah(row['HIFI'] || 0);
+        }
+    } catch (error) {
+        console.error("Gagal mengambil data Dashboard:", error);
+    }
+}
+
 </script>
 
 </body>
