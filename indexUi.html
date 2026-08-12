@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC-SAGARANTEN - Home Portal</title>
+    <link rel="stylesheet" href="ui.css">
+    <!-- Favicon Browser -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon.png">
+
+    <!-- Android / Home Screen -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon.png">
+
+    <!-- Progressive Web App -->
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#0f172a">
+    <style>
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f8fafc;
+}
+
+
+/* =========================================
+   SUMMARY / KARTU
+========================================= */
+
+.summary-wrapper{
+
+    position:relative;
+
+    /*
+       JANGAN lebih tinggi dari sticky header
+    */
+    z-index:1000;
+
+    background:
+        rgba(255,255,255,.95);
+
+    backdrop-filter:blur(10px);
+
+    margin:
+        90px
+        10px
+        20px;
+
+    border-radius:16px;
+
+    box-shadow:
+        0 12px 28px
+        rgba(15,23,42,.12);
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+
+/* =========================================
+   SALDO CARD
+========================================= */
+
+.saldo-card{
+    background:#1e3a8a;
+    color:#fff;
+
+    width:auto;
+
+    padding:10px 14px;
+
+    margin:
+        10px
+        10px
+        10px;
+
+    border-radius:14px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    align-self:stretch;
+
+    box-shadow:
+        0 8px 20px rgba(15,23,42,.15);
+}
+
+.saldo-card:first-child{
+    border-radius:12px 12px 12px 12px;
+}
+
+
+/* =========================================
+   SUMMARY CONTENT
+========================================= */
+
+.summary-content{
+    padding:12px;
+}
+
+
+/* =========================================
+   SALDO TEXT
+========================================= */
+
+.saldo-label{
+    font-size:10px;
+
+    margin-bottom:2px;
+
+    opacity:.9;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+}
+
+.saldo-amount{
+    font-size:18px;
+
+    font-weight:700;
+    margin-top: 10px;
+    margin-bottom:8px;
+}
+
+
+/* =========================================
+   SUMMARY 3 COLUMN
+========================================= */
+
+.sub-summary-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:8px;
+}
+
+.sub-stat{
+    background:#fff;
+
+    padding:6px 4px;
+
+    border-radius:8px;
+
+    text-align:center;
+
+    color:#1e3a8a;
+}
+
+.sub-label{
+    font-size:8px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    margin-bottom:2px;
+}
+
+.sub-value{
+    font-size:10px;
+
+    font-weight:700;
+}
+
+/* =========================================
+   LACI - MENU AKSI CEPAT
+   DIBUAT SAMA SEPERTI MENU GRID
+========================================= */
+
+.quick-action-grid{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:16px 8px;
+
+    padding:
+        8px 0 12px;
+
+    margin:0;
+
+    background:#fff;
+}
+
+
+/* =========================================
+   ITEM AKSI
+========================================= */
+
+.action-btn{
+
+    position:relative;
+
+    width:100%;
+
+    min-height:78px;
+
+    padding:4px 2px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    background:transparent;
+
+    border:0;
+
+    border-radius:0;
+
+    text-decoration:none;
+
+    color:#475569;
+
+    box-shadow:none;
+
+    cursor:pointer;
+
+    transition:
+        transform .18s ease,
+        opacity .18s ease;
+}
+
+
+/* =========================================
+   ICON AKSI
+========================================= */
+
+.action-icon{
+
+    width:44px;
+
+    height:44px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:0 0 6px;
+
+    font-size:22px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:13px;
+
+    box-shadow:
+        0 3px 8px
+        rgba(15,23,42,.07);
+
+    flex-shrink:0;
+
+    text-shadow:
+        0 2px 3px
+        rgba(15,23,42,.25);
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.action-label{
+
+    width:100%;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    line-height:1.25;
+
+    text-align:center;
+
+    color:#475569;
+
+    white-space:normal;
+
+    text-transform:none;
+
+    letter-spacing:0;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.action-btn:hover{
+
+    background:transparent;
+
+    box-shadow:none;
+
+    transform:translateY(-2px);
+}
+
+
+/* =========================================
+   TOUCH
+========================================= */
+
+.action-btn:active{
+
+    transform:scale(.94);
+}
+
+
+/* =========================================
+   REFRESH ICON
+========================================= */
+
+.refresh-circle{
+
+    width:44px;
+
+    height:44px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin:0 0 6px;
+}
+
+
+/* Karena icon refresh sudah
+   berada di dalam refresh-circle */
+
+.refresh-circle .action-icon{
+
+    margin:0;
+}
+
+
+/* =========================================
+   MOBILE KECIL
+========================================= */
+
+@media(max-width:380px){
+
+    .quick-action-grid{
+
+        grid-template-columns:
+            repeat(4,1fr);
+
+        gap:14px 5px;
+
+    }
+
+    .action-btn{
+
+        min-height:74px;
+
+    }
+
+    .action-icon,
+    .refresh-circle{
+
+        width:40px;
+
+        height:40px;
+
+        font-size:20px;
+
+        border-radius:12px;
+
+    }
+
+    .action-label{
+
+        font-size:8px;
+
+    }
+
+}
+
+
+/* =========================================
+   REFRESH ANIMATION
+========================================= */
+
+.refresh-spin{
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+    100%{
+        transform:rotate(360deg);
+    }
+
+}
+
+/* =========================================
+   APP NAVIGATION
+========================================= */
+
+.app-navigation{
+    width:100%;
+    padding:2px 10px 30px;
+    position:relative;
+    z-index:1000;
+}
+
+
+/* =========================================
+   MENU GROUP
+========================================= */
+
+.menu-group{
+    width:100%;
+    margin-bottom:16px;
+}
+
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.section-title{
+    font-size:12px;
+    font-weight:800;
+    color:#1e3a8a;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    margin:14px 4px 15px;
+
+    text-shadow:
+        -1px -1px 0 #fff,
+         1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+         1px  1px 0 #fff;
+}
+
+.section-title:first-of-type{
+    margin-top:2px;
+}
+
+
+/* =========================================
+   MENU GRID
+========================================= */
+
+.nav-wrapper{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px 8px;
+}
+
+
+/* =========================================
+   SEMUA MENU
+========================================= */
+
+.nav-item{
+    position:relative;
+
+    width:100%;
+    min-height:78px;
+
+    padding:4px 2px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+
+    background:transparent;
+
+    border:0;
+    border-radius:0;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    box-shadow:none;
+
+    transition:
+        transform .18s ease,
+        opacity .18s ease;
+}
+
+
+/* =========================================
+   MENU IMAGE / ICON
+========================================= */
+
+.nav-icon{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:0 0 6px;
+
+    font-size:22px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:13px;
+
+    box-shadow:
+        0 3px 8px rgba(15,23,42,.07);
+
+    flex-shrink:0;
+    text-shadow:
+        0 2px 3px rgba(15,23,42,.25);
+    overflow:hidden;
+}
+
+
+/* =========================================
+   IMAGE DI DALAM MENU
+========================================= */
+
+.nav-icon .menu-image{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    display:block;
+}
+
+
+/* =========================================
+   MENU DETAILS
+========================================= */
+
+.nav-details{
+    width:100%;
+    margin:0;
+
+    text-align:center;
+}
+
+
+/* =========================================
+   MENU TITLE
+========================================= */
+
+.nav-title{
+    width:100%;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    line-height:1.25;
+
+    letter-spacing:.5px;
+
+    text-align:center;
+
+    color:#475569;
+
+    text-shadow:
+         0.5px  0.5px 0 #fff,
+        -0.5px -0.5px 0 #fff,
+         0.5px -0.5px 0 #fff,
+        -0.5px  0.5px 0 #fff;
+
+    white-space:normal;
+}
+
+
+/* =========================================
+   MENU DESCRIPTION
+========================================= */
+
+.nav-desc{
+    display:none;
+}
+
+
+/* =========================================
+   HILANGKAN ARROW
+========================================= */
+
+.nav-arrow{
+    display:none !important;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.nav-item:hover{
+    background:transparent;
+
+    box-shadow:none;
+
+    transform:translateY(-2px);
+}
+
+
+/* =========================================
+   ACTIVE / TOUCH
+========================================= */
+
+.nav-item:active{
+    transform:scale(.94);
+}
+
+
+/* =========================================
+   WARNA MENU
+========================================= */
+
+.form-link .nav-title{
+    color:var(--accent-form);
+}
+
+.gudang-link .nav-title{
+    color:var(--accent-gudang);
+}
+
+.dse-link .nav-title{
+    color:var(--accent-dse);
+}
+
+.penjualan-link .nav-title{
+    color:var(--accent-penjualan);
+}
+
+.trade-link .nav-title{
+    color:var(--accent-trade);
+}
+
+.kpi-link .nav-title{
+    color:var(--accent-kpi);
+}
+
+.md-link .nav-title{
+    color:var(--accent-md);
+}
+
+
+/* =========================================
+   SUBMENU
+   JIKA MASIH ADA DI HTML LAMA
+   AKAN TETAP TAMPIL SEBAGAI MENU BIASA
+========================================= */
+
+.submenu-container{
+    display:contents;
+}
+
+.submenu-container.active{
+    display:contents;
+}
+
+.submenu-item{
+    position:relative;
+
+    width:100%;
+    min-height:78px;
+
+    padding:4px 2px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+
+    background:transparent;
+
+    border:0;
+    border-radius:0;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    box-shadow:none;
+
+    transition:
+        transform .18s ease,
+        opacity .18s ease;
+}
+
+
+/* =========================================
+   SUBMENU ICON
+========================================= */
+
+.submenu-icon{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:0 0 6px;
+
+    font-size:22px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:13px;
+
+    box-shadow:
+        0 3px 8px rgba(15,23,42,.07);
+
+    flex-shrink:0;
+}
+
+
+/* =========================================
+   SUBMENU IMAGE
+========================================= */
+
+.submenu-img{
+    width:44px;
+    height:44px;
+
+    object-fit:cover;
+
+    margin:0 0 6px;
+
+    border-radius:13px;
+
+    border:1px solid #e2e8f0;
+
+    box-shadow:
+        0 3px 8px rgba(15,23,42,.07);
+
+    flex-shrink:0;
+}
+
+
+/* =========================================
+   SUBMENU TITLE
+========================================= */
+
+.submenu-title{
+    width:100%;
+
+    font-size:9px;
+    font-weight:700;
+
+    line-height:1.25;
+
+    text-align:center;
+
+    color:#475569;
+}
+
+
+/* =========================================
+   SUBMENU HOVER
+========================================= */
+
+.submenu-item:hover{
+    background:transparent;
+
+    box-shadow:none;
+
+    transform:translateY(-2px);
+}
+
+.submenu-item:active{
+    transform:scale(.94);
+}
+
+
+/* =========================================
+   MOBILE KECIL
+========================================= */
+
+@media(max-width:380px){
+
+    .nav-wrapper{
+        grid-template-columns:repeat(4,1fr);
+
+        gap:14px 5px;
+    }
+
+    .nav-item,
+    .submenu-item{
+        min-height:74px;
+    }
+
+    .nav-icon,
+    .submenu-icon,
+    .submenu-img{
+        width:40px;
+        height:40px;
+
+        font-size:20px;
+
+        border-radius:12px;
+    }
+
+    .nav-title,
+    .submenu-title{
+        font-size:8px;
+    }
+}
+
+
+/* =========================================
+   TABLET / DESKTOP
+========================================= */
+
+@media(min-width:600px){
+
+    .nav-wrapper{
+        grid-template-columns:repeat(5,1fr);
+
+        gap:20px 12px;
+    }
+
+    .nav-item,
+    .submenu-item{
+        min-height:85px;
+    }
+
+    .nav-icon,
+    .submenu-icon,
+    .submenu-img{
+        width:48px;
+        height:48px;
+
+        font-size:23px;
+    }
+
+    .nav-title,
+    .submenu-title{
+        font-size:10px;
+    }
+}
+/* =========================================
+   SEARCH OVERLAY
+========================================= */
+
+.search-overlay{
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(15,23,42,.55);
+
+    backdrop-filter:blur(5px);
+
+    z-index:999999;
+
+    display:none;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    padding:
+        80px
+        14px
+        20px;
+}
+
+.search-overlay.active{
+    display:flex;
+}
+
+.search-box{
+    width:100%;
+
+    max-width:500px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.18);
+}
+
+#searchInput{
+    width:100%;
+
+    border:0;
+
+    outline:0;
+
+    padding:16px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    border-bottom:
+        1px solid #e2e8f0;
+}
+
+#searchResults{
+    max-height:60vh;
+
+    overflow-y:auto;
+}
+
+.search-item{
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 16px;
+
+    text-decoration:none;
+
+    color:#0f172a;
+
+    border-bottom:
+        1px solid #f1f5f9;
+}
+
+.search-item:active{
+    background:#f8fafc;
+}
+
+.search-icon{
+    font-size:20px;
+}
+
+.search-text{
+    flex:1;
+}
+
+.search-title{
+    font-size:13px;
+
+    font-weight:700;
+}
+
+.search-desc{
+    font-size:11px;
+
+    color:#64748b;
+
+    margin-top:2px;
+}
+
+.empty-search{
+    padding:20px;
+
+    text-align:center;
+
+    font-size:12px;
+
+    color:#94a3b8;
+}
+
+
+/* =========================================
+   MENU AKSI CEPAT
+========================================= */
+
+.quick-menu-section{
+    width:100%;
+    padding:0 10px 8px;
+}
+
+
+/* =========================================
+   JUDUL MENU AKSI
+========================================= */
+
+.quick-menu-section {
+    font-size:10px;
+    font-weight:800;
+    color:#64748b;
+
+    text-transform:uppercase;
+    letter-spacing:.6px;
+
+    margin:
+        2px 3px
+        5px;
+}
+
+
+/* =========================================
+   GRID
+========================================= */
+
+.quick-menu-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:8px;
+}
+
+
+/* =========================================
+   ITEM
+========================================= */
+
+.quick-menu-item{
+    width:100%;
+
+    min-height:70px;
+
+    padding:4px 2px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    background:transparent;
+
+    border:0;
+
+    border-radius:0;
+
+    text-decoration:none;
+
+    color:#475569;
+
+    cursor:pointer;
+
+    transition:
+        transform .18s ease,
+        opacity .18s ease;
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.quick-menu-icon{
+    width:44px;
+    height:44px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin:0 0 6px;
+
+    font-size:18px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:13px;
+
+    box-shadow:
+        0 3px 8px
+        rgba(15,23,42,.07);
+
+    flex-shrink:0;
+
+    text-shadow:
+        0 2px 3px
+        rgba(15,23,42,.25);
+
+    overflow:hidden;
+}
+
+
+/* =========================================
+   TEXT
+========================================= */
+
+.quick-menu-title-item{
+    width:100%;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    line-height:1.25;
+
+    text-align:center;
+
+    color:#475569;
+
+    white-space:normal;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.quick-menu-item:hover{
+    background:transparent;
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================
+   TOUCH
+========================================= */
+
+.quick-menu-item:active{
+    transform:
+        scale(.94);
+}
+
+
+/* =========================================
+   MOBILE KECIL
+========================================= */
+
+@media(max-width:380px){
+
+    .quick-menu-grid{
+        gap:5px;
+    }
+
+    .quick-menu-item{
+        min-height:66px;
+    }
+
+    .quick-menu-icon{
+        width:40px;
+        height:40px;
+
+        font-size:20px;
+
+        border-radius:12px;
+    }
+
+    .quick-menu-title-item{
+        font-size:8px;
+    }
+
+}
+
+
+/* =========================================
+   TABLET / DESKTOP
+========================================= */
+
+@media(min-width:600px){
+
+    .quick-menu-grid{
+        grid-template-columns:
+            repeat(5,1fr);
+
+        gap:12px;
+    }
+
+    .quick-menu-item{
+        min-height:78px;
+    }
+
+    .quick-menu-icon{
+        width:48px;
+        height:48px;
+
+        font-size:23px;
+    }
+
+    .quick-menu-title-item{
+        font-size:10px;
+    }
+
+}
+
+/* =========================================
+   TOAST
+========================================= */
+
+.toast-container{
+    position:fixed;
+
+    right:16px;
+
+    bottom:70px;
+
+    z-index:99999;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+.toast{
+    background:#1e293b;
+
+    color:#fff;
+
+    padding:
+        12px
+        16px;
+
+    border-radius:10px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.15);
+
+    opacity:0;
+
+    transform:
+        translateY(10px);
+
+    animation:
+        toastIn .25s ease forwards,
+        toastOut .25s ease forwards 2.5s;
+}
+
+@keyframes toastIn{
+
+    to{
+        opacity:1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+@keyframes toastOut{
+
+    to{
+        opacity:0;
+
+        transform:
+            translateY(10px);
+    }
+
+}
+.nav-title{
+    font-size:10px !important;
+    font-weight:700;
+    line-height:1.25;
+    color:#475569 !important;
+    text-align:center;
+    white-space:normal;
+}
+
+*{
+    -webkit-tap-highlight-color:transparent;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     FIXED HEADER TEKS & LOGO
+========================================= -->
+<div class="header-content-overlay">
+    <!-- KIRI -->
+    <div class="header-welcome-layer">
+        <div class="header-logo-layer">
+            <img src="img/favicon.png" alt="Logo MC-SAGARANTEN">
+        </div>
+        <div class="welcome-text-layer">
+            <div class="welcome-greeting-layer">Hallo,</div>
+            <div class="welcome-title-layer">Selamat Datang..</div>
+        </div>
+    </div>
+
+    <!-- KANAN -->
+    <div class="header-brand-layer">
+        <div class="brand-title-layer">Dashboard</div>
+        <div class="brand-name-layer">MC-SAGARANTEN</div>
+        <div class="brand-subtitle-layer">Monitoring Stok dan Penjualan</div>
+    </div>
+</div>
+
+<!-- =========================================
+     LATAR BELAKANG BIRU MELENGKUNG (TETAP)
+========================================= -->
+<div class="hero-background"></div>
+
+<div class="summary-wrapper">
+    <div class="saldo-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2);">
+            
+            <div class="main-summary" style="margin-bottom: 0;">
+                <div class="saldo-label">Total Penjualan Salmo</div>
+                <div class="saldo-amount" id="grand-total" style="margin-bottom: 0;">Memuat...</div>
+            </div>
+
+            <div id="live-clock-container" style="text-align: right;">
+                <div id="live-date" style="font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">--/--/----</div>
+                <div id="live-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">--:--:--</div>
+            </div>
+        </div>
+        
+        <div class="sub-summary-grid">
+            <div class="sub-stat">
+                <div class="sub-label">SP & Voucher</div>
+                <div class="sub-value" id="total-sp">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">All Paket</div>
+                <div class="sub-value" id="total-paket">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">Hifi</div>
+                <div class="sub-value" id="total-hifi">...</div>
+            </div>
+        </div>
+    </div>
+
+ <!-- =========================================
+     MENU AKSI CEPAT
+========================================= -->
+
+<div class="quick-menu-section">
+
+    <div class="quick-menu-grid">
+
+        <!-- FILE -->
+        <a href="download-data.html"
+           class="quick-menu-item">
+
+            <div class="quick-menu-icon">
+                📥
+            </div>
+
+            <div class="quick-menu-title-item">
+                File
+            </div>
+
+        </a>
+
+
+        <!-- CARI -->
+        <div class="quick-menu-item"
+             id="openSearch">
+
+            <div class="quick-menu-icon">
+                🔍
+            </div>
+
+            <div class="quick-menu-title-item">
+                Cari
+            </div>
+
+        </div>
+
+
+        <!-- LOG -->
+        <a href="info-log.html"
+           class="quick-menu-item">
+
+            <div class="quick-menu-icon">
+                📜
+            </div>
+
+            <div class="quick-menu-title-item">
+                Log
+            </div>
+
+        </a>
+
+
+        <!-- REFRESH -->
+        <div class="quick-menu-item"
+             id="btn-refresh">
+
+            <div class="quick-menu-icon">
+                🔄
+            </div>
+
+            <div class="quick-menu-title-item">
+                Refresh
+            </div>
+
+        </div>
+
+
+        <!-- SETTING -->
+        <a href="setting.html"
+           class="quick-menu-item">
+
+            <div class="quick-menu-icon">
+                ⚙️
+            </div>
+
+            <div class="quick-menu-title-item">
+                Setting
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+</div>
+
+<!-- BAGIAN NAVIGASI YANG BISA DI-SCROLL -->
+<!-- =========================================
+     NAVIGASI UTAMA
+========================================= -->
+
+<div class="app-navigation">
+
+    <!-- =====================================
+         OPERASIONAL & GUDANG
+    ====================================== -->
+
+    <div class="menu-group">
+
+        <div class="section-title">
+            Operasional & Gudang
+        </div>
+
+        <div class="nav-wrapper">
+
+            <!-- PERMINTAAN BARANG -->
+            <a href="form-permintaan.html"
+               class="nav-item form-link">
+
+                <div class="nav-icon">
+                    📋
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-form)">
+                        TAMBAH STOCK
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- DAILY REPORT DSE -->
+            <a href="form-daily.html"
+               class="nav-item form-link">
+
+                <div class="nav-icon">
+                    🗒️
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-form)">
+                        REPORT DSE
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- REQUEST STOCK -->
+            <a href="form-Request-Stock.html"
+               class="nav-item form-link">
+
+                <div class="nav-icon">
+                    📦
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-form)">
+                        REQUEST GUDANG
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- STOK GUDANG -->
+            <a href="stok-gudang.html"
+               class="nav-item gudang-link">
+
+                <div class="nav-icon">
+                    📦
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-gudang)">
+                        STOK GUDANG
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- STOK DSE -->
+            <a href="stok-barang-dse.html"
+               class="nav-item dse-link">
+
+                <div class="nav-icon">
+                    💼
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-dse)">
+                        STOK DSE
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- PENJUALAN SALMO -->
+            <a href="penjualan-salmo.html"
+               class="nav-item penjualan-link">
+
+                <div class="nav-icon">
+                    <img
+                        src="img/mobii.jpg"
+                        class="menu-image"
+                        alt="SALMO">
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-penjualan)">
+                        SALMO
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- SP & VOUCHER -->
+            <a href="penjualan-reguler-new.html"
+               class="nav-item penjualan-link">
+
+                <div class="nav-icon">
+                    🛒
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-penjualan)">
+                        SP & VOUCHER
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- PAKET JUPITER -->
+            <a href="penjualan-paket-jupiter.html"
+               class="nav-item penjualan-link">
+
+                <div class="nav-icon">
+                    📞
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-penjualan)">
+                        PAKET
+                    </div>
+                </div>
+
+            </a>
+
+            <!-- PENJUALAN HIFI -->
+            <a href="penjualan-hifi.html"
+               class="nav-item penjualan-link">
+
+                <div class="nav-icon">
+
+                    <img
+                        src="img/hifi.png"
+                        class="menu-image"
+                        alt="Hifi">
+
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-penjualan)">
+                        HIFI
+                    </div>
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         MARKETING & MONITORING
+    ====================================== -->
+
+    <div class="menu-group">
+
+        <div class="section-title">
+            Marketing & Monitoring
+        </div>
+
+        <div class="nav-wrapper">
+
+            <!-- PROGRAM OUTLET -->
+            <a
+                href="https://andisianday393-byte.github.io/Info_dan-Materi_Biometrik"
+                class="nav-item trade-link">
+
+                <div class="nav-icon">
+                    🏪
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-trade)">
+                        PROGRAM OUTLET
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- PROGRAM PAKET -->
+            <a href="program-paket.html"
+               class="nav-item trade-link">
+
+                <div class="nav-icon">
+                    📦
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-trade)">
+                        PROGRAM PAKET
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- KPI DSE -->
+            <a href="kpi-dse-data-outlet.html"
+               class="nav-item kpi-link">
+
+                <div class="nav-icon">
+                    📊
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-kpi)">
+                        KPI DSE
+                    </div>
+                </div>
+
+            </a>
+
+
+            <!-- MERCHANT MD -->
+            <a href="merchant-diser.html"
+               class="nav-item md-link">
+
+                <div class="nav-icon">
+                    🏪
+                </div>
+
+                <div class="nav-details">
+                    <div class="nav-title"
+                         style="color:var(--accent-md)">
+                        MERCHANT MD
+                    </div>
+                </div>
+
+            </a>
+
+        </div>
+
+      <div class="menu-banner-divider"></div>
+      
+      <div class="banner-header">
+    <div class="banner-header-title">
+        Informasi Terbaru
+    </div>
+    <div class="banner-header-desc">
+        Promo • Harga • Program
+    </div>
+</div>
+      <!-- =========================================
+     CAROUSEL BANNER
+========================================= -->
+
+<div class="banner-carousel">
+
+    <div class="banner-track">
+
+        <a href="#" class="banner-slide">
+            <img src="img/file_000000000be4820bb04fd9bd4c39a7b9.png" alt="Banner 1">
+        </a>
+
+        <a href="#" class="banner-slide">
+            <img src="img/file_00000000c0dc820b8c3911fb0a896e2a.png" alt="Banner 2">
+        </a>
+
+        <a href="#" class="banner-slide">
+            <img src="img/file_00000000443c81faad21b4718e0302eb.png" alt="Banner 3">
+        </a>
+
+        <a href="#" class="banner-slide">
+            <img src="img/file_00000000cc5c81fa94a880a7f27ff01e.png" alt="Banner 4">
+        </a>
+
+    </div>
+  
+    <!-- INDICATOR -->
+
+    <div class="banner-dots">
+
+        <span class="banner-dot active"></span>
+        <span class="banner-dot"></span>
+        <span class="banner-dot"></span>
+
+    </div>
+
+</div>
+    </div>
+
+</div>
+<div id="toast-container" class="toast-container"></div>
+
+<!-- =========================================
+     BOTTOM NAVIGATION
+========================================= -->
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="notif.html" class="bottom-item" id="notif-link">
+    <div class="notif-container">
+        <span class="bell-icon">🔔</span>
+        <span class="notif-badge" id="notif-badge">!</span>
+    </div>
+    <span>Notif</span>
+</a>
+
+    <!-- PROFILE -->
+<a href="javascript:void(0)" class="bottom-item" id="openProfil">
+    <div>👤</div>
+    <span>Profil</span>
+</a>
+
+
+</footer>
+
+<!-- Library Pembaca file Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="global-ui.js"></script>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari menu..."
+            autocomplete="off"
+        >
+
+        <div id="searchResults"></div>
+    </div>
+
+</div>
+<div class="search-overlay" id="profilOverlay">
+    <div class="search-box">
+        <div style="padding: 16px; border-bottom: 1px solid #e2e8f0; font-weight: bold; font-size: 14px;">
+            Registrasi Akun Baru
+        </div>
+        <div style="padding: 16px;">
+            <input type="text" id="username" placeholder="Nama Lengkap" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <input type="password" id="password" placeholder="Password" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #cbd5e1; border-radius:8px;">
+            <button id="btn-submit-akun" style="width:100%; padding:12px; background:#1e3a8a; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                BUAT AKUN
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const WEB_APP_URL =
+'https://script.google.com/macros/s/AKfycbyRFemxVivBCbScqY77yX68CtZxZ7uy1l4YUqgYDS6qz8sH5YTKI5Tk7BBXp7ZqHS3J/exec';
+
+const EXCEL_FILE_URL = 'index-data.xlsx';
+
+let lastDashboardSignature = null;
+let isFirstDashboardLoad = true;
+
+
+/* =========================================
+   LOG AKTIVITAS
+========================================= */
+
+async function kirimLog(
+    aktivitas,
+    halaman = window.location.pathname
+){
+
+    try{
+
+        const response = await fetch(
+            WEB_APP_URL,
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':
+                    'text/plain;charset=utf-8'
+                },
+
+                body:JSON.stringify({
+                    aktivitas:aktivitas,
+                    halaman:halaman,
+                    device:navigator.userAgent
+                })
+            }
+        );
+
+        const result = await response.text();
+
+        console.log(
+            'HASIL LOG:',
+            result
+        );
+
+    }catch(error){
+
+        console.log(
+            'Gagal kirim log:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   FORMAT RUPIAH
+========================================= */
+
+function formatRupiah(number){
+
+    return "Rp " +
+        Number(number || 0)
+        .toLocaleString('id-ID');
+
+}
+
+
+/* =========================================
+   AMBIL ANGKA
+========================================= */
+
+function ambilAngka(value){
+
+    if(
+        value === null ||
+        value === undefined ||
+        value === ''
+    ){
+        return 0;
+    }
+
+    return parseInt(
+        String(value)
+        .replace(/[^\d]/g,''),
+        10
+    ) || 0;
+
+}
+
+
+/* =========================================
+   UPDATE DASHBOARD
+========================================= */
+
+async function updateDashboardData(){
+
+    try{
+
+        const response = await fetch(
+            EXCEL_FILE_URL +
+            '?t=' +
+            Date.now()
+        );
+
+        if(!response.ok){
+
+            throw new Error(
+                'Gagal mengambil file Excel: ' +
+                response.status
+            );
+
+        }
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        const workbook =
+            XLSX.read(
+                arrayBuffer,
+                {
+                    type:'array'
+                }
+            );
+
+
+        /* =====================================
+           1. SALMO
+        ===================================== */
+
+        const worksheetSalmo =
+            workbook.Sheets[
+                'penjualan-salmo'
+            ];
+
+        let grandTotal = 0;
+
+        if(worksheetSalmo){
+
+            const dataSalmo =
+                XLSX.utils.sheet_to_json(
+                    worksheetSalmo
+                );
+
+            dataSalmo.forEach(row => {
+
+                const nama =
+                    String(
+                        row['Nama cso'] || ''
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                if(
+                    nama === 'GRAND TOTAL'
+                ){
+                    return;
+                }
+
+                grandTotal +=
+                    ambilAngka(
+                        row['Amount']
+                    );
+
+            });
+
+        }
+
+
+        /* =====================================
+           2. SP & VOUCHER
+        ===================================== */
+
+        const worksheetSP =
+            workbook.Sheets[
+                'penjualan-reguler-new'
+            ];
+
+        let totalSPVoucher = 0;
+
+        if(worksheetSP){
+
+            const dataSP =
+                XLSX.utils.sheet_to_json(
+                    worksheetSP,
+                    {
+                        header:1,
+                        defval:''
+                    }
+                );
+
+            let totalSP = 0;
+            let totalVoucher = 0;
+
+            dataSP.forEach(row => {
+
+                const label =
+                    String(
+                        row[0] || ''
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                if(label === 'TOTAL SP'){
+
+                    totalSP =
+                        ambilAngka(
+                            row[7]
+                        );
+
+                }
+
+                if(label === 'TOTAL VOUCHER'){
+
+                    totalVoucher =
+                        ambilAngka(
+                            row[7]
+                        );
+
+                }
+
+            });
+
+            totalSPVoucher =
+                totalSP +
+                totalVoucher;
+
+        }
+
+
+        /* =====================================
+           3. PAKET
+        ===================================== */
+
+        const worksheetJupiter =
+            workbook.Sheets[
+                'penjualan-paket-jupiter'
+            ];
+
+        let totalJupiter = 0;
+
+        if(worksheetJupiter){
+
+            const dataJupiter =
+                XLSX.utils.sheet_to_json(
+                    worksheetJupiter
+                );
+
+            dataJupiter.forEach(row => {
+
+                const key =
+                    Object.keys(row).find(
+                        k =>
+                            k.trim()
+                            .toLowerCase() ===
+                            'jumlah pembayaran'
+                    );
+
+                if(key){
+
+                    totalJupiter +=
+                        ambilAngka(
+                            row[key]
+                        );
+
+                }
+
+            });
+
+        }
+
+
+        /* =====================================
+           4. DIRECT SELLING
+        ===================================== */
+
+        const worksheetDS =
+            workbook.Sheets[
+                'penjualan-direct-selling'
+            ];
+
+        let totalDS = 0;
+
+        if(worksheetDS){
+
+            const dataDS =
+                XLSX.utils.sheet_to_json(
+                    worksheetDS
+                );
+
+            dataDS.forEach(row => {
+
+                if(row['ID DSE']){
+
+                    totalDS +=
+                        ambilAngka(
+                            row['Pembayaran']
+                        );
+
+                }
+
+            });
+
+        }
+
+
+        const totalPaket =
+            totalJupiter +
+            totalDS;
+
+        /* =====================================
+           5. HIFI
+        ===================================== */
+
+        const worksheetHifi =
+            workbook.Sheets[
+                'penjualan-hifi'
+            ];
+
+        let totalHifi = 0;
+
+        if(worksheetHifi){
+
+            const dataHifi =
+                XLSX.utils.sheet_to_json(
+                    worksheetHifi
+                );
+
+            dataHifi.forEach(row => {
+
+                const tglBayar =
+                    row['Tgl Bayar'];
+
+                const harga =
+                    row['HARGA'];
+
+                if(
+                    tglBayar &&
+                    String(tglBayar).trim() !== ''
+                ){
+
+                    totalHifi +=
+                        ambilAngka(
+                            harga
+                        );
+
+                }
+
+            });
+
+        }
+
+ /* =====================================
+   DETEKSI PERUBAHAN DATA EXCEL
+===================================== */
+
+const dashboardSignature = JSON.stringify({
+
+    salmo: grandTotal,
+
+    spVoucher: totalSPVoucher,
+
+    paket: totalPaket,
+
+    hifi: totalHifi
+
+});
+
+
+/* =====================================
+   CEK PERUBAHAN
+===================================== */
+
+if(!isFirstDashboardLoad){
+
+    if(
+        lastDashboardSignature !==
+        dashboardSignature
+    ){
+
+        console.log(
+            'PERUBAHAN DATA EXCEL TERDETEKSI'
+        );
+
+        tambahNotif(
+            'Data Dashboard berubah. Silakan periksa data terbaru.'
+        );
+
+        showToast(
+            'Data Excel berubah'
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   SIMPAN SIGNATURE
+===================================== */
+
+lastDashboardSignature =
+    dashboardSignature;
+
+isFirstDashboardLoad = false;
+         
+
+        /* =====================================
+           UPDATE TAMPILAN
+        ===================================== */
+
+        const grandTotalElement =
+            document.getElementById(
+                'grand-total'
+            );
+
+        const totalSPElement =
+            document.getElementById(
+                'total-sp'
+            );
+
+        const totalPaketElement =
+            document.getElementById(
+                'total-paket'
+            );
+
+        const totalHifiElement =
+            document.getElementById(
+                'total-hifi'
+            );
+
+
+        if(grandTotalElement){
+
+            grandTotalElement.innerText =
+                formatRupiah(
+                    grandTotal
+                );
+
+        }
+
+        if(totalSPElement){
+
+            totalSPElement.innerText =
+                formatRupiah(
+                    totalSPVoucher
+                );
+
+        }
+
+        if(totalPaketElement){
+
+            totalPaketElement.innerText =
+                formatRupiah(
+                    totalPaket
+                );
+
+        }
+
+        if(totalHifiElement){
+
+            totalHifiElement.innerText =
+                formatRupiah(
+                    totalHifi
+                );
+
+        }
+
+
+        /* =====================================
+           CEK PERUBAHAN DATA
+        ===================================== */
+
+        console.log(
+            'Dashboard berhasil diperbarui'
+        );
+
+    }catch(error){
+
+        console.error(
+            'Gagal mengambil data Dashboard:',
+            error
+        );
+
+
+        const elements = [
+            'grand-total',
+            'total-sp',
+            'total-paket',
+            'total-hifi'
+        ];
+
+
+        elements.forEach(id => {
+
+            const element =
+                document.getElementById(id);
+
+            if(
+                element &&
+                element.innerText === 'Memuat...'
+            ){
+
+                element.innerText =
+                    'Error';
+
+            }
+
+        });
+
+    }
+
+}
+
+
+/* =========================================
+   JAM DIGITAL
+========================================= */
+
+function updateClock(){
+
+    const now =
+        new Date();
+
+    const optionsDate = {
+        weekday:'short',
+        day:'numeric',
+        month:'long'
+    };
+
+    const dateString =
+        now.toLocaleDateString(
+            'id-ID',
+            optionsDate
+        );
+
+    const hours =
+        String(
+            now.getHours()
+        ).padStart(2,'0');
+
+    const minutes =
+        String(
+            now.getMinutes()
+        ).padStart(2,'0');
+
+    const seconds =
+        String(
+            now.getSeconds()
+        ).padStart(2,'0');
+
+
+    const dateElement =
+        document.getElementById(
+            'live-date'
+        );
+
+    const timeElement =
+        document.getElementById(
+            'live-time'
+        );
+
+
+    if(dateElement){
+
+        dateElement.innerText =
+            dateString;
+
+    }
+
+    if(timeElement){
+
+        timeElement.innerText =
+            `${hours}:${minutes}:${seconds}`;
+
+    }
+
+}
+
+
+updateClock();
+
+setInterval(
+    updateClock,
+    1000
+);
+
+
+/* =========================================
+   NOTIFICATION BADGE
+========================================= */
+
+function updateBadge(){
+
+    const notifBadge =
+        document.getElementById(
+            'notif-badge'
+        );
+
+    if(!notifBadge){
+
+        return;
+
+    }
+
+
+    let logs = [];
+
+    try{
+
+        logs =
+            JSON.parse(
+                localStorage.getItem(
+                    'notif_logs'
+                ) || '[]'
+            );
+
+    }catch(error){
+
+        logs = [];
+
+    }
+
+
+    const unreadCount =
+        logs.filter(
+            log => log.read !== true
+        ).length;
+
+
+    if(unreadCount > 0){
+
+        notifBadge.style.display =
+            'flex';
+
+        notifBadge.textContent =
+            unreadCount;
+
+    }else{
+
+        notifBadge.style.display =
+            'none';
+
+        notifBadge.textContent =
+            '';
+
+    }
+
+}
+
+
+/* =========================================
+   TAMBAH NOTIFIKASI
+========================================= */
+
+function tambahNotif(pesan){
+
+    let logs = [];
+
+    try{
+
+        logs =
+            JSON.parse(
+                localStorage.getItem(
+                    'notif_logs'
+                ) || '[]'
+            );
+
+    }catch(error){
+
+        logs = [];
+
+    }
+
+
+    /* Hapus notif lebih dari 1 hari */
+
+    logs =
+        logs.filter(log => {
+
+            const umur =
+                Date.now() -
+                (
+                    log.timestamp || 0
+                );
+
+            return umur < 86400000;
+
+        });
+
+
+    /* Tambah notif */
+
+    logs.unshift({
+
+        pesan:pesan,
+
+        waktu:
+            new Date()
+            .toLocaleString(
+                'id-ID'
+            ),
+
+        timestamp:
+            Date.now(),
+
+        read:false
+
+    });
+
+
+    /* Maksimal 20 */
+
+    logs =
+        logs.slice(
+            0,
+            20
+        );
+
+
+    localStorage.setItem(
+        'notif_logs',
+        JSON.stringify(logs)
+    );
+
+
+    updateBadge();
+
+}
+
+
+/* =========================================
+   TOAST
+========================================= */
+
+function showToast(message){
+
+    const container =
+        document.getElementById(
+            'toast-container'
+        );
+
+    if(!container){
+
+        return;
+
+    }
+
+
+    const toast =
+        document.createElement(
+            'div'
+        );
+
+    toast.className =
+        'toast';
+
+    toast.textContent =
+        message;
+
+
+    container.appendChild(
+        toast
+    );
+
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    },3000);
+
+}
+
+
+/* =========================================
+   LOAD SEMUA DATA
+========================================= */
+
+async function loadSemua(){
+
+    try{
+
+        await updateDashboardData();
+
+        updateBadge();
+
+    }catch(error){
+
+        console.error(
+            'Gagal load dashboard:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SEARCH MENU
+========================================= */
+
+const openSearchBtn =
+    document.getElementById(
+        'openSearch'
+    );
+
+const searchOverlay =
+    document.getElementById(
+        'searchOverlay'
+    );
+
+const searchInput =
+    document.getElementById(
+        'searchInput'
+    );
+
+const searchResults =
+    document.getElementById(
+        'searchResults'
+    );
+
+
+function ambilSemuaMenu(){
+
+    const menus = [];
+
+
+    /* DOWNLOAD */
+
+    menus.push({
+
+        title:'Download File',
+
+        desc:
+            'Unduh data excel dan backup',
+
+        href:
+            'download-data.html',
+
+        icon:'📥'
+
+    });
+
+
+    /* MENU UTAMA */
+
+    document
+        .querySelectorAll(
+            '.nav-item[href], .submenu-item[href]'
+        )
+        .forEach(item => {
+
+            menus.push({
+
+                title:
+                    item.querySelector(
+                        '.nav-title, .submenu-title'
+                    )?.innerText || '',
+
+                desc:
+                    item.querySelector(
+                        '.nav-desc'
+                    )?.innerText || '',
+
+                href:
+                    item.getAttribute(
+                        'href'
+                    ),
+
+                icon:
+                    item.querySelector(
+                        '.nav-icon, .submenu-icon'
+                    )?.innerText || '📄'
+
+            });
+
+        });
+
+
+    /* QUICK ACTION */
+
+    document
+        .querySelectorAll(
+            '.action-btn[href]'
+        )
+        .forEach(item => {
+
+            menus.push({
+
+                title:
+                    item.querySelector(
+                        '.action-label'
+                    )?.innerText || '',
+
+                desc:
+                    'Menu Aksi Cepat',
+
+                href:
+                    item.getAttribute(
+                        'href'
+                    ),
+
+                icon:
+                    item.querySelector(
+                        '.action-icon'
+                    )?.innerText || '⚡'
+
+            });
+
+        });
+
+
+    return menus;
+
+}
+
+
+const allMenus =
+    ambilSemuaMenu();
+
+
+/* =========================================
+   BUKA SEARCH
+========================================= */
+
+if(openSearchBtn){
+
+    openSearchBtn.addEventListener(
+        'click',
+        () => {
+
+            searchOverlay.classList.add(
+                'active'
+            );
+
+            searchInput.value =
+                '';
+
+            tampilkanHasil(
+                ''
+            );
+
+
+            setTimeout(
+                () => {
+
+                    searchInput.focus();
+
+                },
+                100
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   TUTUP SEARCH
+========================================= */
+
+if(searchOverlay){
+
+    searchOverlay.addEventListener(
+        'click',
+        e => {
+
+            if(
+                e.target ===
+                searchOverlay
+            ){
+
+                searchOverlay.classList.remove(
+                    'active'
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   SEARCH REALTIME
+========================================= */
+
+if(searchInput){
+
+    searchInput.addEventListener(
+        'input',
+        function(){
+
+            tampilkanHasil(
+                this.value
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   HASIL SEARCH
+========================================= */
+
+function tampilkanHasil(keyword){
+
+    keyword =
+        keyword
+        .toLowerCase()
+        .trim();
+
+
+    const hasil =
+        allMenus.filter(
+            menu => {
+
+                return (
+
+                    menu.title
+                        .toLowerCase()
+                        .includes(
+                            keyword
+                        )
+
+                    ||
+
+                    menu.desc
+                        .toLowerCase()
+                        .includes(
+                            keyword
+                        )
+
+                );
+
+            }
+        );
+
+
+    if(
+        !searchResults
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        hasil.length === 0
+    ){
+
+        searchResults.innerHTML = `
+
+            <div class="empty-search">
+                Menu tidak ditemukan
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    searchResults.innerHTML =
+        hasil.map(
+            menu => `
+
+                <a
+                    href="${menu.href}"
+                    class="search-item"
+                >
+
+                    <div class="search-icon">
+                        ${menu.icon}
+                    </div>
+
+                    <div class="search-text">
+
+                        <div class="search-title">
+                            ${menu.title}
+                        </div>
+
+                        <div class="search-desc">
+                            ${menu.desc}
+                        </div>
+
+                    </div>
+
+                </a>
+
+            `
+        ).join('');
+
+}
+
+/* =========================================
+   REFRESH
+========================================= */
+
+const refreshButton =
+    document.getElementById(
+        'btn-refresh'
+    );
+
+
+if(refreshButton){
+
+    refreshButton.addEventListener(
+        'click',
+        function(){
+
+            const icon =
+                document.getElementById(
+                    'refresh-icon'
+                );
+
+
+            if(icon){
+
+                icon.classList.add(
+                    'refresh-spin'
+                );
+
+            }
+
+
+            kirimLog(
+                'Manual Refresh Halaman'
+            );
+
+
+            tambahNotif(
+                'Halaman sedang direfresh...'
+            );
+
+
+            showToast(
+                'Halaman sedang direfresh...'
+            );
+
+
+            setTimeout(
+                () => {
+
+                    location.reload();
+
+                },
+                1500
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   DOWNLOAD
+========================================= */
+
+const downloadButton =
+    document.getElementById(
+        'btn-download'
+    );
+
+
+if(downloadButton){
+
+    downloadButton.addEventListener(
+        'click',
+        function(e){
+
+            e.preventDefault();
+
+
+            kirimLog(
+                'Melakukan Download File'
+            );
+
+
+            window.location.href =
+                'download-data.html?download=success';
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   PROFILE OVERLAY
+========================================= */
+
+const openProfilBtn =
+    document.getElementById(
+        'openProfil'
+    );
+
+const profilOverlay =
+    document.getElementById(
+        'profilOverlay'
+    );
+
+
+if(
+    openProfilBtn &&
+    profilOverlay
+){
+
+    openProfilBtn.addEventListener(
+        'click',
+        () => {
+
+            profilOverlay.classList.add(
+                'active'
+            );
+
+        }
+    );
+
+
+    profilOverlay.addEventListener(
+        'click',
+        e => {
+
+            if(
+                e.target ===
+                profilOverlay
+            ){
+
+                profilOverlay.classList.remove(
+                    'active'
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   SUBMIT AKUN
+========================================= */
+
+const submitAkun =
+    document.getElementById(
+        'btn-submit-akun'
+    );
+
+
+if(submitAkun){
+
+    submitAkun.addEventListener(
+        'click',
+        () => {
+
+            showToast(
+                'Fitur registrasi sedang dalam pengembangan'
+            );
+
+
+            if(profilOverlay){
+
+                profilOverlay.classList.remove(
+                    'active'
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   STORAGE EVENT
+========================================= */
+
+window.addEventListener(
+    'storage',
+    event => {
+
+        if(
+            event.key ===
+            'notif_logs'
+        ){
+
+            updateBadge();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   HAPUS NOTIF SAAT MENU DIBUKA
+========================================= */
+
+document
+    .querySelectorAll(
+        '.nav-item[href], .submenu-item[href], .bottom-item[href]'
+    )
+    .forEach(menu => {
+
+        menu.addEventListener(
+            'click',
+            () => {
+
+                localStorage.removeItem(
+                    'notif_logs'
+                );
+
+
+                const badge =
+                    document.getElementById(
+                        'notif-badge'
+                    );
+
+
+                if(badge){
+
+                    badge.style.display =
+                        'none';
+
+                    badge.textContent =
+                        '';
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   INIT
+========================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        updateBadge();
+
+        kirimLog(
+            'Membuka Home Portal'
+        );
+
+        loadSemua();
+
+    }
+);
+
+
+/* =========================================
+   AUTO REFRESH DATA
+========================================= */
+
+setInterval(
+    loadSemua,
+    10000
+);
+
+  /* =========================================
+   BANNER CAROUSEL
+========================================= */
+
+const bannerTrack =
+    document.querySelector('.banner-track');
+
+const bannerSlides =
+    document.querySelectorAll('.banner-slide');
+
+const bannerDots =
+    document.querySelectorAll('.banner-dot');
+
+let bannerIndex = 0;
+
+let bannerTimer;
+
+
+/* =========================================
+   PINDAH BANNER
+========================================= */
+
+function pindahBanner(index){
+
+    if(!bannerTrack){
+        return;
+    }
+
+    bannerIndex = index;
+
+    bannerTrack.style.transform =
+        `translateX(-${bannerIndex * 100}%)`;
+
+
+    bannerDots.forEach(
+        (dot, i) => {
+
+            dot.classList.toggle(
+                'active',
+                i === bannerIndex
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   AUTO SLIDE
+========================================= */
+
+function mulaiBanner(){
+
+    bannerTimer =
+        setInterval(
+            () => {
+
+                bannerIndex++;
+
+                if(
+                    bannerIndex >=
+                    bannerSlides.length
+                ){
+
+                    bannerIndex = 0;
+
+                }
+
+                pindahBanner(
+                    bannerIndex
+                );
+
+            },
+            4000
+        );
+
+}
+
+
+/* =========================================
+   KLIK DOT
+========================================= */
+
+bannerDots.forEach(
+    (dot, index) => {
+
+        dot.addEventListener(
+            'click',
+            () => {
+
+                clearInterval(
+                    bannerTimer
+                );
+
+                pindahBanner(
+                    index
+                );
+
+                mulaiBanner();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================
+   MULAI
+========================================= */
+
+if(
+    bannerTrack &&
+    bannerSlides.length > 1
+){
+
+    mulaiBanner();
+
+}
+</script>
+
+</body>
+</html>
