@@ -34,7 +34,7 @@
 }
 
 body{
-            background:var(--bg-color);
+            background:#ffffff;
             color:var(--text-main);
             min-height:100vh;
             display:flex;
@@ -62,7 +62,7 @@ body{
 
     background: #1e3a8a;
 
-    color: #fff;
+    color: #ffffff;
     z-index: 9999; /* Z-index tertinggi agar kartu masuk di bawahnya saat di-scroll */
     
 }
@@ -73,30 +73,26 @@ body{
 ========================================= */
 .hero-background {
     position: fixed;
-
     top: 0;
     left: 0;
 
     width: 100%;
     height: 232px;
 
-    background:
-        linear-gradient(
-            to bottom,
-            #1e3a8a 0%,
-            #1e3a8a 72%,
-            #254b9a 80%,
-            #4565a5 88%,
-            #7184b5 94%,
-            #f8fafc 100%
-        );
+    background: linear-gradient(
+        to bottom,
+        #1e3a8a 0%,
+        #1e3a8a 93%,
+        #31539b 96%,
+        #7184b5 98%,
+        #ffffff 100%
+    );
 
-    border-bottom-left-radius:30px;
-    border-bottom-right-radius:30px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
 
-    z-index:998;
-
-    pointer-events:none;
+    z-index: 998;
+    pointer-events: none;
 }
 
 
@@ -110,19 +106,33 @@ body{
 }
 
 .header-logo-layer{
-    width: 50px !important;
-    height: 50px !important;
-    min-width: 50px !important;
-    min-height: 50px !important;
-    flex: 0 0 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,.18);
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 3px 8px rgba(15,23,42,.12);
+    width:50px !important;
+    height:50px !important;
+    min-width:50px !important;
+    min-height:50px !important;
+    flex:0 0 50px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:transparent;
+    border:none;
+    box-shadow:none;
+
+    border-radius:0;
+    overflow:visible;
+}
+
+.header-logo-layer img{
+    display:block;
+
+    width:42px !important;
+    height:42px !important;
+
+    object-fit:contain;
+
+    border-radius:0;
 }
 
 .header-logo-layer img{
@@ -220,9 +230,31 @@ body{
     justify-content:space-around;
     align-items:center;
 
-    border-top:1px solid #e2e8f0;
+    
 
-    box-shadow:0 -2px 10px rgba(0,0,0,.05);
+    .hero-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 232px;
+
+    background: linear-gradient(
+        to bottom,
+        #1e3a8a 0%,
+        #1e3a8a 93%,
+        #31539b 96%,
+        #7184b5 98%,
+        #ffffff 100%
+    );
+
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+
+    z-index: 998;
+    pointer-events: none;
+}
 
     z-index:99999;
     border-top-left-radius: 15px;
@@ -235,32 +267,48 @@ body{
     flex:1;
 
     height:100%;
-
+    
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-
+    gap: 5px;
     text-decoration:none;
-
-    color:#64748b;
+    
+    color:#475569;
     letter-spacing:.5px;
-    font-size:12px;
-    font-weight:600;
-
+    font-size:10px;
+    font-weight:700;
+    filter: drop-shadow(
+        0 2px 3px rgba(15,23,42,.25)
+    );
     transition:.2s;
 }
 
 /* ICON */
 .bottom-item div{
-    font-size:18px;
+    font-size:20px;
+    
 
-    margin-bottom:2px;
 }
 
-/* ACTIVE */
-.bottom-item.active{
-    color:#1e3a8a;
+/* ACTIVE INDICATOR */
+.bottom-item.active {
+    color: #475569;
+    position: relative;
+}
+
+.bottom-item.active::after {
+    content: "";
+    position: absolute;
+
+    bottom: 57px;
+
+    width: 22px;
+    height: 3px;
+
+    background: #0284c7;
+    border-radius: 10px;
 }
 
 /* TAP EFFECT */
@@ -585,7 +633,7 @@ body{
     height:100%;
     display:block;
     object-fit:contain;
-    background:#1e3a8a;
+    background:#DCE6F7;
 }
 
 

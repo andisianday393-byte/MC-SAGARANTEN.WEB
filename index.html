@@ -28,7 +28,7 @@
 }
 
 body{
-    background:#f8fafc;
+    background:#ffffff;
 }
 
 
@@ -45,10 +45,16 @@ body{
     */
     z-index:1000;
 
-    background:
-        rgba(255,255,255,.95);
+    
+    background:#ffffff;
 
-    backdrop-filter:blur(10px);
+    border:1px solid #e2e8f0;
+
+    box-shadow:
+    0 6px 10px rgba(15,23,42,.12);
+
+    backdrop-filter:none;
+
 
     margin:
         90px
@@ -56,10 +62,6 @@ body{
         20px;
 
     border-radius:16px;
-
-    box-shadow:
-        0 12px 28px
-        rgba(15,23,42,.12);
 
     overflow:hidden;
 
@@ -95,7 +97,7 @@ body{
     align-self:stretch;
 
     box-shadow:
-        0 8px 20px rgba(15,23,42,.15);
+    0 4px 6px -2px rgba(15,23,42,.18);
 }
 
 .saldo-card:first-child{
@@ -151,7 +153,7 @@ body{
 }
 
 .sub-stat{
-    background:#fff;
+    background:#ffffff;
 
     padding:6px 4px;
 
@@ -199,7 +201,7 @@ body{
 
     margin:0;
 
-    background:#fff;
+    background:#ffffff;
 }
 
 
@@ -427,7 +429,7 @@ body{
 
 .app-navigation{
     width:100%;
-    padding:2px 10px 30px;
+    padding:10px 10px 30px;
     position:relative;
     z-index:1000;
 }
@@ -453,7 +455,7 @@ body{
     color:#1e3a8a;
     text-transform:uppercase;
     letter-spacing:.7px;
-    margin:14px 4px 15px;
+    margin:14px 4px 20px;
 
     text-shadow:
         -1px -1px 0 #fff,
@@ -529,7 +531,7 @@ body{
 
     font-size:22px;
 
-    background:#fff;
+    background:#DCE6F7;
 
     border:1px solid #e2e8f0;
 
@@ -549,15 +551,17 @@ body{
    IMAGE DI DALAM MENU
 ========================================= */
 
-.nav-icon .menu-image{
-    width:100%;
-    height:100%;
+.nav-icon .menu-image {
+    width: 38px;
+    height: 38px;
 
-    object-fit:cover;
+    object-fit: contain;
+    display: block;
 
-    display:block;
+    filter: drop-shadow(
+        0 2px 3px rgba(15,23,42,.25)
+    );
 }
-
 
 /* =========================================
    MENU DETAILS
@@ -1092,7 +1096,7 @@ body{
 
     font-size:18px;
 
-    background:#fff;
+    background:#DCE6F7;
 
     border:1px solid #e2e8f0;
 
@@ -1295,6 +1299,23 @@ body{
 
 *{
     -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+    background:#ffffff !important;
+}
+
+.app-navigation{
+    background:#ffffff;
+}
+
+.quick-menu-section{
+    background:#ffffff;
+}
+
+.quick-menu-grid{
+    background:#ffffff;
 }
 </style>
 </head>
@@ -1562,7 +1583,7 @@ body{
 
                 <div class="nav-icon">
                     <img
-                        src="img/mobii.jpg"
+                        src="img/20260813_052238.png"
                         class="menu-image"
                         alt="SALMO">
                 </div>
@@ -1619,7 +1640,7 @@ body{
                 <div class="nav-icon">
 
                     <img
-                        src="img/hifi.png"
+                        src="img/hifi-removebg-preview.png"
                         class="menu-image"
                         alt="Hifi">
 
@@ -1785,13 +1806,13 @@ body{
     <!-- HOME -->
     <a href="index.html" class="bottom-item active">
         <div>🏠</div>
-        <span>Home</span>
+        <span>HOME</span>
     </a>
 
    <!-- REPORT -->
     <a href="#" class="bottom-item">
         <div>📊</div>
-        <span>Report</span>
+        <span>REPORT</span>
     </a>
 
     <!-- NOTIF -->
@@ -1800,13 +1821,13 @@ body{
         <span class="bell-icon">🔔</span>
         <span class="notif-badge" id="notif-badge">!</span>
     </div>
-    <span>Notif</span>
+    <span>NOTIF</span>
 </a>
 
     <!-- PROFILE -->
 <a href="javascript:void(0)" class="bottom-item" id="openProfil">
     <div>👤</div>
-    <span>Profil</span>
+    <span>PROFIL</span>
 </a>
 
 
