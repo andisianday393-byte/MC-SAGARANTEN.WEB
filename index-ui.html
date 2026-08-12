@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC-SAGARANTEN - Home Portal</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --android-dark: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Warna Ikon Aplikasi khas Android */
+            --gudang-bg: linear-gradient(135deg, #0ea5e9, #0284c7);
+            --form-bg: linear-gradient(135deg, #f59e0b, #d97706);
+            --dse-bg: linear-gradient(135deg, #6366f1, #4f46e5);
+            --penjualan-bg: linear-gradient(135deg, #10b981, #059669);
+            --trade-bg: linear-gradient(135deg, #ec4899, #db2777); 
+            --kpi-bg: linear-gradient(135deg, #8b5cf6, #7c3aed); 
+            --submenu-bg: linear-gradient(135deg, #14b8a6, #0d9488);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px; /* Ruang untuk navbar bawah android */
+        }
+
+        /* Sticky Header Dashboard */
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-color);
+            padding-bottom: 12px;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 15px 20px; 
+            text-align: center;
+            border-bottom: 3px solid #eab308; 
+        }
+
+        .app-header h1 {
+            font-size: 16px; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .app-header p {
+            font-size: 10px; 
+            opacity: .75;
+        }
+
+        /* Saldo Card */
+        .saldo-card {
+            background: #1e3a8a;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 12px 12px 4px;
+            box-shadow: 0 8px 20px rgba(30,58,138,0.2);
+        }
+
+        .saldo-label {
+            font-size: 11px;
+            opacity: .8;
+            text-transform: uppercase;
+        }
+
+        .saldo-amount {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sub-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .sub-stat {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 4px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .sub-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 2px;
+        }
+
+        .sub-value {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Quick Actions Atas */
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            padding: 0 12px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            padding: 8px 4px; 
+            border-radius: 12px; 
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .action-icon { font-size: 14px; margin-bottom: 2px; }
+        .action-label { font-size: 8.5px; font-weight: 700; text-transform: uppercase; text-align: center;}
+
+        /* GRID MENU UTAMA (Gaya Aplikasi Android) */
+        .android-menu-container {
+            padding: 10px 16px;
+            flex: 1;
+        }
+
+        /* Grid utama: 3 Kolom Seimbang */
+        .android-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .android-app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+        }
+
+        /* Bentuk Ikon Bulat Aplikasi */
+        .android-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%; /* Membuat tombol bulat utuh */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+            transition: transform 0.15s ease;
+        }
+
+        .android-app-item:active .android-icon-wrapper {
+            transform: scale(0.9);
+        }
+
+        .android-app-title {
+            font-size: 11.5px;
+            font-weight: 600;
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Pewarnaan Gradasi Bulatan Menu */
+        .bg-gudang { background: var(--gudang-bg); }
+        .bg-form { background: var(--form-bg); }
+        .bg-dse { background: var(--dse-bg); }
+        .bg-penjualan { background: var(--penjualan-bg); }
+        .bg-trade { background: var(--trade-bg); }
+        .bg-kpi { background: var(--kpi-bg); }
+        .bg-submenu { background: var(--submenu-bg); }
+
+        .submenu-img-round {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Animasi Kontainer Submenu Android */
+        .android-sub-grid {
+            display: none; /* Disembunyikan default, muncul via JS */
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 12px;
+        }
+
+        /* BAR NAVIGASI BAWAH SISTEM ANDROID (STICKY FOOTER) */
+        .android-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #1e293b;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: env(safe-area-inset-bottom); /* Dukungan HP modern layar poni bawah */
+        }
+
+        /* Tombol Kembali Android Sistem */
+        .android-back-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            width: 60px;
+            height: 100%;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* Efek aktif/menyala saat ada di dalam submenu */
+        .android-back-btn.active {
+            color: #f59e0b; /* Warna kuning menyala menandakan fungsi kembali aktif */
+        }
+
+        .android-back-btn span {
+            font-size: 22px;
+        }
+
+        .android-back-label {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .app-footer {
+            text-align: center;
+            padding: 15px 20px 40px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sticky-container">
+    <div class="app-header">
+        <h1>MC-SAGARANTEN</h1>
+        <p>Sistem Pengelolaan Stok & Distribusi Barang</p>
+    </div>
+
+    <!-- Saldo & Jam -->
+    <div class="saldo-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
+            <div>
+                <div class="saldo-label">Total Penjualan Salmo</div>
+                <div class="saldo-amount" id="grand-total">Memuat...</div>
+            </div>
+            <div style="text-align: right;">
+                <div id="live-date" style="font-size: 10px; opacity: 0.8; text-transform: uppercase;">--/--/----</div>
+                <div id="live-time" style="font-size: 14px; font-weight: bold; font-family: monospace;">--:--:--</div>
+            </div>
+        </div>
+        <div class="sub-summary-grid">
+            <div class="sub-stat">
+                <div class="sub-label">SP & Voucher</div>
+                <div class="sub-value" id="total-sp">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">All Paket</div>
+                <div class="sub-value" id="total-paket">...</div>
+            </div>
+            <div class="sub-stat">
+                <div class="sub-label">Hifi</div>
+                <div class="sub-value" id="total-hifi">...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Grid -->
+    <div class="quick-action-grid">
+        <a href="download-data.html" class="action-btn">
+            <div class="action-icon">📥</div>
+            <div class="action-label">Download</div>
+        </a>
+        <a href="cari-data.html" class="action-btn">
+            <div class="action-icon">🔍</div>
+            <div class="action-label">Cari</div>
+        </a>
+        <a href="info-log.html" class="action-btn">
+            <div class="action-icon">📜</div>
+            <div class="action-label">Log</div>
+        </a>
+        <a href="setting.html" class="action-btn">
+            <div class="action-icon">⚙️</div>
+            <div class="action-label">Setting</div>
+        </a>
+    </div>
+</div>
+
+<!-- CONTAINER UTAMA HALAMAN APLIKASI -->
+<div class="android-menu-container">
+    
+    <!-- GRID HALAMAN UTAMA (HOME SCREEN DI-RENDER DI SINI) -->
+    <div class="android-grid" id="main-menu-grid">
+        
+        <a href="stok-gudang.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-gudang">📦</div>
+            <div class="android-app-title">Stok Gudang</div>
+        </a>
+
+        <a href="form-permintaan.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-form">📝</div>
+            <div class="android-app-title">Permintaan</div>
+        </a>
+
+        <a href="stok-barang-dse.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-dse">💼</div>
+            <div class="android-app-title">Stok DSE</div>
+        </a>
+
+        <!-- Tombol Pemicu Folder/Submenu Penjualan -->
+        <button class="android-app-item" id="trigger-penjualan">
+            <div class="android-icon-wrapper bg-penjualan">📊</div>
+            <div class="android-app-title">Penjualan</div>
+        </button>
+
+        <a href="trade-program.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-trade">🎁</div>
+            <div class="android-app-title">Trade Program</div>
+        </a>
+
+        <a href="kpi-dse-data-outlet.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-kpi">📉</div>
+            <div class="android-app-title">KPI & Outlet</div>
+        </a>
+    </div>
+
+    <!-- GRID FOLDER SUBMENU (Hanya tampil saat folder Penjualan dibuka) -->
+    <div class="android-sub-grid" id="submenu-penjualan-grid">
+        <a href="penjualan-salmo.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-submenu">
+                <img src="img/mobii.jpg" class="submenu-img-round" alt="Salmo">
+            </div>
+            <div class="android-app-title">SALMO</div>
+        </a>
+        <a href="penjualan-reguler3.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-submenu">🛒</div>
+            <div class="android-app-title">Regular</div>
+        </a>
+        <a href="penjualan-paket-tm2.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-submenu">📞</div>
+            <div class="android-app-title">Paket TM</div>
+        </a>
+        <a href="penjualan-direct-selling.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-submenu">🚶</div>
+            <div class="android-app-title">Direct Sale</div>
+        </a>
+        <a href="penjualan-hifi.html" class="android-app-item">
+            <div class="android-icon-wrapper bg-submenu">
+                <img src="img/hifi.png" class="submenu-img-round" alt="Hifi">
+            </div>
+            <div class="android-app-title">Hifi</div>
+        </a>
+    </div>
+</div>
+
+<div class="app-footer">
+    &copy; 2026 Designed and developed by [Andi Ramdani] WEB MC-SAGARANTEN
+</div>
+
+<!-- SYSTEM NAVIGATION BAR (SISTEM TOMBOL KEMBALI ANDROID) -->
+<div class="android-nav-bar">
+    <button class="android-back-btn" id="android-back-action" disabled>
+        <span>◀</span>
+        <div class="android-back-label">Kembali</div>
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+// --- LOGIKA UTAMA INTERAKSI NAVIGASI ANDROID ---
+const mainMenuGrid = document.getElementById('main-menu-grid');
+const subMenuGrid = document.getElementById('submenu-penjualan-grid');
+const backButton = document.getElementById('android-back-action');
+const triggerPenjualan = document.getElementById('trigger-penjualan');
+
+// Fungsi Membuka Sub-Menu (Masuk ke Folder)
+triggerPenjualan.addEventListener('click', () => {
+    mainMenuGrid.style.display = 'none';
+    subMenuGrid.style.display = 'grid';
+    
+    // Aktifkan Tombol Kembali Android
+    backButton.removeAttribute('disabled');
+    backButton.classList.add('active');
+});
+
+// Fungsi Tombol Kembali Sistem Android
+backButton.addEventListener('click', () => {
+    subMenuGrid.style.display = 'none';
+    mainMenuGrid.style.display = 'grid';
+    
+    // Matikan kembali tombol karena sudah di halaman utama
+    backButton.setAttribute('disabled', 'true');
+    backButton.classList.remove('active');
+});
+
+
+// --- SCRIPT HITUNG EXCEL DATA (TIDAK BERUBAH) ---
+function formatRupiah(number) {
+    return "Rp " + Number(number).toLocaleString('id-ID');
+}
+function ambilAngka(value) {
+    if (!value) return 0;
+    return parseInt(String(value).replace(/[^\d]/g, '')) || 0;
+}
+
+const EXCEL_FILE_URL = 'index-data.xlsx';
+
+async function updateSaldoSalmo() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        const worksheet = workbook.Sheets['penjualan-salmo'];
+        if (!worksheet) return;
+        const data = XLSX.utils.sheet_to_json(worksheet);
+        let grandTotal = 0;
+        data.forEach(row => {
+            const nama = String(row['Nama cso'] || '').trim().toUpperCase();
+            if (nama === 'GRAND TOTAL') return;
+            grandTotal += ambilAngka(row['Amount']);
+        });
+        document.getElementById('grand-total').innerText = formatRupiah(grandTotal);
+    } catch(error) {
+        document.getElementById('grand-total').innerText = 'Error';
+    }
+}
+
+async function updateTotalSPVoucher() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        const worksheet = workbook.Sheets['penjualan-reguler'];
+        if (!worksheet) return;
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header:1, defval:0 });
+        let total = 0;
+        for(let i=2; i<rows.length; i++) {
+            const row = rows[i];
+            if(!row) continue;
+            const harga = ambilAngka(row[6]);
+            let qty = 0;
+            for(let c=1; c<=4; c++) { qty += ambilAngka(row[c]); }
+            total += qty * harga;
+        }
+        document.getElementById('total-sp').innerText = formatRupiah(total);
+    } catch(error) {
+        document.getElementById('total-sp').innerText = 'Error';
+    }
+}
+
+async function updateTotalPaket() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type:'array' });
+        let grandTotal = 0;
+
+        function ambilCell(sheetName, cell) {
+            const worksheet = workbook.Sheets[sheetName];
+            if (!worksheet) return 0;
+            const value = worksheet[cell] ? worksheet[cell].v : 0;
+            return ambilAngka(value);
+        }
+
+        const totalTM = ambilCell('penjualan-paket-tm', 'E7');
+        const totalDS = ambilCell('penjualan-direct-selling', 'E6');
+        grandTotal = totalTM + totalDS;
+        document.getElementById('total-paket').innerText = formatRupiah(grandTotal);
+    } catch(error) {
+        document.getElementById('total-paket').innerText = 'Error';
+    }
+}
+
+async function updateTotalHifi() {
+    try {
+        const response = await fetch(EXCEL_FILE_URL + '?t=' + Date.now());
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const worksheet = workbook.Sheets['penjualan-hifi'];
+        if (!worksheet) return;
+        const data = XLSX.utils.sheet_to_json(worksheet);
+        let total = 0;
+        data.forEach(row => {
+            const tglBayar = row['Tgl Bayar'];
+            const harga = row['HARGA'];
+            if (tglBayar && String(tglBayar).trim() !== "") { total += ambilAngka(harga); }
+        });
+        document.getElementById('total-hifi').innerText = formatRupiah(total);
+    } catch(error) {
+        document.getElementById('total-hifi').innerText = 'Error';
+    }
+}
+
+function updateClock() {
+    const now = new Date();
+    const optionsDate = { weekday: 'short', day: 'numeric', month: 'long' };
+    document.getElementById('live-date').innerText = now.toLocaleDateString('id-ID', optionsDate);
+    
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('live-time').innerText = `${hours}:${minutes}:${seconds}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+function loadSemua() {
+    updateSaldoSalmo();
+    updateTotalSPVoucher();
+    updateTotalPaket();
+    updateTotalHifi();
+}
+
+loadSemua();
+setInterval(loadSemua, 10000);
+</script>
+</body>
+</html>
