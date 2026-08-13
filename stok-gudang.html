@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Gudang Otomatis - Monitor Excel Real-time</title>
+    <link rel="stylesheet" href="global-ui.css">
+    <script src="global-notif.js"></script>  <!-- ✅ Load duluan -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        /* =========================================
+   STOCK DASHBOARD
+========================================= */
+
+.dashboard-container{
+    width:100%;
+    max-width:900px;
+
+    margin:18px auto 30px;
+
+    padding:0 10px;
+}
+
+
+/* =========================================
+   STOCK SECTION
+========================================= */
+
+.stock-section{
+    width:100%;
+
+    margin-bottom:18px;
+
+    background:#ffffff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 4px 12px rgba(15,23,42,.06);
+}
+
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.stock-section-header{
+    min-height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:14px 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc 0%,
+            #ffffff 100%
+        );
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+
+/* TITLE */
+
+.stock-section-header h2{
+    margin:0;
+
+    font-size:16px;
+
+    line-height:1.2;
+
+    font-weight:800;
+
+    color:#0f172a;
+
+    letter-spacing:.3px;
+}
+
+
+/* SUBTITLE */
+
+.stock-section-header p{
+    margin:3px 0 0;
+
+    font-size:10px;
+
+    line-height:1.2;
+
+    color:#64748b;
+
+    font-weight:500;
+}
+
+
+/* =========================================
+   MAIN TOTAL
+========================================= */
+
+.stock-total-main{
+    min-width:90px;
+
+    padding:7px 10px;
+
+    text-align:right;
+
+    background:#f0f9ff;
+
+    border:1px solid #bae6fd;
+
+    border-radius:10px;
+}
+
+
+.stock-total-main span{
+    display:block;
+
+    margin-bottom:2px;
+
+    font-size:8px;
+
+    line-height:1;
+
+    color:#64748b;
+
+    text-transform:uppercase;
+
+    letter-spacing:.4px;
+
+    font-weight:700;
+}
+
+
+.stock-total-main strong{
+    display:block;
+
+    font-size:18px;
+
+    line-height:1.1;
+
+    color:#0284c7;
+
+    font-weight:800;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.stock-summary{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:1px;
+
+    background:#e2e8f0;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+
+.summary-item{
+    min-width:0;
+
+    padding:10px 6px;
+
+    text-align:center;
+
+    background:#ffffff;
+}
+
+
+.summary-item span{
+    display:block;
+
+    margin-bottom:4px;
+
+    font-size:9px;
+
+    line-height:1;
+
+    color:#64748b;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.3px;
+}
+
+
+.summary-item strong{
+    display:block;
+
+    font-size:14px;
+
+    line-height:1.2;
+
+    color:#334155;
+
+    font-weight:800;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* =========================================
+   TABLE WRAPPER
+========================================= */
+
+.stock-table-wrapper{
+    width:100%;
+
+    overflow-x:auto;
+
+    -webkit-overflow-scrolling:touch;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.stock-table{
+    width:100%;
+
+    min-width:420px;
+
+    border-collapse:collapse;
+
+    background:#ffffff;
+
+    border:none;
+
+    box-shadow:none;
+}
+
+
+/* =========================================
+   TABLE HEADER
+========================================= */
+
+.stock-table th{
+    padding:10px 9px;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    border-bottom:1px solid #e2e8f0;
+
+    font-size:9px;
+
+    line-height:1.2;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:.35px;
+
+    white-space:nowrap;
+
+    text-align:right;
+}
+
+
+.stock-table th.item-name-col{
+    text-align:left;
+}
+
+
+/* =========================================
+   TABLE BODY
+========================================= */
+
+.stock-table td{
+    padding:10px 9px;
+
+    border-bottom:1px solid #f1f5f9;
+
+    color:#334155;
+
+    font-size:11px;
+
+    line-height:1.25;
+
+    font-weight:500;
+
+    white-space:nowrap;
+
+    text-align:right;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* NAMA BARANG */
+
+.stock-table td.item-name-col{
+    width:45%;
+
+    text-align:left;
+
+    color:#334155;
+
+    font-weight:650;
+
+    white-space:normal;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.stock-table tbody tr{
+    transition:background .15s ease;
+}
+
+
+.stock-table tbody tr:hover{
+    background:#f8fafc;
+}
+
+
+/* =========================================
+   TOTAL ROW
+========================================= */
+
+.stock-table tfoot td{
+    padding:11px 9px;
+
+    background:#fefce8;
+
+    color:#713f12;
+
+    border-top:2px solid #fde68a;
+
+    border-bottom:none;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    text-align:right;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+.stock-table tfoot td.item-name-col{
+    text-align:left;
+
+    color:#713f12;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.stock-table .loading-text{
+    padding:30px 10px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    font-weight:500;
+
+    border-bottom:none;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.stock-table .empty-text{
+    padding:25px 10px;
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:11px;
+}
+
+
+/* =========================================
+   TABLE NUMBER ALIGNMENT
+========================================= */
+
+.stock-table th:nth-child(2),
+.stock-table th:nth-child(3),
+.stock-table th:nth-child(4),
+
+.stock-table td:nth-child(2),
+.stock-table td:nth-child(3),
+.stock-table td:nth-child(4){
+    text-align:right;
+}
+
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width:768px){
+
+    .dashboard-container{
+        padding:0 15px;
+
+        margin-top:20px;
+    }
+
+    .stock-section{
+        border-radius:18px;
+
+        margin-bottom:22px;
+    }
+
+    .stock-section-header{
+        padding:16px 18px;
+    }
+
+    .stock-section-header h2{
+        font-size:17px;
+    }
+
+    .stock-section-header p{
+        font-size:11px;
+    }
+
+    .stock-total-main{
+        min-width:110px;
+
+        padding:8px 12px;
+    }
+
+    .stock-total-main strong{
+        font-size:20px;
+    }
+
+    .stock-summary{
+        gap:1px;
+    }
+
+    .summary-item{
+        padding:12px;
+    }
+
+    .summary-item strong{
+        font-size:15px;
+    }
+
+    .stock-table th{
+        padding:11px 12px;
+
+        font-size:10px;
+    }
+
+    .stock-table td{
+        padding:11px 12px;
+
+        font-size:12px;
+    }
+}
+    </style>
+</head>
+<body>
+<div class="sticky-container">
+    <div class="header-wrapper">
+      <div class="back-container" onclick="goBack()">
+    <div class="back-button"></div>
+    </div>
+        <div class="app-header">
+            <h1>STOK BARANG GUDANG</h1>
+        <p>Data Monitor Stok Segel dan Sellin</p>
+        </div>
+    </div>
+</div>
+    <div class="dashboard-container">
+
+    <!-- =========================================
+         SECTION SP
+    ========================================= -->
+
+    <section class="stock-section">
+
+        <!-- HEADER SP -->
+        <div class="stock-section-header">
+            <div>
+                <h2>SP</h2>
+                <p>Stok Produk SP</p>
+            </div>
+
+            <div class="stock-total-main">
+                <span>Total Stok</span>
+                <strong id="sp-total">0</strong>
+            </div>
+        </div>
+
+
+        <!-- SUMMARY SP -->
+        <div class="stock-summary">
+
+            <div class="summary-item">
+                <span>Segel</span>
+                <strong id="sp-segel-total">
+                    0
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Sell-In</span>
+                <strong id="sp-sellin-total">
+                    0
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Total</span>
+                <strong id="sp-total-summary">
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- TABLE SP -->
+        <div class="stock-table-wrapper">
+
+            <table class="stock-table">
+
+                <thead>
+                    <tr>
+                        <th class="item-name-col">
+                            Nama Barang
+                        </th>
+
+                        <th>
+                            Segel
+                        </th>
+
+                        <th>
+                            Sell-In
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody id="sp-data-table">
+
+                    <tr>
+                        <td
+                            colspan="4"
+                            class="loading-text"
+                        >
+                            🔄 Mengambil data SP...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+                <tfoot>
+                    <tr class="total-row">
+
+                        <td class="item-name-col">
+                            TOTAL SP
+                        </td>
+
+                        <td id="sp-footer-segel">
+                            0
+                        </td>
+
+                        <td id="sp-footer-sellin">
+                            0
+                        </td>
+
+                        <td id="sp-footer-total">
+                            0
+                        </td>
+
+                    </tr>
+                </tfoot>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+         SECTION VOUCHER
+    ========================================= -->
+
+    <section class="stock-section">
+
+        <!-- HEADER VOUCHER -->
+        <div class="stock-section-header">
+            <div>
+                <h2>Voucher</h2>
+                <p>Stok Produk Voucher</p>
+            </div>
+
+            <div class="stock-total-main">
+                <span>Total Stok</span>
+                <strong id="voucher-total">0</strong>
+            </div>
+        </div>
+
+
+        <!-- SUMMARY VOUCHER -->
+        <div class="stock-summary">
+
+            <div class="summary-item">
+                <span>Segel</span>
+                <strong id="voucher-segel-total">
+                    0
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Sell-In</span>
+                <strong id="voucher-sellin-total">
+                    0
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Total</span>
+                <strong id="voucher-total-summary">
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- TABLE VOUCHER -->
+        <div class="stock-table-wrapper">
+
+            <table class="stock-table">
+
+                <thead>
+                    <tr>
+                        <th class="item-name-col">
+                            Nama Barang
+                        </th>
+
+                        <th>
+                            Segel
+                        </th>
+
+                        <th>
+                            Sell-In
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody id="voucher-data-table">
+
+                    <tr>
+                        <td
+                            colspan="4"
+                            class="loading-text"
+                        >
+                            🔄 Mengambil data Voucher...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+                <tfoot>
+                    <tr class="total-row">
+
+                        <td class="item-name-col">
+                            TOTAL VOUCHER
+                        </td>
+
+                        <td id="voucher-footer-segel">
+                            0
+                        </td>
+
+                        <td id="voucher-footer-sellin">
+                            0
+                        </td>
+
+                        <td id="voucher-footer-total">
+                            0
+                        </td>
+
+                    </tr>
+                </tfoot>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+<footer class="bottom-nav">
+
+    <!-- HOME -->
+    <a href="index.html" class="bottom-item active">
+        <div>🏠</div>
+        <span>Home</span>
+    </a>
+
+   <!-- REPORT -->
+    <a href="#" class="bottom-item">
+        <div>📊</div>
+        <span>Report</span>
+    </a>
+
+    <!-- NOTIF -->
+    <a href="notif.html" class="bottom-item" id="notif-link">
+
+    <div class="notif-container">
+
+        <span class="bell-icon">🔔</span>
+
+        <span
+            class="notif-badge"
+            id="notif-badge">
+            !
+        </span>
+
+    </div>
+
+    <span>Notif</span>
+
+</a>
+
+    <!-- PROFILE -->
+    <a href="#" class="bottom-item">
+        <div>👤</div>
+        <span>Profil</span>
+    </a>
+
+</footer>
+     <script>
+const excelFileUrl = "index-data.xlsx";
+const TARGET_SHEET_NAME = "stok-gudang";
+
+/* =========================================
+   FORMAT ANGKA
+========================================= */
+
+function formatNumber(value) {
+
+    return Number(value || 0).toLocaleString("id-ID");
+
+}
+
+
+/* =========================================
+   PARSE ANGKA EXCEL
+========================================= */
+
+function parseExcelNumber(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return 0;
+    }
+
+    if (typeof value === "number") {
+        return value;
+    }
+
+    let text = String(value)
+        .trim()
+        .replace(/\s/g, "");
+
+    /*
+     * Format Indonesia:
+     * 1.950
+     * 2.500
+     * 10.000
+     */
+
+    text = text.replace(/\./g, "");
+
+    /*
+     * Format desimal:
+     * 1.950,50
+     */
+
+    text = text.replace(",", ".");
+
+    const number = Number(text);
+
+    return Number.isFinite(number)
+        ? number
+        : 0;
+
+}
+
+
+/* =========================================
+   UPDATE ELEMENT
+========================================= */
+
+function setText(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent =
+            formatNumber(value);
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD EXCEL
+========================================= */
+
+async function fetchExcelData() {
+
+    try {
+
+        console.log(
+            "1. Mulai mengambil Excel..."
+        );
+
+
+        const response =
+            await fetch(
+                excelFileUrl +
+                "?t=" +
+                Date.now()
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "File Excel gagal dibaca: " +
+                response.status
+            );
+
+        }
+
+
+        console.log(
+            "2. File Excel berhasil diambil"
+        );
+
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+
+        console.log(
+            "3. Ukuran Excel:",
+            arrayBuffer.byteLength
+        );
+
+
+        /* =====================================
+           BACA EXCEL
+        ===================================== */
+
+        const workbook =
+            XLSX.read(
+                arrayBuffer,
+                {
+                    type: "array"
+                }
+            );
+
+
+        console.log(
+            "4. Sheet:",
+            workbook.SheetNames
+        );
+
+
+        const sheet =
+            workbook.Sheets[
+                TARGET_SHEET_NAME
+            ];
+
+
+        if (!sheet) {
+
+            throw new Error(
+                "Sheet '" +
+                TARGET_SHEET_NAME +
+                "' tidak ditemukan"
+            );
+
+        }
+
+
+        /* =====================================
+           KONVERSI SHEET
+        ===================================== */
+
+        const matrix =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {
+                    header: 1,
+                    defval: ""
+                }
+            );
+
+
+        console.log(
+            "5. Data Excel:",
+            matrix
+        );
+
+
+        const sections = splitStockData(matrix);
+
+renderSP(sections.sp);
+
+renderVoucher(sections.voucher);
+
+
+        /* =====================================
+           CEK UPDATE EXCEL
+        ===================================== */
+
+        try {
+
+            if (
+                typeof window.cekUpdateExcel ===
+                "function"
+            ) {
+
+                await window.cekUpdateExcel(
+                    "stok-gudang",
+                    arrayBuffer
+                );
+
+            }
+
+        } catch (notifError) {
+
+            console.warn(
+                "Cek update Excel gagal:",
+                notifError
+            );
+
+        }
+
+
+        /* =====================================
+           TANGGAL UPDATE
+        ===================================== */
+
+        updateExcelDate(
+            workbook,
+            response
+        );
+
+
+        console.log(
+            "6. Semua data berhasil ditampilkan"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR EXCEL:",
+            error
+        );
+
+
+        showTableError(
+            "sp-data-table",
+            "Gagal memuat data SP"
+        );
+
+
+        showTableError(
+            "voucher-data-table",
+            "Gagal memuat data Voucher"
+        );
+
+
+        const updateTime =
+            document.getElementById(
+                "updateTime"
+            );
+
+
+        if (updateTime) {
+
+            updateTime.textContent =
+                "Update Data: Gagal memuat";
+
+        }
+
+    }
+
+}
+
+/* =========================================
+   PISAH DATA SP & VOUCHER
+========================================= */
+
+function splitStockData(matrix) {
+
+    const sp = [];
+    const voucher = [];
+
+    let voucherStarted = false;
+
+
+    matrix.forEach((row, index) => {
+
+        /* Lewati header dan baris kosong awal */
+        if (
+            index < 2 ||
+            !row[0]
+        ) {
+            return;
+        }
+
+
+        const nama =
+            String(row[0]).trim();
+
+
+        /*
+         * VDK menjadi awal bagian Voucher
+         */
+        if (
+            nama.toUpperCase() === "VDK"
+        ) {
+
+            voucherStarted = true;
+
+        }
+
+
+        /*
+         * Sebelum VDK = SP
+         * Mulai VDK = Voucher
+         */
+
+        if (!voucherStarted) {
+
+            sp.push(row);
+
+        } else {
+
+            voucher.push(row);
+
+        }
+
+    });
+
+
+    console.log(
+        "DATA SP:",
+        sp
+    );
+
+
+    console.log(
+        "DATA VOUCHER:",
+        voucher
+    );
+
+
+    return {
+        sp,
+        voucher
+    };
+
+}
+       
+/* =========================================
+   RENDER SP
+========================================= */
+
+function renderSP(rows) {
+
+    const tbody =
+        document.getElementById(
+            "sp-data-table"
+        );
+
+
+    if (!tbody) return;
+
+
+    let html = "";
+
+    let totalSegel = 0;
+
+    let totalSellIn = 0;
+
+
+    rows.forEach(row => {
+
+        if (!row[0]) {
+            return;
+        }
+
+
+        const namaBarang =
+            String(row[0]).trim();
+
+
+        const segel =
+            parseExcelNumber(row[1]);
+
+
+        const sellIn =
+            parseExcelNumber(row[2]);
+
+
+        const total =
+            segel + sellIn;
+
+
+        totalSegel += segel;
+
+        totalSellIn += sellIn;
+
+
+        html += `
+            <tr>
+
+                <td class="item-name-col">
+                    ${escapeHTML(namaBarang)}
+                </td>
+
+                <td>
+                    ${formatNumber(segel)}
+                </td>
+
+                <td>
+                    ${formatNumber(sellIn)}
+                </td>
+
+                <td>
+                    ${formatNumber(total)}
+                </td>
+
+            </tr>
+        `;
+
+    });
+
+
+    if (!html) {
+
+        html = `
+            <tr>
+                <td
+                    colspan="4"
+                    class="empty-text"
+                >
+                    Data SP tidak tersedia
+                </td>
+            </tr>
+        `;
+
+    }
+
+
+    tbody.innerHTML = html;
+
+
+    const totalSP =
+        totalSegel +
+        totalSellIn;
+
+
+    setText(
+        "sp-total",
+        totalSP
+    );
+
+
+    setText(
+        "sp-segel-total",
+        totalSegel
+    );
+
+
+    setText(
+        "sp-sellin-total",
+        totalSellIn
+    );
+
+
+    setText(
+        "sp-total-summary",
+        totalSP
+    );
+
+
+    setText(
+        "sp-footer-segel",
+        totalSegel
+    );
+
+
+    setText(
+        "sp-footer-sellin",
+        totalSellIn
+    );
+
+
+    setText(
+        "sp-footer-total",
+        totalSP
+    );
+
+
+    console.log(
+        "TOTAL SP:",
+        {
+            segel: totalSegel,
+            sellIn: totalSellIn,
+            total: totalSP
+        }
+    );
+
+}
+
+/* =========================================
+   RENDER VOUCHER
+========================================= */
+
+function renderVoucher(rows) {
+
+    const tbody =
+        document.getElementById(
+            "voucher-data-table"
+        );
+
+
+    if (!tbody) return;
+
+
+    let html = "";
+
+    let totalSegel = 0;
+
+    let totalSellIn = 0;
+
+
+    rows.forEach(row => {
+
+        if (!row[0]) {
+            return;
+        }
+
+
+        const namaBarang =
+            String(row[0]).trim();
+
+
+        const segel =
+            parseExcelNumber(row[1]);
+
+
+        const sellIn =
+            parseExcelNumber(row[2]);
+
+
+        const total =
+            segel + sellIn;
+
+
+        totalSegel += segel;
+
+        totalSellIn += sellIn;
+
+
+        html += `
+            <tr>
+
+                <td class="item-name-col">
+                    ${escapeHTML(namaBarang)}
+                </td>
+
+                <td>
+                    ${formatNumber(segel)}
+                </td>
+
+                <td>
+                    ${formatNumber(sellIn)}
+                </td>
+
+                <td>
+                    ${formatNumber(total)}
+                </td>
+
+            </tr>
+        `;
+
+    });
+
+
+    if (!html) {
+
+        html = `
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="empty-text"
+                >
+                    Data Voucher tidak tersedia
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+
+    tbody.innerHTML = html;
+
+
+    /* =====================================
+       TOTAL VOUCHER
+    ===================================== */
+
+    const totalVoucher =
+        totalSegel +
+        totalSellIn;
+
+
+    /* HEADER */
+
+    setText(
+        "voucher-total",
+        totalVoucher
+    );
+
+
+    /* SUMMARY */
+
+    setText(
+        "voucher-segel-total",
+        totalSegel
+    );
+
+
+    setText(
+        "voucher-sellin-total",
+        totalSellIn
+    );
+
+
+    setText(
+        "voucher-total-summary",
+        totalVoucher
+    );
+
+
+    /* FOOTER */
+
+    setText(
+        "voucher-footer-segel",
+        totalSegel
+    );
+
+
+    setText(
+        "voucher-footer-sellin",
+        totalSellIn
+    );
+
+
+    setText(
+        "voucher-footer-total",
+        totalVoucher
+    );
+
+
+    console.log(
+        "TOTAL VOUCHER:",
+        {
+            segel: totalSegel,
+            sellIn: totalSellIn,
+            total: totalVoucher
+        }
+    );
+
+}
+
+/* =========================================
+   UPDATE DATE
+========================================= */
+
+function updateExcelDate(
+    workbook,
+    response
+) {
+
+    let updateDate = null;
+
+
+    /* Excel ModifiedDate */
+
+    if (
+        workbook.Props &&
+        workbook.Props.ModifiedDate
+    ) {
+
+        updateDate =
+            new Date(
+                workbook
+                    .Props
+                    .ModifiedDate
+            );
+
+    }
+
+
+    /* Server Last-Modified */
+
+    if (
+        !updateDate ||
+        isNaN(updateDate)
+    ) {
+
+        const lastModified =
+            response.headers.get(
+                "Last-Modified"
+            );
+
+
+        if (lastModified) {
+
+            updateDate =
+                new Date(
+                    lastModified
+                );
+
+        }
+
+    }
+
+
+    const updateTime =
+        document.getElementById(
+            "updateTime"
+        );
+
+
+    if (!updateTime) {
+
+        return;
+
+    }
+
+
+    if (
+        updateDate &&
+        !isNaN(updateDate)
+    ) {
+
+        updateTime.textContent =
+            "Update Data: " +
+            updateDate.toLocaleString(
+                "id-ID",
+                {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+
+    } else {
+
+        updateTime.textContent =
+            "Update Data: Tidak diketahui";
+
+    }
+
+}
+
+
+/* =========================================
+   ERROR TABLE
+========================================= */
+
+function showTableError(
+    tableId,
+    message
+) {
+
+    const tbody =
+        document.getElementById(
+            tableId
+        );
+
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = `
+        <tr>
+
+            <td
+                colspan="4"
+                class="loading-text"
+            >
+                ⚠️ ${message}
+            </td>
+
+        </tr>
+    `;
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        fetchExcelData();
+
+    }
+);
+
+</script>
+
+    <script src="global-ui.js"></script>
+</body>
+</html>

@@ -87,126 +87,588 @@
             user-select: none;
         }
 
-        /* CONTAINER RESPONSIF */
-        .dashboard-container {
-            width: 100%;
-            max-width: 900%;
-            margin: 0;
-            padding: 0 10px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed; 
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            margin-top:5px;
-        }
+        /* =========================================
+   DSE DASHBOARD
+========================================= */
 
-        th, td {
-            padding: 10px 4px;
-            font-size: 11px;
-            border-bottom: 1px solid #e2e8f0;
-            white-space: nowrap; 
-        }
+.dashboard-container{
+    width:100%;
+    max-width:900px;
 
-        th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 10px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #cbd5e1;
-        }
-        @media (min-width: 1024px) {
-    .dashboard-container {
-        max-width: 800px;
-    }
+    margin:18px auto 30px;
 
-    th, td {
-        font-size: 13px;
-        padding: 14px 12px;
-    }
+    padding:0 10px;
 }
 
-        .item-name-col {
-            text-align: left;
-            font-weight: 600;
-            color: #334155;
-            width: 34%;
-            white-space: normal; 
-            padding-left: 8px;
-        }
 
-        .data-user-col {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            width: 13%;
-            padding-right: 6px;
-        }
+/* =========================================
+   UPDATE DATA
+========================================= */
 
-        table th:last-child, table td:last-child {
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            width: 14%;
-            padding-right: 8px;
-        }
+#updateTime{
+    margin:0 0 8px !important;
 
-        tbody tr:not(.empty-row):not(.total-row) td:last-child {
-            background-color: #f0f9ff !important;
-            font-weight: 700;
-            color: #0284c7;
-        }
+    padding:0 2px;
 
-        .zero-val {
-            color: #cbd5e1;
-            text-align: right;
-        }
-        
-        /* BARIS KOSONG (PEMISAH SP / VDK) */
-        .empty-row td {
-            height: 16px;
-            background-color: #f8fafc !important;
-            border-top: 1px solid #e2e8f0;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0;
-        }
+    font-size:11px !important;
 
-        /* BARIS TOTAL PALING BAWAH */
-        .total-row td {
-            background-color: #fef08a !important; 
-            color: #713f12 !important;
-            font-weight: 700;
-            font-size: 11.5px;
-            border-top: 2px solid #fef08a;
-            border-bottom: 1px solid #ca8a04;
-        }
-        .total-row td:first-child {
-            color: #713f12 !important;
-        }
-        
-        tbody tr:not(.empty-row):not(.total-row):hover td { 
-            background-color: #f8fafc !important; 
-        }
-        
-        .loading-text { 
-            text-align: center; 
-            padding: 30px; 
-            font-size: 13px; 
-            color: #64748b; 
-            font-weight: 600;
-        }
+    line-height:1.3;
 
-        @media (min-width: 768px) {
-            .dashboard-container { padding: 0 20px; }
-            th, td { padding: 12px 10px; font-size: 12px; }
-            th { font-size: 11px; }
-            .total-row td { font-size: 13px; }
-        }
+    color:#64748b !important;
+
+    font-weight:500;
+}
+
+
+/* =========================================
+   STOCK SECTION
+========================================= */
+
+.dse-section{
+    width:100%;
+
+    background:#ffffff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 4px 12px rgba(15,23,42,.06);
+}
+
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.dse-section-header{
+
+    min-height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding:14px 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc 0%,
+            #ffffff 100%
+        );
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+
+/* TITLE */
+
+.dse-title{
+    min-width:0;
+}
+
+.dse-title h2{
+
+    margin:0;
+
+    font-size:16px;
+
+    line-height:1.2;
+
+    font-weight:800;
+
+    color:#0f172a;
+
+    letter-spacing:.3px;
+}
+
+
+.dse-title p{
+
+    margin:3px 0 0;
+
+    font-size:10px;
+
+    line-height:1.2;
+
+    color:#64748b;
+
+    font-weight:500;
+}
+
+
+/* =========================================
+   TOTAL CARD
+========================================= */
+
+.dse-total-main{
+
+    min-width:90px;
+
+    padding:7px 10px;
+
+    text-align:right;
+
+    background:#f0f9ff;
+
+    border:1px solid #bae6fd;
+
+    border-radius:10px;
+}
+
+
+.dse-total-main span{
+
+    display:block;
+
+    margin-bottom:2px;
+
+    font-size:8px;
+
+    line-height:1;
+
+    color:#64748b;
+
+    text-transform:uppercase;
+
+    letter-spacing:.4px;
+
+    font-weight:700;
+}
+
+
+.dse-total-main strong{
+
+    display:block;
+
+    font-size:18px;
+
+    line-height:1.1;
+
+    color:#0284c7;
+
+    font-weight:800;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* =========================================
+   USER SUMMARY
+========================================= */
+
+.dse-summary{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:1px;
+
+    background:#e2e8f0;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+
+.dse-summary-item{
+
+    min-width:0;
+
+    padding:10px 5px;
+
+    text-align:center;
+
+    background:#ffffff;
+}
+
+
+.dse-summary-item span{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    font-size:8px;
+
+    line-height:1;
+
+    color:#64748b;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.25px;
+}
+
+
+.dse-summary-item strong{
+
+    display:block;
+
+    font-size:14px;
+
+    line-height:1.2;
+
+    color:#334155;
+
+    font-weight:800;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* =========================================
+   TABLE WRAPPER
+========================================= */
+
+.dse-table-wrapper{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    -webkit-overflow-scrolling:touch;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.dse-table{
+
+    width:100%;
+
+    min-width:500px;
+
+    border-collapse:collapse;
+
+    background:#ffffff;
+}
+
+
+/* =========================================
+   HEADER TABLE
+========================================= */
+
+.dse-table th{
+
+    padding:10px 8px;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    border-bottom:1px solid #e2e8f0;
+
+    font-size:9px;
+
+    line-height:1.2;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:.3px;
+
+    white-space:nowrap;
+
+    text-align:right;
+}
+
+
+.dse-table th:first-child{
+
+    text-align:left;
+
+    padding-left:10px;
+}
+
+
+/* =========================================
+   BODY TABLE
+========================================= */
+
+.dse-table td{
+
+    padding:10px 8px;
+
+    border-bottom:1px solid #f1f5f9;
+
+    color:#334155;
+
+    font-size:11px;
+
+    line-height:1.25;
+
+    font-weight:500;
+
+    white-space:nowrap;
+
+    text-align:right;
+
+    font-variant-numeric:tabular-nums;
+}
+
+
+/* NAMA BARANG */
+
+.dse-table td.item-name-col{
+
+    width:38%;
+
+    text-align:left;
+
+    padding-left:10px;
+
+    color:#334155;
+
+    font-weight:650;
+
+    white-space:normal;
+}
+
+
+/* USER */
+
+.dse-table td.user-col{
+
+    width:13%;
+
+    text-align:right;
+}
+
+
+/* TOTAL */
+
+.dse-table td.total-col{
+
+    width:14%;
+
+    text-align:right;
+
+    background:#f0f9ff;
+
+    color:#0284c7;
+
+    font-weight:800;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.dse-table tbody tr.data-row{
+
+    transition:
+        background .15s ease;
+}
+
+
+.dse-table tbody tr.data-row:hover td{
+
+    background:#f8fafc;
+}
+
+
+.dse-table tbody tr.data-row:hover
+.total-col{
+
+    background:#e0f2fe;
+}
+
+
+/* =========================================
+   PEMISAH SP / VDK
+========================================= */
+
+.dse-divider td{
+
+    height:12px;
+
+    padding:0;
+
+    background:#f1f5f9;
+
+    border-top:1px solid #e2e8f0;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+
+/* =========================================
+   TOTAL ROW
+========================================= */
+
+.dse-table .total-row td{
+
+    padding:11px 8px;
+
+    background:#fefce8 !important;
+
+    color:#713f12 !important;
+
+    border-top:2px solid #fde68a;
+
+    border-bottom:none;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    text-align:right;
+}
+
+
+.dse-table .total-row td:first-child{
+
+    text-align:left;
+
+    padding-left:10px;
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.dse-table .empty-text{
+
+    padding:28px 10px;
+
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:11px;
+
+    border-bottom:none;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.dse-table .loading-text{
+
+    padding:30px 10px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    font-weight:500;
+
+    border-bottom:none;
+}
+
+
+/* =========================================
+   ZERO VALUE
+========================================= */
+
+.dse-table .zero-val{
+
+    color:#cbd5e1;
+
+    font-weight:500;
+}
+
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width:768px){
+
+    .dashboard-container{
+
+        padding:0 15px;
+
+        margin-top:20px;
+    }
+
+
+    .dse-section{
+
+        border-radius:18px;
+    }
+
+
+    .dse-section-header{
+
+        padding:16px 18px;
+    }
+
+
+    .dse-title h2{
+
+        font-size:17px;
+    }
+
+
+    .dse-title p{
+
+        font-size:11px;
+    }
+
+
+    .dse-total-main{
+
+        min-width:110px;
+
+        padding:8px 12px;
+    }
+
+
+    .dse-total-main strong{
+
+        font-size:20px;
+    }
+
+
+    .dse-summary-item{
+
+        padding:12px;
+    }
+
+
+    .dse-summary-item strong{
+
+        font-size:15px;
+    }
+
+
+    .dse-table th{
+
+        padding:11px 10px;
+
+        font-size:10px;
+    }
+
+
+    .dse-table td{
+
+        padding:11px 10px;
+
+        font-size:12px;
+    }
+}
     </style>
 </head>
 <body>
@@ -224,27 +686,148 @@
   </div>
          
     <div class="dashboard-container">
-      <div id="updateTime" style="font-size: 11px; color: #64748b; margin-top: 15px; font-weight: 500;">
+
+    <div id="updateTime">
         Update Data: Memuat...
     </div>
-        <table>
-            <thead>
-                <tr>
-                    <th class="item-name-col">Jenis Barang</th>
-                    <th class="data-user-col">Andi</th>
-                    <th class="data-user-col">Farhan</th>
-                    <th class="data-user-col">Enden</th>
-                    <th class="data-user-col">Pebrian</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="cso-stock-table">
-                <tr>
-                    <td colspan="6" class="loading-text">🔄 Sedang mengambil data terbaru langsung dari Excel...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+    <section class="dse-section">
+
+        <!-- HEADER -->
+        <div class="dse-section-header">
+
+            <div class="dse-title">
+
+                <h2>Stok Akhir DSE</h2>
+
+                <p>
+                    Monitoring stok per user
+                </p>
+
+            </div>
+
+            <div class="dse-total-main">
+
+                <span>Total Stok</span>
+
+                <strong id="dse-grand-total">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY USER -->
+        <div class="dse-summary">
+
+            <div class="dse-summary-item">
+
+                <span>Andi</span>
+
+                <strong id="summary-andi">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="dse-summary-item">
+
+                <span>Farhan</span>
+
+                <strong id="summary-farhan">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="dse-summary-item">
+
+                <span>Enden</span>
+
+                <strong id="summary-enden">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="dse-summary-item">
+
+                <span>Pebrian</span>
+
+                <strong id="summary-pebrian">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="dse-table-wrapper">
+
+            <table class="dse-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="item-name-col">
+                            Jenis Barang
+                        </th>
+
+                        <th>
+                            Andi
+                        </th>
+
+                        <th>
+                            Farhan
+                        </th>
+
+                        <th>
+                            Enden
+                        </th>
+
+                        <th>
+                            Pebrian
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="cso-stock-table">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="loading-text"
+                        >
+                            🔄 Mengambil data terbaru...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
 <footer class="bottom-nav">
 
     <!-- HOME -->
@@ -487,6 +1070,10 @@ function formatDisplay(num) {
 // RENDER TABLE
 // ===============================
 
+// ===============================
+// RENDER TABLE
+// ===============================
+
 function processAndRender(matrix) {
 
     let html = "";
@@ -501,9 +1088,17 @@ function processAndRender(matrix) {
     let grandEnden = 0;
     let grandPebrian = 0;
 
+
+    // ===============================
+    // BACA DATA EXCEL
+    // ===============================
+
     matrix.forEach(row => {
 
-        if (!row || row.length === 0) return;
+        if (!row || row.length === 0) {
+            return;
+        }
+
 
         let col0 = row[0]
             ? row[0]
@@ -512,24 +1107,54 @@ function processAndRender(matrix) {
                 .replace(/^"|"$/g, '')
             : "";
 
+
         let colClean =
             col0.toLowerCase();
+
+
+        // SKIP HEADER / BARIS KOSONG
 
         if (
             colClean === "" ||
             colClean === "jenis barang" ||
             colClean === "nama barang" ||
             colClean === "total"
-        ) return;
-
-        if (col0.toUpperCase() === "VDK") {
-            isVdkActiveGroup = true;
+        ) {
+            return;
         }
 
-        let andi = parseNum(row[1]);
-        let farhan = parseNum(row[2]);
-        let enden = parseNum(row[3]);
-        let pebrian = parseNum(row[4]);
+
+        // ===============================
+        // DETEKSI VDK
+        // ===============================
+
+        if (
+            col0.toUpperCase() === "VDK"
+        ) {
+
+            isVdkActiveGroup = true;
+
+        }
+
+
+        // ===============================
+        // AMBIL DATA USER
+        // ===============================
+
+        let andi =
+            parseNum(row[1]);
+
+        let farhan =
+            parseNum(row[2]);
+
+        let enden =
+            parseNum(row[3]);
+
+        let pebrian =
+            parseNum(row[4]);
+
+
+        // SKIP BARIS TANPA DATA
 
         if (
             andi === null &&
@@ -537,7 +1162,16 @@ function processAndRender(matrix) {
             enden === null &&
             pebrian === null &&
             col0.toUpperCase() !== "VDK"
-        ) return;
+        ) {
+
+            return;
+
+        }
+
+
+        // ===============================
+        // TOTAL BARIS
+        // ===============================
 
         let totalBaris =
             (andi || 0) +
@@ -545,188 +1179,330 @@ function processAndRender(matrix) {
             (enden || 0) +
             (pebrian || 0);
 
+
         let itemObj = {
+
             nama: col0,
-            andi,
-            farhan,
-            enden,
-            pebrian,
+
+            andi: andi,
+
+            farhan: farhan,
+
+            enden: enden,
+
+            pebrian: pebrian,
+
             total: totalBaris
+
         };
 
-        // TOTAL BAWAH
-        if (col0.toUpperCase() !== "VDK") {
 
-            grandAndi += (andi || 0);
-            grandFarhan += (farhan || 0);
-            grandEnden += (enden || 0);
-            grandPebrian += (pebrian || 0);
+        // ===============================
+        // TOTAL USER
+        // HANYA DATA SP
+        // ===============================
+
+        if (
+            col0.toUpperCase() !== "VDK"
+        ) {
+
+            grandAndi +=
+                (andi || 0);
+
+            grandFarhan +=
+                (farhan || 0);
+
+            grandEnden +=
+                (enden || 0);
+
+            grandPebrian +=
+                (pebrian || 0);
+
         }
 
+
+        // ===============================
+        // MASUKKAN GROUP
+        // ===============================
+
         if (isVdkActiveGroup) {
+
             dataVdk.push(itemObj);
+
         } else {
+
             dataSp.push(itemObj);
+
         }
 
     });
 
+
+    // ===============================
     // DATA KOSONG
+    // ===============================
+
     if (
         dataSp.length === 0 &&
         dataVdk.length === 0
     ) {
 
         document.getElementById(
-            'cso-stock-table'
+            "cso-stock-table"
         ).innerHTML = `
+
             <tr>
-                <td colspan="6"
-                    style="
-                        text-align:center;
-                        padding:30px;
-                        color:#ef4444;
-                        font-weight:bold;
-                    ">
+
+                <td
+                    colspan="6"
+                    class="empty-text"
+                >
+
                     Format Excel Tidak Sesuai!
+
                     <br>
 
-                    <span style="
-                        font-weight:normal;
-                        font-size:11px;
-                        color:#64748b;
-                    ">
+                    <span
+                        style="
+                            font-weight:normal;
+                            font-size:11px;
+                            color:#64748b;
+                        "
+                    >
                         Pastikan sheet Excel benar.
                     </span>
+
                 </td>
+
             </tr>
+
         `;
 
         return;
+
     }
 
-    // BUAT BARIS
+
+    // ===============================
+    // BUAT ROW
+    // ===============================
+
     const makeRowHtml = (item) => {
 
         return `
-            <tr>
+
+            <tr class="data-row">
 
                 <td class="item-name-col">
                     ${item.nama}
                 </td>
 
+
                 <td class="data-user-col">
                     ${formatDisplay(item.andi)}
                 </td>
+
 
                 <td class="data-user-col">
                     ${formatDisplay(item.farhan)}
                 </td>
 
+
                 <td class="data-user-col">
                     ${formatDisplay(item.enden)}
                 </td>
+
 
                 <td class="data-user-col">
                     ${formatDisplay(item.pebrian)}
                 </td>
 
-                <td>
+
+                <td class="total-col">
                     ${formatDisplay(item.total)}
                 </td>
 
             </tr>
+
         `;
+
     };
 
+
+    // ===============================
     // DATA SP
+    // ===============================
+
     dataSp.forEach(item => {
-        html += makeRowHtml(item);
+
+        html +=
+            makeRowHtml(item);
+
     });
 
-    // DATA VDK
-    if (dataVdk.length > 0) {
+
+    // ===============================
+    // PEMISAH SP / VDK
+    // ===============================
+
+    if (
+        dataVdk.length > 0
+    ) {
 
         html += `
-            <tr class="empty-row">
+
+            <tr class="dse-divider">
+
                 <td colspan="6"></td>
+
             </tr>
+
         `;
 
+
+        // ===============================
+        // DATA VDK
+        // ===============================
+
         dataVdk.forEach(item => {
-            html += makeRowHtml(item);
+
+            html +=
+                makeRowHtml(item);
+
         });
+
     }
 
+
+    // ===============================
     // GRAND TOTAL
-    let grandTotalSemua =
+    // ===============================
+
+    const grandTotalSemua =
         grandAndi +
         grandFarhan +
         grandEnden +
         grandPebrian;
 
+
+    // ===============================
+    // UPDATE SUMMARY
+    // ===============================
+
+    document.getElementById(
+        "summary-andi"
+    ).textContent =
+        grandAndi.toLocaleString(
+            "id-ID"
+        );
+
+
+    document.getElementById(
+        "summary-farhan"
+    ).textContent =
+        grandFarhan.toLocaleString(
+            "id-ID"
+        );
+
+
+    document.getElementById(
+        "summary-enden"
+    ).textContent =
+        grandEnden.toLocaleString(
+            "id-ID"
+        );
+
+
+    document.getElementById(
+        "summary-pebrian"
+    ).textContent =
+        grandPebrian.toLocaleString(
+            "id-ID"
+        );
+
+
+    document.getElementById(
+        "dse-grand-total"
+    ).textContent =
+        grandTotalSemua.toLocaleString(
+            "id-ID"
+        );
+
+
+    // ===============================
+    // TOTAL ROW
+    // ===============================
+
     html += `
+
         <tr class="total-row">
 
             <td class="item-name-col">
                 TOTAL
             </td>
 
-            <td class="data-user-col">
-                ${grandAndi.toLocaleString('id-ID')}
-            </td>
 
             <td class="data-user-col">
-                ${grandFarhan.toLocaleString('id-ID')}
+                ${grandAndi.toLocaleString("id-ID")}
             </td>
+
 
             <td class="data-user-col">
-                ${grandEnden.toLocaleString('id-ID')}
+                ${grandFarhan.toLocaleString("id-ID")}
             </td>
+
 
             <td class="data-user-col">
-                ${grandPebrian.toLocaleString('id-ID')}
+                ${grandEnden.toLocaleString("id-ID")}
             </td>
 
-            <td>
-                ${grandTotalSemua.toLocaleString('id-ID')}
+
+            <td class="data-user-col">
+                ${grandPebrian.toLocaleString("id-ID")}
+            </td>
+
+
+            <td class="total-col">
+                ${grandTotalSemua.toLocaleString("id-ID")}
             </td>
 
         </tr>
+
     `;
 
-    document.getElementById(
-        'cso-stock-table'
-    ).innerHTML = html;
-}
 
-// ===============================
+    // ===============================
+    // TAMPILKAN TABLE
+    // ===============================
+
+    document.getElementById(
+        "cso-stock-table"
+    ).innerHTML = html;
+
+}
+    
+   // ===============================
 // LOAD HALAMAN
 // ===============================
 
 document.addEventListener(
-    'DOMContentLoaded',
+    "DOMContentLoaded",
     () => {
 
         fetchExcelData();
 
         // AUTO REFRESH 30 DETIK
-        setInterval(() => {
-            fetchExcelData();
-        }, 30000);
+        setInterval(
+            () => {
+                fetchExcelData();
+            },
+            30000
+        );
 
     }
-);
-
-</script>
+); 
+    </script>
 
 <script src="global-ui.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
